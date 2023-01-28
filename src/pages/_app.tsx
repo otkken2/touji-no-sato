@@ -4,11 +4,12 @@ import '@/styles/globals.css';
 import { ApolloClient, InMemoryCache,ApolloProvider } from '@apollo/client';
 import type { AppProps } from 'next/app';
 import withData from '../../lib/apollo';
-import  {AppContext}  from 'context/AppContext';
 import { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { useAtom } from 'jotai';
+import { userAtom } from '@/atoms/atoms';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337";
 
@@ -21,7 +22,7 @@ const client = new ApolloClient({
 
 
 function App({ Component, pageProps }: AppProps) {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useAtom(userAtom);
   const [token, setToken] = useState<string | undefined>( Cookies.get('token') )
   useEffect(()=>{
     const autoLogin = async() => {
@@ -36,7 +37,7 @@ function App({ Component, pageProps }: AppProps) {
           setUser(res.data)
         }else{
           Cookies.remove('token');
-          setUser(null)
+          setUser(undefined)
           return;
         }
 
@@ -48,12 +49,10 @@ function App({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient()
   return (
     <QueryClientProvider client={queryClient}>
-    <AppContext.Provider value={{ user, setUser}}>
       <ApolloProvider client={client}>
         <Component {...pageProps} />
         <Footer/>
       </ApolloProvider>
-    </AppContext.Provider>
     </QueryClientProvider>
 
   )

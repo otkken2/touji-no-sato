@@ -1,12 +1,12 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useContext } from "react";
-import { AppContext } from "context/AppContext";
 import { useRouter } from "next/router";
 import { API_URL } from "const";
+import { useSetAtom } from "jotai";
+import { userAtom } from "@/atoms/atoms";
 
 export const useAuth = () => {
-  const {setUser} = useContext(AppContext);
+  const setUser = useSetAtom(userAtom);
   const  router  = useRouter();
 
   const login = async (identifier: string, password: string) => {
@@ -42,7 +42,7 @@ export const useAuth = () => {
   const logout = () => {
     alert('ログアウトしますか？')
     Cookies.remove('token')
-    setUser(null)
+    setUser(undefined)
     router.push('/')
   }
   return {login, registUser, logout};

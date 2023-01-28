@@ -1,9 +1,9 @@
+import { userAtom } from "@/atoms/atoms";
+import { useAtomValue } from "jotai";
 import Image from "next/image";
-import { useContext } from "react";
-import { AppContext } from "context/AppContext";
 
 export default () => {
-  const {user} = useContext(AppContext)
+  const user = useAtomValue(userAtom);
   return (
     <div className="flex justify-between items-center">
       <h1>

@@ -1,15 +1,16 @@
-import { AppContext } from "context/AppContext";
 import Image from "next/image";
 import Link from "next/link";
-import { useContext } from "react";
 import { useAuth } from "lib/useAuth";
+import { useAtomValue } from "jotai";
+import { userAtom } from "@/atoms/atoms";
 
 const FOOTER_ICON_WIDTH = 35;
 const FOOTER_ICON_HEIGHT = 35;
 
 export default () => {
   const {logout} = useAuth();
-  const {user} = useContext(AppContext);
+  const user = useAtomValue(userAtom);
+
   return (
     <footer className="text-center flex flex-row justify-around py-2 bg-slate-700">
       <Link href='/Favorite'>
@@ -23,7 +24,7 @@ export default () => {
       </Link>
       
       {/* TODO 追々、未ログイン状態でのみ表示するようにする */}
-      {user === null ?
+      {!user ?
         <>
           <Link href='/Login'>
             <Image src='/login.svg' height={FOOTER_ICON_HEIGHT} width={FOOTER_ICON_WIDTH} alt="ログイン"/>

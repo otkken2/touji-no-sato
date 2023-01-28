@@ -1,6 +1,4 @@
 import { Button, Input, TextField } from "@mui/material";
-import { AppContext } from "context/AppContext";
-import { useContext, useState } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { useAuth } from '../../lib/useAuth';
 

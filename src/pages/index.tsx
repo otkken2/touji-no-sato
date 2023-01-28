@@ -3,12 +3,13 @@ import Image from 'next/image'
 import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
 import Header from '@/components/Header/Header'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { gql } from 'apollo-boost'
 import { useQuery } from '@apollo/client'
 import Moment from 'react-moment'
 import 'moment-timezone'
-import { AppContext } from 'context/AppContext'
+import { useAtomValue } from 'jotai'
+import { userAtom } from '@/atoms/atoms'
 
 const query = gql`
 {
@@ -42,7 +43,7 @@ export default function Home() {
   const { loading, error, data} = useQuery<any>(query);
   // console.log(data);
   const [posts, setPosts] = useState<any[]>([]);
-  const {user} = useContext(AppContext);
+  const user = useAtomValue(userAtom);
   console.log({'user':user})
 
   useEffect(()=>{
