@@ -44,13 +44,10 @@ export default function Home() {
   // console.log(data);
   const [posts, setPosts] = useState<any[]>([]);
   const user = useAtomValue(userAtom);
-  console.log({'user':user})
+  // console.log({'user':user})
 
   useEffect(()=>{
     const getPosts = async () => {
-      // const response = await axios.get('http://localhost:1337/api/posts?populate=*');
-      // console.log(response.data);
-      // setPosts(response.data.data);
       if(loading) return;
       setPosts(data.posts.data);
     };

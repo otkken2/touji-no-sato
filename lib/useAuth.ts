@@ -9,6 +9,12 @@ export const useAuth = () => {
   const setUser = useSetAtom(userAtom);
   const  router  = useRouter();
 
+  const fetchUser = async(userId :number) => {
+    const res = await axios.get(`${API_URL}/api/users/${userId}?populate[posts][populate]=*`)
+    console.log(res.data)
+    setUser(res.data)
+  }
+
   const login = async (identifier: string, password: string) => {
     return await axios.
       post(`${API_URL}/api/auth/local`,{
@@ -16,7 +22,9 @@ export const useAuth = () => {
         password,
       }).then(res => {
         Cookies.set('token', res.data.jwt, {expires: 60});
-        setUser(res.data.user)
+        // console.log(res.data.user)
+        // setUser(res.data.user)
+        fetchUser(res.data.user.id)
         router.push('/')
       }).catch(err => {
         console.log('失敗？')

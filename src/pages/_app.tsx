@@ -24,27 +24,27 @@ const client = new ApolloClient({
 function App({ Component, pageProps }: AppProps) {
   const [user, setUser] = useAtom(userAtom);
   const [token, setToken] = useState<string | undefined>( Cookies.get('token') )
-  useEffect(()=>{
-    const autoLogin = async() => {
-      const token = Cookies.get('token')
-      if(!token)return;
-      await axios.get(`${API_URL}/api/users/me`,{
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
-      }).then((res) => {
-        if(res.status === 200){
-          setUser(res.data)
-        }else{
-          Cookies.remove('token');
-          setUser(undefined)
-          return;
-        }
+  // useEffect(()=>{
+  //   const autoLogin = async() => {
+  //     const token = Cookies.get('token')
+  //     if(!token)return;
+  //     await axios.get(`${API_URL}/api/users/me`,{
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       }
+  //     }).then((res) => {
+  //       if(res.status === 200){
+  //         setUser(res.data)
+  //       }else{
+  //         Cookies.remove('token');
+  //         setUser(undefined)
+  //         return;
+  //       }
 
-      })
-    }
-    autoLogin()
-  },[token])
+  //     })
+  //   }
+  //   autoLogin()
+  // },[token])
 
   const queryClient = new QueryClient()
   return (

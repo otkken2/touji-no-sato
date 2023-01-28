@@ -11,7 +11,9 @@ export const Layout = ({children}: LayoutProps) => {
   return (
     <>
       <Header/>
-        {children}
+        <main className='text-white'>
+          {children}
+        </main>
       <Footer/>
     </>
   );
