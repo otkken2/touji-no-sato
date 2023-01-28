@@ -3,8 +3,7 @@ import Cookies from "js-cookie";
 import { useContext } from "react";
 import { AppContext } from "context/AppContext";
 import { useRouter } from "next/router";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337";
+import { API_URL } from "const";
 
 export const useAuth = () => {
   const {setUser} = useContext(AppContext);

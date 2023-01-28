@@ -2,8 +2,11 @@ import { Button } from "@mui/material";
 
 export default () => {
   return (
-    <div>
-      THIS IS MYPAGE
-    </div>
+    <div>Mypage</div>
+    // <div>
+    //   {user && Object.keys(user).map(info => {
+    //     return <p>{info}:{user[info]}</p>
+    //   })}
+    // </div>
   );
 }
