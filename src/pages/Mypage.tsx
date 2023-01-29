@@ -5,12 +5,10 @@ import { API_URL } from "const";
 import { useAtomValue } from "jotai";
 import { useQuery } from "react-query";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 export default () => {
   const user =  useAtomValue(userAtom)
-  
-  // const {data,isLoading} = useQuery('user',fetchUser)
-  // console.log(data)
 
   return (
     <main>

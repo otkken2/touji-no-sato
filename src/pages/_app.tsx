@@ -10,7 +10,7 @@ import axios from 'axios';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useAtom } from 'jotai';
 import { userAtom } from '@/atoms/atoms';
-
+import { HydrationProvider, Client } from 'react-hydration-provider';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337";
 
 const cache = new InMemoryCache();
@@ -48,12 +48,16 @@ function App({ Component, pageProps }: AppProps) {
 
   const queryClient = new QueryClient()
   return (
-    <QueryClientProvider client={queryClient}>
-      <ApolloProvider client={client}>
-        <Component {...pageProps} />
-        <Footer/>
-      </ApolloProvider>
-    </QueryClientProvider>
+    <HydrationProvider>
+    <Client>
+      <QueryClientProvider client={queryClient}>
+        <ApolloProvider client={client}>
+          <Component {...pageProps} />
+          <Footer/>
+        </ApolloProvider>
+      </QueryClientProvider>
+    </Client>
+    </HydrationProvider>
 
   )
 }
