@@ -19,6 +19,7 @@ export interface Post{
   locale?: string; 
   publishedAt?: string;
   updatedAt?: string;
+  ryokan?: string;
 }
 
 export interface Image{

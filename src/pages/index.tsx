@@ -33,6 +33,7 @@ const query = gql`
           }
         }
         createdAt
+        ryokan
       }
     }
   }
@@ -55,6 +56,8 @@ export default function Home() {
   },[data]);
 
   if(loading)return <h1>loading now...</h1>
+
+  console.log(data.posts.data)
   return (
     <>
       <Head>
@@ -69,7 +72,7 @@ export default function Home() {
           posts.map((post,index)=>{
           return(
             <div key={index} className={`post-${index} text-white mb-10`}>
-              <div className='flex items-center justify-between'>
+              <div className='flex items-center justify-between mb-5'>
                 <div className='flex'>
                   <div className={`w-10 h-10 bg- rounded-full bg_primary`}>
                     <Image src='/mypage.svg' height={100} width={100} alt="プロフィール"/>
@@ -80,7 +83,17 @@ export default function Home() {
                   {post.attributes.createdAt}
                 </Moment>
               </div>
-              {post.attributes.description}
+              <p className='mb-1'>
+                {post.attributes.description}
+              </p>
+              {
+                post.attributes?.ryokan && 
+                <div className='flex items-center text-xs opacity-50'>
+                  <Image src={'/map.svg'} height={19} width={19} alt='mapIcon'/> 
+                  <p>{post.attributes?.ryokan}</p>
+                </div>
+
+              }
               {post?.attributes?.Image?.data?.map((eachData:any,ImageIndex:number)=>{
                 return(
                   
