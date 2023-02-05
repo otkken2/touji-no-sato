@@ -8,8 +8,9 @@ import { gql } from 'apollo-boost'
 import { useQuery } from '@apollo/client'
 import Moment from 'react-moment'
 import 'moment-timezone'
-import { useAtomValue } from 'jotai'
-import { userAtom } from '@/atoms/atoms'
+import { useAtom, useAtomValue } from 'jotai'
+import { ryokanAtom, userAtom } from '@/atoms/atoms'
+import Link from 'next/link'
 
 const query = gql`
 {
@@ -45,6 +46,7 @@ export default function Home() {
   // console.log(data);
   const [posts, setPosts] = useState<any[]>([]);
   const user = useAtomValue(userAtom);
+  const [ryokanName, setRyokanName] = useAtom(ryokanAtom);
   // console.log({'user':user})
 
   useEffect(()=>{
@@ -53,7 +55,7 @@ export default function Home() {
       setPosts(data.posts.data);
     };
     getPosts();
-  },[data]);
+  },[data, loading]);
 
   if(loading)return <h1>loading now...</h1>
 
@@ -83,21 +85,27 @@ export default function Home() {
                   {post.attributes.createdAt}
                 </Moment>
               </div>
+
+              {/* 投稿本文 */}
               <p className='mb-1'>
                 {post.attributes.description}
               </p>
+
+              {/* 旅館情報 */}
               {
                 post.attributes?.ryokan && 
-                <div className='flex items-center text-xs opacity-50'>
-                  <Image src={'/map.svg'} height={19} width={19} alt='mapIcon'/> 
-                  <p>{post.attributes?.ryokan}</p>
-                </div>
-
+                  <Link href='/RyokanInfo'>
+                    <div className='flex items-center text-xs opacity-50'>
+                      <Image src={'/map.svg'} height={19} width={19} alt='mapIcon'/> 
+                      <p>{post.attributes?.ryokan}</p>
+                    </div>
+                  </Link>
               }
+              {/* 画像 */}
               {post?.attributes?.Image?.data?.map((eachData:any,ImageIndex:number)=>{
                 return(
                   
-                  <Image className='w-full' src={`http://localhost:1337${eachData.attributes.url}`} alt={`onsen${ImageIndex + 1}`} width={275} height={183}/>
+                  <Image key={ImageIndex} className='w-full' src={`http://localhost:1337${eachData.attributes.url}`} alt={`onsen${ImageIndex + 1}`} width={275} height={183}/>
                 );
               })}
             </div>

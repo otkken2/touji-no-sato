@@ -50,3 +50,4 @@ export interface Role{
   type?: string;
   updatedAt?: string;
 }
+
