@@ -11,6 +11,8 @@ import 'moment-timezone'
 import { useAtom, useAtomValue } from 'jotai'
 import { ryokanAtom, userAtom } from '@/atoms/atoms'
 import Link from 'next/link'
+import axios from 'axios'
+import { useRouter } from 'next/router'
 
 const query = gql`
 {
@@ -48,6 +50,7 @@ export default function Home() {
   const user = useAtomValue(userAtom);
   const [ryokanName, setRyokanName] = useAtom(ryokanAtom);
   // console.log({'user':user})
+  const router = useRouter();
 
   useEffect(()=>{
     const getPosts = async () => {
@@ -57,9 +60,33 @@ export default function Home() {
     getPosts();
   },[data, loading]);
 
+
+
+  // const API_SEARCH_LOCATIONS = {
+  //   URL: 'https://booking-com.p.rapidapi.com/v1/hotels/locations',
+  //   options: {
+  //     params: {
+  //       locale: 'ja', name: '長寿館'
+  //     },
+  //     headers: {
+  //       'X-RapidAPI-Key': 'ba3d005649msh2dd5744cb01116bp18b537jsn8243088475bd',
+  //       'X-RapidAPI-Host': 'booking-com.p.rapidapi.com'
+  //     },
+  //   }
+  // }
+  // const getDestId = async() => {
+  //   const res = await axios.get(API_SEARCH_LOCATIONS.URL,API_SEARCH_LOCATIONS.options)
+  //   // console.log(res.data[0].dest_id);
+  //   return res.data[0]?.dest_id;
+  // };
+  // const handleOnClickRyokanName = async (ryokanName: string) => {
+  //   await getDestId()
+
+  // };
+
   if(loading)return <h1>loading now...</h1>
 
-  console.log(data.posts.data)
+  // console.log(data.posts.data)
   return (
     <>
       <Head>
@@ -94,7 +121,7 @@ export default function Home() {
               {/* 旅館情報 */}
               {
                 post.attributes?.ryokan && 
-                  <Link href='/RyokanInfo'>
+                  <Link href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${post.attributes?.ryokan}`)}&basemap=satellite`} target='_blank' rel='noopener noreferrer'>
                     <div className='flex items-center text-xs opacity-50'>
                       <Image src={'/map.svg'} height={19} width={19} alt='mapIcon'/> 
                       <p>{post.attributes?.ryokan}</p>
