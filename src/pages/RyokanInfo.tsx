@@ -62,7 +62,8 @@ const Map = () => {
   return (
     <>
       <div className="places-container">
-        <PlacesAutocomplete setSelected={setSelected} setCenter={setCenter}/>
+        {/* <PlacesAutocomplete setSelected={setSelected} setCenter={setCenter}/> */}
+        <PlacesAutocomplete setSelected={setSelected} />
       </div>
       <GoogleMap
         zoom={10}
@@ -78,10 +79,11 @@ const Map = () => {
 
 interface PlacesAutocompleteProps{
   setSelected:Dispatch<SetStateAction<null | LatLng>>;
-  setCenter:Dispatch<SetStateAction<LatLng>>;
+  // setCenter:Dispatch<SetStateAction<LatLng>>;
 }
 
-const PlacesAutocomplete = ({setSelected, setCenter}: PlacesAutocompleteProps) => {
+// export const PlacesAutocomplete = ({setSelected, setCenter}: PlacesAutocompleteProps) => {
+export const PlacesAutocomplete = ({setSelected}: PlacesAutocompleteProps) => {
   const {
     ready,
     value,
@@ -98,7 +100,7 @@ const PlacesAutocomplete = ({setSelected, setCenter}: PlacesAutocompleteProps) =
     const results = await getGeocode({address});
     const {lat, lng} = await getLatLng(results[0]);
     setSelected({lat, lng})
-    setCenter({lat, lng})
+    // setCenter({lat, lng})
   };
   return (
     // TODO: ユーザーの投稿ページにこの自動補完機能を実装する！
