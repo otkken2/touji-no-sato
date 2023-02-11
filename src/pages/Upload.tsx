@@ -21,6 +21,7 @@ interface PostInterface{
 }
 const Upload = () => {
   const [selected, setSelected] = useState<null | LatLng>(null);
+  const [imageId, setImageId] = useState<number>(0);
   const { control, handleSubmit } = useForm({
     defaultValues: {
       description: '',
@@ -30,27 +31,38 @@ const Upload = () => {
   })
 
   const onSubmit = async (data: PostInterface) => { 
-    console.log(JSON.stringify(data))
+    console.log('投稿のdata')
     console.log(data)
     const token = Cookies.get('token');
-    console.log(token)
-    return await axios.post(`${API_URL}/api/posts`,{
-      'data':{
-        description: data.description,
-        ryokan: data.ryokan,
-        images: data.images,
-      }
-    },{
-      headers: {
+    const postData = new FormData();
+    if(data.images){
+      postData.append('files.images', data.images as unknown as Blob);      
+    }
+
+    const textData = {
+      description: data.description,
+      ryokan: data.ryokan,
+    };
+
+    postData.append('data', JSON.stringify(textData));
+    await fetch(`${API_URL}/api/posts`,{
+      method: 'post',
+      body: postData,
+      headers:{
         Authorization: `Bearer ${token}`
       }
-    }).then(res=> {
-      console.log(res)
-    }).catch(err => {
-      console.log('失敗')
-      console.log(err);
-    });
-   }
+    })
+    // return await axios.post(`${API_URL}/api/posts`,postData,{
+    //   headers: {
+    //     Authorization: `Bearer ${token}`
+    //   }
+    // }).then(res=> {
+    //   console.log(res)
+    // }).catch(err => {
+    //   console.log('失敗')
+    //   console.log(err);
+    // });
+  }
 
   return (
     <form className="page-title" onSubmit={handleSubmit(onSubmit)}>
