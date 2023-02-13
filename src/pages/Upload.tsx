@@ -75,7 +75,7 @@ const Upload = () => {
     const textData = {
       ryokan: ryokan,
       description: description,
-      // user: user?.username,
+      user: user?.id,
     }
     formData.append('data', JSON.stringify(textData));
     await fetch(`${API_URL}/api/posts`, {
@@ -90,23 +90,29 @@ const Upload = () => {
   return (
     <form onSubmit={handleSubmit}>
       <div className="flex flex-col">
-        <TextField 
-          className="bg-white rounded-lg mb-8"
-          required
-          name="ryokan"
-          label='旅館・温泉名'
-          variant="filled"
-          onChange={e => setRyokan(e.target.value)}
-        />
-        <TextField 
-          required
-          className="bg-white rounded-lg mb-8"
-          name="description"
-          label='本文'
-          variant="filled"
-          onChange={e => setDescription(e.target.value)}
-        />
-        <MuiFileInput variant="filled" className="bg-white" onChange={e => setFiles(e)}/>
+        <div className="mb-5 w-full">
+          <TextField 
+            className="bg-white w-full rounded-lg"
+            required
+            name="ryokan"
+            label='旅館・温泉名'
+            variant="filled"
+            onChange={e => setRyokan(e.target.value)}
+          />
+        </div>
+        <div className="mb-5">
+          <TextField 
+            required
+            className="bg-white w-full rounded-lg mb-8"
+            name="description"
+            label='本文'
+            variant="filled"
+            onChange={e => setDescription(e.target.value)}
+          />
+        </div>
+        <div className="mb-10">
+          <MuiFileInput variant="filled" className="bg-white w-full" placeholder="ファイルを選択してください" onChange={e => setFiles(e)}/>
+        </div>
         <Button type="submit" variant="contained">投稿</Button>
       </div>
     </form>
