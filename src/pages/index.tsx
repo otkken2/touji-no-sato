@@ -13,6 +13,7 @@ import { ryokanAtom, userAtom } from '@/atoms/atoms'
 import Link from 'next/link'
 import axios from 'axios'
 import { useRouter } from 'next/router'
+import { API_URL } from 'const'
 
 const query = gql`
 {
@@ -47,18 +48,30 @@ export default function Home() {
   const { loading, error, data} = useQuery<any>(query);
   // console.log(data);
   const [posts, setPosts] = useState<any[]>([]);
+  console.log(posts)
   const user = useAtomValue(userAtom);
   const [ryokanName, setRyokanName] = useAtom(ryokanAtom);
   // console.log({'user':user})
   const router = useRouter();
 
+  const getPosts = async () => {
+    await axios.get(`${API_URL}/api/posts?populate=*`).then(res => {
+      console.log("res.data.data");
+      console.log(res.data.data);
+      setPosts(res.data.data);
+    }) 
+  }
+
+  // getPosts();
+
   useEffect(()=>{
-    const getPosts = async () => {
-      if(loading) return;
-      setPosts(data.posts.data);
-    };
+    // const getPosts = async () => {
+    //   if(loading) return;
+    //   setPosts(data.posts.data);
+    //   // console.log(data);
+    // };
     getPosts();
-  },[data, loading]);
+  },[]);
 
 
 
@@ -85,6 +98,7 @@ export default function Home() {
   // };
 
   if(loading)return <h1>loading now...</h1>
+  console.log(API_URL)
 
   // console.log(data.posts.data)
   return (
@@ -131,8 +145,8 @@ export default function Home() {
               {/* 画像 */}
               {post?.attributes?.Image?.data?.map((eachData:any,ImageIndex:number)=>{
                 return(
-                  
-                  <Image key={ImageIndex} className='w-full' src={`http://localhost:1337${eachData.attributes.url}`} alt={`onsen${ImageIndex + 1}`} width={275} height={183}/>
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img key={ImageIndex} src={`${API_URL}${eachData.attributes.url}`} alt="" className='w-full' />
                 );
               })}
             </div>

@@ -23,6 +23,7 @@ interface PostInterface{
 }
 const Upload = () => {
   const [files, setFiles] = useState<any>();
+  // console.log(files)
   const [ryokan, setRyokan] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const user = useAtomValue(userAtom);
@@ -70,7 +71,10 @@ const Upload = () => {
     console.log(user);
     const formData = new FormData();
 
-    formData.append('files.Image', files);
+    files.map((file:any)=> {
+      formData.append('files.Image',file, file.name);
+    })
+    // formData.append('files.Image', files);
 
     const textData = {
       ryokan: ryokan,
@@ -111,8 +115,15 @@ const Upload = () => {
           />
         </div>
         <div className="mb-10">
-          <MuiFileInput variant="filled" className="bg-white w-full" placeholder="ファイルを選択してください" onChange={e => setFiles(e)}/>
-        </div>
+          <MuiFileInput 
+            multiple
+            variant="filled" 
+            className="bg-white w-full" 
+            placeholder="ファイルを選択してください" 
+            onChange={e => setFiles(e)}
+          />
+          <Button onClick={() => setFiles(undefined)}>クリア</Button>
+        </div>  
         <Button type="submit" variant="contained">投稿</Button>
       </div>
     </form>

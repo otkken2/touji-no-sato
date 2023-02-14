@@ -8,7 +8,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Post } from "interfaces";
 
-export default () => {
+export const Mypage = () => {
   const user =  useAtomValue(userAtom)
   const [myPosts,setMyPosts] = useAtom(myPostsAtom)
   const fetchMyPosts = async () => {
@@ -47,3 +47,5 @@ export default () => {
     </main>
   );
 }
+
+export default Mypage;
