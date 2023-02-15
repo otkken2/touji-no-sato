@@ -11,37 +11,6 @@ export interface UserInterface{
   role?: Role;
 }
 
-export interface Post{
-  id: number;
-  Image?: Image[];
-  description: string;
-  createdAt?: string;
-  locale?: string; 
-  publishedAt?: string;
-  updatedAt?: string;
-  ryokan?: string;
-}
-
-export interface Image{
-  alternativeText?: string | null;
-  caption?: string | null
-  createdAt?: string;
-  ext?: string;
-  formats?: any;
-  hash?: string;
-  height?: number;
-  id?: number;
-  mime?: string;
-  name: string;
-  previewUrl?: string | null;
-  provider?: string;
-  provider_metadata?: any | null
-  size?: number;
-  updatedAt?: string; 
-  url: string; 
-  width?: number;
-  }
-
 export interface Role{
   createdAt?: string;
   description?: string;
@@ -50,4 +19,95 @@ export interface Role{
   type?: string;
   updatedAt?: string;
 }
+
+
+// ↓新規追加。
+export interface Post {
+  data?: PostData;
+  meta?: Meta;
+}
+
+export interface PostData {
+  id?:         number;
+  attributes?: PostAttributes;
+}
+
+export interface PostAttributes {
+  description?:   string;
+  createdAt?:     Date;
+  updatedAt?:     Date;
+  publishedAt?:   Date;
+  locale?:        string;
+  ryokan?:        string;
+  Image?:         Images;
+  user?:          User;
+  localizations?: Images;
+}
+
+export interface Images {
+  data?: Image[];
+}
+
+export interface Image {
+  id?:         number;
+  attributes?: ImageAttributes;
+}
+
+export interface ImageAttributes {
+  name?:              string;
+  alternativeText?:   null;
+  caption?:           null;
+  width?:             number;
+  height?:            number;
+  formats?:           Formats;
+  hash?:              string;
+  ext?:               string;
+  mime?:              string;
+  size?:              number;
+  url?:               string;
+  previewUrl?:        null;
+  provider?:          string;
+  provider_metadata?: null;
+  createdAt?:         Date;
+  updatedAt?:         Date;
+}
+
+export interface Formats {
+  thumbnail?: Thumbnail;
+}
+
+export interface Thumbnail {
+  name?:   string;
+  hash?:   string;
+  ext?:    string;
+  mime?:   string;
+  path?:   null;
+  width?:  number;
+  height?: number;
+  size?:   number;
+  url?:    string;
+}
+
+export interface User {
+  data?: UserData;
+}
+
+export interface UserData {
+  id?:         number;
+  attributes?: UserAttributes;
+}
+
+export interface UserAttributes {
+  username?:  string;
+  email?:     string;
+  provider?:  string;
+  confirmed?: boolean;
+  blocked?:   boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface Meta {
+}
+
 

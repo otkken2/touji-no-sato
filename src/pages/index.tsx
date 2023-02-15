@@ -4,55 +4,19 @@ import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
 import Header from '@/components/Header/Header'
 import { useEffect, useState } from 'react'
-import { gql } from 'apollo-boost'
-import { useQuery } from '@apollo/client'
 import Moment from 'react-moment'
 import 'moment-timezone'
-import { useAtom, useAtomValue } from 'jotai'
-import { ryokanAtom, userAtom } from '@/atoms/atoms'
 import Link from 'next/link'
 import axios from 'axios'
-import { useRouter } from 'next/router'
 import { API_URL } from 'const'
+import { PostHeader } from '@/components/Post/PostHeader'
+import { PostData } from 'interfaces'
+import { PlaceLink } from '@/components/Post/PlaceLink'
+import { useQuery } from 'react-query'
 
-const query = gql`
-{
-  posts {
-    data{
-      attributes {
-        description
-        user {
-          data{
-            attributes{
-              username
-              email
-            }
-          }
-        }
-        Image {
-          data{
-            attributes{
-              url
-            }
-          }
-        }
-        createdAt
-        ryokan
-      }
-    }
-  }
-}
-`
 
 export default function Home() {
-  const { loading, error, data} = useQuery<any>(query);
-  // console.log(data);
-  const [posts, setPosts] = useState<any[]>([]);
-  console.log(posts)
-  const user = useAtomValue(userAtom);
-  const [ryokanName, setRyokanName] = useAtom(ryokanAtom);
-  // console.log({'user':user})
-  const router = useRouter();
+  const [posts, setPosts] = useState<PostData[]>([]);
 
   const getPosts = async () => {
     await axios.get(`${API_URL}/api/posts?populate=*`).then(res => {
@@ -62,45 +26,14 @@ export default function Home() {
     }) 
   }
 
-  // getPosts();
-
   useEffect(()=>{
-    // const getPosts = async () => {
-    //   if(loading) return;
-    //   setPosts(data.posts.data);
-    //   // console.log(data);
-    // };
     getPosts();
   },[]);
 
+  // if(loading)return <h1>loading now...</h1>
+  const {isLoading, data} = useQuery('posts',getPosts);
+  if(isLoading) return <h1>loading now...</h1>
 
-
-  // const API_SEARCH_LOCATIONS = {
-  //   URL: 'https://booking-com.p.rapidapi.com/v1/hotels/locations',
-  //   options: {
-  //     params: {
-  //       locale: 'ja', name: '長寿館'
-  //     },
-  //     headers: {
-  //       'X-RapidAPI-Key': 'ba3d005649msh2dd5744cb01116bp18b537jsn8243088475bd',
-  //       'X-RapidAPI-Host': 'booking-com.p.rapidapi.com'
-  //     },
-  //   }
-  // }
-  // const getDestId = async() => {
-  //   const res = await axios.get(API_SEARCH_LOCATIONS.URL,API_SEARCH_LOCATIONS.options)
-  //   // console.log(res.data[0].dest_id);
-  //   return res.data[0]?.dest_id;
-  // };
-  // const handleOnClickRyokanName = async (ryokanName: string) => {
-  //   await getDestId()
-
-  // };
-
-  if(loading)return <h1>loading now...</h1>
-  console.log(API_URL)
-
-  // console.log(data.posts.data)
   return (
     <>
       <Head>
@@ -115,40 +48,28 @@ export default function Home() {
           posts.map((post,index)=>{
           return(
             <div key={index} className={`post-${index} text-white mb-10`}>
-              <div className='flex items-center justify-between mb-5'>
-                <div className='flex'>
-                  <div className={`w-10 h-10 bg- rounded-full bg_primary`}>
-                    <Image src='/mypage.svg' height={100} width={100} alt="プロフィール"/>
-                  </div>
-                  <p className='ml-3 my-auto'>{post?.attributes?.user?.data?.attributes?.username}</p>
-                </div>
-                <Moment format='YYYY/MM/DD hh:mm' tz='Asia/Tokyo'>
-                  {post.attributes.createdAt}
-                </Moment>
-              </div>
+              <Link  href={`post/${post.id}`}>
+                <PostHeader username={post?.attributes?.user?.data?.attributes?.username} createdAt={post?.attributes?.createdAt}/>
+                {/* 投稿本文 */}
+                <p className='mb-1'>
+                  {post?.attributes?.description}
+                </p>
+              </Link>
 
-              {/* 投稿本文 */}
-              <p className='mb-1'>
-                {post.attributes.description}
-              </p>
-
-              {/* 旅館情報 */}
+                {/* 旅館情報 */}
               {
                 post.attributes?.ryokan && 
-                  <Link href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${post.attributes?.ryokan}`)}&basemap=satellite`} target='_blank' rel='noopener noreferrer'>
-                    <div className='flex items-center text-xs opacity-50'>
-                      <Image src={'/map.svg'} height={19} width={19} alt='mapIcon'/> 
-                      <p>{post.attributes?.ryokan}</p>
-                    </div>
-                  </Link>
+                <PlaceLink ryokan={post.attributes?.ryokan}/>
               }
-              {/* 画像 */}
-              {post?.attributes?.Image?.data?.map((eachData:any,ImageIndex:number)=>{
-                return(
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img key={ImageIndex} src={`${API_URL}${eachData.attributes.url}`} alt="" className='w-full' />
-                );
-              })}
+              <Link href={`post/${post.id}`}>
+                {/* 画像 */}
+                {post?.attributes?.Image?.data?.map((eachData:any,ImageIndex:number)=>{
+                  return(
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img key={ImageIndex} src={`${API_URL}${eachData.attributes.url}`} alt="" className='w-full' />
+                    );
+                })}
+              </Link>
             </div>
           );
         })}
