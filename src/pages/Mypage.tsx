@@ -34,7 +34,8 @@ export const Mypage = () => {
                 <div >
                   {eachdata.attributes.Image.data.map((eachImage:any)=>{
                     return (
-                      <Image key={eachImage.id} src={`${API_URL}${eachImage.attributes.url}`} alt={eachImage.attributes.name} width={400} height={400}/>
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img className="w-full" key={eachImage.id} src={`${API_URL}${eachImage.attributes.url}`} alt={eachImage.attributes.name}/>
                       )
                     })}
                 </div>
