@@ -6,8 +6,8 @@ import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
 import usePlacesAutocomplete, {getGeocode, getLatLng} from "use-places-autocomplete";
 import { Combobox, ComboboxInput, ComboboxPopover, ComboboxList, ComboboxOption } from "@reach/combobox";
 import "@reach/combobox/styles.css"
-import { SetStateAction, useAtomValue } from "jotai";
-import { ryokanAtom } from "@/atoms/atoms";
+import { SetStateAction, useAtomValue, useSetAtom } from "jotai";
+import { ryokanAtom, selectedPlaceAtom } from "@/atoms/atoms";
 
 // const options = {
 //   method: 'GET',
@@ -58,12 +58,13 @@ const Map = () => {
   const [center, setCenter] = useState<LatLng>({ lat: 35.6, lng: 138.9 })
   const [selected, setSelected] = useState<null | LatLng>(null);
   const ryokanName = useAtomValue(ryokanAtom);
+  const selectedPlace  = useAtomValue(selectedPlaceAtom);
 
   return (
     <>
       <div className="places-container">
         {/* <PlacesAutocomplete setSelected={setSelected} setCenter={setCenter}/> */}
-        <PlacesAutocomplete setSelected={setSelected} />
+        <PlacesAutoComplete/>
       </div>
       <GoogleMap
         zoom={10}
@@ -83,7 +84,9 @@ interface PlacesAutocompleteProps{
 }
 
 // export const PlacesAutocomplete = ({setSelected, setCenter}: PlacesAutocompleteProps) => {
-export const PlacesAutocomplete = ({setSelected}: PlacesAutocompleteProps) => {
+// export const PlacesAutoComplete = ({setSelected}: PlacesAutocompleteProps) => {
+export const PlacesAutoComplete = () => {
+  const setSelectedPlace = useSetAtom(selectedPlaceAtom);
   const {
     ready,
     value,
@@ -92,14 +95,18 @@ export const PlacesAutocomplete = ({setSelected}: PlacesAutocompleteProps) => {
     clearSuggestions,
   } = usePlacesAutocomplete();
 
+  // console.log(data);
 
   const handleSelect = async (address: string) => {
+    console.log("address")
+    console.log(address)
     setValue(address, false);
+    setSelectedPlace(value);
     clearSuggestions();
 
     const results = await getGeocode({address});
     const {lat, lng} = await getLatLng(results[0]);
-    setSelected({lat, lng})
+    // setSelected({lat, lng})
     // setCenter({lat, lng})
   };
   return (
@@ -110,7 +117,7 @@ export const PlacesAutocomplete = ({setSelected}: PlacesAutocompleteProps) => {
         onChange={(e)=> setValue(e.target.value)}
         disabled={!ready}
         className='w-full p-3 text-center'
-        placeholder='検索'
+        placeholder='泊まった旅館・入った公共浴場を入力してみんなに教えよう！'
       />
         <ComboboxPopover>
           <ComboboxList>

@@ -7,7 +7,7 @@ import { userAtom } from "@/atoms/atoms";
 const FOOTER_ICON_WIDTH = 35;
 const FOOTER_ICON_HEIGHT = 35;
 
-export default () => {
+const Footer = () => {
   const {logout} = useAuth();
   const user = useAtomValue(userAtom);
 
@@ -46,3 +46,5 @@ export default () => {
     </footer>
   );
 }
+
+export default Footer;

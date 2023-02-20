@@ -6,7 +6,7 @@ import usePlacesAutocomplete, {getGeocode, getLatLng} from "use-places-autocompl
 import { Controller, useForm } from "react-hook-form"
 import { MuiFileInput } from "mui-file-input";
 import { Combobox, ComboboxInput, ComboboxList, ComboboxOption, ComboboxPopover } from "@reach/combobox";
-import { PlacesAutocomplete } from "./RyokanInfo";
+import { PlacesAutoComplete } from "./RyokanInfo";
 import { useState } from "react";
 import { LatLng } from "use-places-autocomplete";
 import { API_URL } from "const";
@@ -14,8 +14,10 @@ import { Image, Post } from "interfaces";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useAtom, useAtomValue } from "jotai";
-import { descriptionAtom, filesAtom, ryokanAtom, userAtom } from "@/atoms/atoms";
+import { descriptionAtom, filesAtom, ryokanAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
 import { UploadForm } from "@/components/Upload/UploadForm";
+import { useRouter } from "next/router";
+import { usePosts } from "lib/usePosts";
 
 interface PostInterface{
   description: string;
@@ -23,19 +25,26 @@ interface PostInterface{
       images: Image | undefined;
 }
 const Upload = () => {
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: process?.env?.NEXT_PUBLIC_GOOGLE_API_KEY ?? '',
+    libraries: ["places"],
+  });
   const files = useAtomValue(filesAtom);
-  const ryokan = useAtomValue(ryokanAtom);
+  // const ryokan = useAtomValue(ryokanAtom);
+  const selectedPlace = useAtomValue(selectedPlaceAtom);
   const description = useAtomValue(descriptionAtom);
 
   const user = useAtomValue(userAtom);
-
   const token = Cookies.get('token');
+  const router = useRouter();
+
 
   const handleSubmit = async(e: any) => {
     e.preventDefault();
     console.log('handleSubmit')
     console.log(files);
     console.log(user);
+    console.log(selectedPlace);
     const formData = new FormData();
 
     files.map((file:any)=> {
@@ -44,7 +53,7 @@ const Upload = () => {
     // formData.append('files.Image', files);
 
     const textData = {
-      ryokan: ryokan,
+      ryokan: selectedPlace,
       description: description,
       user: user?.id,
     }
@@ -55,11 +64,15 @@ const Upload = () => {
       headers:{
         Authorization: `Bearer ${token}`
       }
-    }).then(res => console.log('成功！'));
+    }).then(res => {
+      alert('投稿に成功しました');
+      router.push('/Mypage')
+    });
   };
 
   return (
-    <UploadForm handleSubmit={handleSubmit}/>
+    isLoaded && 
+      <UploadForm handleSubmit={handleSubmit}/>
   );
 }
 

@@ -7,6 +7,7 @@ import { useQuery } from "react-query";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Post } from "interfaces";
+import Link from "next/link";
 
 export const Mypage = () => {
   const user =  useAtomValue(userAtom)
@@ -24,6 +25,9 @@ export const Mypage = () => {
   return (
     <main>
       <h1>マイページ</h1>
+      <Link href='/MyOnsenCollection'>
+        <h2>温泉コレクションを見る</h2>
+      </Link>
       <div>
         <h2>{user?.username}</h2>
         <p>{user?.email}</p>
@@ -32,7 +36,7 @@ export const Mypage = () => {
             return (
               <div key={eachdata.id} className={`mb-20`}>
                 <div >
-                  {eachdata.attributes.Image.data.map((eachImage:any)=>{
+                  {eachdata?.attributes?.Image?.data?.map((eachImage:any)=>{
                     return (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img className="w-full" key={eachImage.id} src={`${API_URL}${eachImage.attributes.url}`} alt={eachImage.attributes.name}/>

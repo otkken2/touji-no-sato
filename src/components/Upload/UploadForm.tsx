@@ -1,6 +1,7 @@
-import { descriptionAtom, filesAtom, ryokanAtom } from "@/atoms/atoms";
+import { descriptionAtom, filesAtom, ryokanAtom, selectedPlaceAtom } from "@/atoms/atoms";
+import { PlacesAutoComplete } from "@/pages/RyokanInfo";
 import { Button, TextField } from "@mui/material";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { MuiFileInput } from "mui-file-input";
 import { SetStateAction, useEffect } from "react";
 
@@ -9,6 +10,7 @@ interface UploadFormProps{
 }
 export const UploadForm = (props: UploadFormProps) => {
   const [ryokan, setRyokan] = useAtom(ryokanAtom);
+  const selectedPlace = useAtomValue(selectedPlaceAtom);
   const [description, setDescription] = useAtom(descriptionAtom);
   const [files, setFiles] = useAtom(filesAtom);
   const {handleSubmit} = props;
@@ -19,7 +21,7 @@ export const UploadForm = (props: UploadFormProps) => {
     <form onSubmit={handleSubmit}>
       <div className="flex flex-col">
         <div className="mb-5 w-full">
-          <TextField 
+          {/* <TextField 
             className="bg-white w-full rounded-lg"
             required
             name="ryokan"
@@ -27,7 +29,8 @@ export const UploadForm = (props: UploadFormProps) => {
             variant="filled"
             value={ryokan}
             onChange={e => setRyokan(e.target.value)}
-          />
+          /> */}
+          <PlacesAutoComplete />
         </div>
         <div className="mb-5">
           <TextField 
