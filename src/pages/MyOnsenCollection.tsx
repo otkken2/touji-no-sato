@@ -1,15 +1,21 @@
+/* eslint-disable @next/next/no-img-element */
 import GoogleMapReact from "google-map-react";
 import { userAtom } from "@/atoms/atoms";
 import { GoogleMap, Marker, useLoadScript,InfoWindow } from "@react-google-maps/api";
 import axios from "axios";
 import { API_URL } from "const";
-import { PostData } from "interfaces";
+import { Post, PostData } from "interfaces";
 import { useAtomValue } from "jotai";
 import { usePosts } from "lib/usePosts";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { getGeocode, getLatLng, LatLng } from "use-places-autocomplete";
+import Link from "next/link";
 
+interface MyOnsenInterface{
+  data: PostData,
+  latLng: LatLng
+};
 
 const MyOnsenCollection = () => {
   const user =  useAtomValue(userAtom);
@@ -19,7 +25,7 @@ const MyOnsenCollection = () => {
   });
   const center: LatLng = { lat: 37.0, lng: 139.2 };
   const [idOfVisibleInfoWindow,setIdOfVisibleInfoWindow] = useState<number>(0);
-  const [myOnsens, setMyOnsens] = useState<LatLng[]>([]);
+  const [myOnsens, setMyOnsens] = useState<MyOnsenInterface[]>([]);
   const fetchMyPosts = async () => {
     const response = await axios.get(`${API_URL}/api/posts?populate=*&filters[user][id][$eq]=${user?.id}`)
     return response.data;
@@ -34,7 +40,8 @@ const MyOnsenCollection = () => {
       const address = eachPost?.attributes?.ryokan;
       const geoCode = await getGeocode({address});
       const latLng = await getLatLng(geoCode[0]);
-      setMyOnsens((myOnsens)=>[...myOnsens,latLng]);
+      setMyOnsens((prevState) => [...prevState,{data: eachPost, latLng: latLng}]);
+      // setMyOnsens((myOnsens)=>[...myOnsens,latLng]);
     });
   }
 
@@ -62,24 +69,25 @@ const MyOnsenCollection = () => {
             
             <div key={index}>
               {index + 1 === idOfVisibleInfoWindow && 
-                <InfoWindow position={eachMyOnsen}>
+                <InfoWindow position={eachMyOnsen.latLng}>
                 {/* <div className="bg-red-300 absolute h-[100vh]"> */}
-                  <div className="bg-red-300 max-w-[50px] max-h-[40px] overflow-scroll">
-                    <p>
-                      idは{idOfVisibleInfoWindow}です。
-                      idは{idOfVisibleInfoWindow}です。
-                      idは{idOfVisibleInfoWindow}です。
-                      idは{idOfVisibleInfoWindow}です。
-                      idは{idOfVisibleInfoWindow}です。
-                      idは{idOfVisibleInfoWindow}です。
-                      idは{idOfVisibleInfoWindow}です。
-                      idは{idOfVisibleInfoWindow}です。
-                      idは{idOfVisibleInfoWindow}です。
-                    </p>
+                  <div className="max-w-[350px] max-h-[540px] overflow-y-scroll">
+                    <ul>
+                      <li className="mb-1">{eachMyOnsen.data.attributes?.createdAt as ReactNode}</li>
+                      <li className="mb-8">{eachMyOnsen.data.attributes?.ryokan}</li>
+                      <li className="mb-3">{eachMyOnsen.data.attributes?.description}</li>
+                    </ul>
+                    {eachMyOnsen.data.attributes?.Image?.data?.map((eachData,imageIndex)=>{
+                      return(
+                        <img className="w-full" key={imageIndex} src={`${API_URL}${eachData?.attributes?.url}`} alt={eachData.attributes?.name} />
+                        // <img className="" key={imageIndex} src={`${API_URL}${eachData?.attributes?.url}`} alt={eachData.attributes?.name} />
+                      );
+                    })}
+                    <Link href={`post/${eachMyOnsen.data.id}`}>詳細ページを開く</Link>
                   </div>
                 </InfoWindow>
               }
-              <Marker key={index} position={eachMyOnsen} onClick={() => handleSelectInfoWindow(index)}/>
+              <Marker key={index} position={eachMyOnsen.latLng} onClick={() => handleSelectInfoWindow(index)}/>
             </div>
           );
         })}
