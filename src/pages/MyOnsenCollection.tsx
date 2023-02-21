@@ -80,7 +80,6 @@ const MyOnsenCollection = () => {
                     {eachMyOnsen.data.attributes?.Image?.data?.map((eachData,imageIndex)=>{
                       return(
                         <img className="w-full" key={imageIndex} src={`${API_URL}${eachData?.attributes?.url}`} alt={eachData.attributes?.name} />
-                        // <img className="" key={imageIndex} src={`${API_URL}${eachData?.attributes?.url}`} alt={eachData.attributes?.name} />
                       );
                     })}
                     <Link href={`post/${eachMyOnsen.data.id}`}>詳細ページを開く</Link>
