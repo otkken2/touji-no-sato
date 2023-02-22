@@ -39,6 +39,7 @@ export interface PostAttributes {
   publishedAt?:   Date;
   locale?:        string;
   ryokan?:        string;
+  favoriteCount?: number;
   Image?:         Images;
   user?:          User;
   localizations?: Images;

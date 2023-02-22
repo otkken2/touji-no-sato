@@ -13,11 +13,18 @@ import { PostHeader } from '@/components/Post/PostHeader'
 import { PostData } from 'interfaces'
 import { PlaceLink } from '@/components/Post/PlaceLink'
 import { useQuery } from 'react-query'
+import Cookies from 'js-cookie'
+import { usePosts } from 'lib/usePosts'
+import { useAtomValue } from 'jotai'
+import { userAtom } from '@/atoms/atoms'
 
 
 export default function Home() {
   const [posts, setPosts] = useState<PostData[]>([]);
-
+  const token = Cookies.get('token');
+  const { addFavorite } = usePosts()
+  const user = useAtomValue(userAtom);
+  
   const getPosts = async () => {
     await axios.get(`${API_URL}/api/posts?populate=*`).then(res => {
       console.log("res.data.data");
@@ -29,6 +36,10 @@ export default function Home() {
   useEffect(()=>{
     getPosts();
   },[]);
+
+  const handleClickFavorite = async( postId: number | undefined ,favoriteCount: number | undefined) => {
+    await addFavorite(postId, favoriteCount, token,user?.id);
+  }
 
   // if(loading)return <h1>loading now...</h1>
   const {isLoading, data} = useQuery('posts',getPosts);
@@ -70,6 +81,11 @@ export default function Home() {
                     );
                 })}
               </Link>
+              <div className='favorite-container flex items-center' onClick={()=> handleClickFavorite(post?.id, post?.attributes?.favoriteCount)}>
+                <Image src='/favorite.svg' alt='お気に入りに追加' width={20} height={20} className='m-3'/>
+                <p>{post?.attributes?.favoriteCount}</p>
+              </div>
+
             </div>
           );
         })}

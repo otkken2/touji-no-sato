@@ -2,7 +2,7 @@ import { userAtom } from "@/atoms/atoms";
 import { useAtomValue } from "jotai";
 import Image from "next/image";
 
-export default () => {
+const Header = () => {
   const user = useAtomValue(userAtom);
   return (
     <div className="flex justify-between items-center">
@@ -13,3 +13,5 @@ export default () => {
     </div>
   );
 }
+
+export default Header;
