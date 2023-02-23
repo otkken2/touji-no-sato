@@ -7,7 +7,7 @@ export const useFavorite = () => {
   const [myFavorites,setMyFavorites] = useAtom(myFavoritesAtom);
   const user = useAtomValue(userAtom);
   type UpdateCountType = 'increase' | 'decrease'
-  
+
   const handleFavoriteCount = async (type: UpdateCountType ,postId: number, favoriteCount: number, token: string) => {
     let newFavoriteCount;
     if(type === 'increase'){
@@ -83,12 +83,9 @@ export const useFavorite = () => {
     
     if(myFavoritesIds.includes(postId)){
       clearFavorite(postId,favoriteCount, token);
-      console.log('「お気に入り」解除しました');
-      return;
     }else{
       addFavorite(userId, postId, token, favoriteCount);
     }
-
   };
 
   const getMyFavorites = async() => {
