@@ -1,5 +1,5 @@
 import { API_URL } from "const";
-import { Image } from "interfaces";
+import { Image } from "@/Interface/interfaces";
 
 interface PostImagesProps{
   images: Image[];

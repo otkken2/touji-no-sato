@@ -10,31 +10,39 @@ import Link from 'next/link'
 import axios from 'axios'
 import { API_URL } from 'const'
 import { PostHeader } from '@/components/Post/PostHeader'
-import { PostData } from 'interfaces'
+import { PostData } from '@/Interface/interfaces'
 import { PlaceLink } from '@/components/Post/PlaceLink'
 import { useQuery } from 'react-query'
 import Cookies from 'js-cookie'
 import { usePosts } from 'lib/usePosts'
-import { useAtomValue } from 'jotai'
-import { userAtom } from '@/atoms/atoms'
+import { useAtom, useAtomValue } from 'jotai'
+import { myFavoritesAtom, userAtom } from '@/atoms/atoms'
+import { useFavorite } from 'lib/useFavorite'
 
 
 export default function Home() {
   const [posts, setPosts] = useState<PostData[]>([]);
   const token = Cookies.get('token');
-  const { addFavorite } = usePosts()
+  const { addFavorite,myFavorites, setMyFavorites, getMyFavorites } = useFavorite()
   const user = useAtomValue(userAtom);
+  // const [myFavorites,setMyFavorites] = useAtom(myFavoritesAtom)
+
+  
   
   const getPosts = async () => {
     await axios.get(`${API_URL}/api/posts?populate=*`).then(res => {
-      console.log("res.data.data");
-      console.log(res.data.data);
+      // console.log("res.data.data");
+      // console.log(res.data.data);
       setPosts(res.data.data);
     }) 
   }
 
   useEffect(()=>{
     getPosts();
+  },[myFavorites]);
+  
+  useEffect(()=>{
+    getMyFavorites();
   },[]);
 
   const handleClickFavorite = async( postId: number | undefined ,favoriteCount: number | undefined) => {

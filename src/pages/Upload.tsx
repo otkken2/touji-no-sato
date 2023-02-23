@@ -10,7 +10,7 @@ import { PlacesAutoComplete } from "./RyokanInfo";
 import { useState } from "react";
 import { LatLng } from "use-places-autocomplete";
 import { API_URL } from "const";
-import { Image, Post } from "interfaces";
+import { Image, Post } from "@/Interface/interfaces";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useAtom, useAtomValue } from "jotai";

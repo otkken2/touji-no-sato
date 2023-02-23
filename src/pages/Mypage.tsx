@@ -6,7 +6,7 @@ import { useAtom, useAtomValue } from "jotai";
 import { useQuery } from "react-query";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Post } from "interfaces";
+import { Post } from "@/Interface/interfaces";
 import Link from "next/link";
 
 export const Mypage = () => {

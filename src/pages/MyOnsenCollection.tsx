@@ -4,7 +4,7 @@ import { userAtom } from "@/atoms/atoms";
 import { GoogleMap, Marker, useLoadScript,InfoWindow } from "@react-google-maps/api";
 import axios from "axios";
 import { API_URL } from "const";
-import { Post, PostData } from "interfaces";
+import { Post, PostData } from "@/Interface/interfaces";
 import { useAtomValue } from "jotai";
 import { usePosts } from "lib/usePosts";
 import { ReactNode, useEffect, useState } from "react";

@@ -1,4 +1,4 @@
-import { PostData } from "interfaces";
+import { PostData } from "@/Interface/interfaces";
 import Image from "next/image";
 import Moment from "react-moment";
 import 'moment-timezone';

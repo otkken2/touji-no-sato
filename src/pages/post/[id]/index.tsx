@@ -2,7 +2,7 @@ import { PlaceLink } from "@/components/Post/PlaceLink";
 import { PostHeader } from "@/components/Post/PostHeader";
 import axios from "axios";
 import { API_URL } from "const";
-import { Post, PostData } from "interfaces";
+import { Post, PostData } from "@/Interface/interfaces";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
