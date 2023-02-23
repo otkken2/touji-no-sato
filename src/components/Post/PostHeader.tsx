@@ -11,9 +11,7 @@ interface PostHeaderProps{
 
 export const PostHeader = (props: PostHeaderProps) => {
   const username = props.username;
-  console.log(username);
   const createdAt = props.createdAt;
-  console.log(createdAt);
   if(!username)return <p>投稿者情報がありません</p>
   return(
     <div className='flex items-center justify-between mb-5'>
