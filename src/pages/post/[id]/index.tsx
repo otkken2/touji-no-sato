@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { PlaceLink } from "@/components/Post/PlaceLink";
 import { PostHeader } from "@/components/Post/PostHeader";
 import axios, { AxiosResponse } from "axios";
@@ -48,7 +49,7 @@ const ShowPostDetail = () => {
   useEffect(()=>{
     if(!router.isReady)return;
     const getReplies = async() => {
-      const res = await axios.get(`${API_URL}/api/replies?populate[post][populate]=*&populate[user]=*&filters[post][id][$eq]=${id}`);
+      const res = await axios.get(`${API_URL}/api/replies?populate[post][populate]=*&populate[user]=*&populate[Image]=*&filters[post][id][$eq]=${id}`);
       console.log('ReplyData[]');
       console.log(res.data?.data);
       if(res.data === undefined)return;
@@ -87,6 +88,12 @@ const ShowPostDetail = () => {
               return (
                 <div key={eachReply.id} className='mb-5'>
                   <HeaderAndDescription key={eachReply.id} username={eachReply.attributes.user.data.attributes.username} createdAt={eachReply.attributes.createdAt} description={eachReply.attributes.text}/>
+                  {
+                    eachReply.attributes.Image?.data &&
+                    eachReply.attributes.Image?.data.map(eachImage => {
+                      return <img key={eachImage.id} src={`${API_URL}${eachImage.attributes?.url}`} alt={eachImage.attributes?.name} className='w-full'/>
+                    })
+                  }
                 </div>
               );
             }
