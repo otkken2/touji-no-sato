@@ -2,7 +2,7 @@ import { PlaceLink } from "@/components/Post/PlaceLink";
 import { PostHeader } from "@/components/Post/PostHeader";
 import axios from "axios";
 import { API_URL } from "const";
-import { Post, PostData } from "@/Interface/interfaces";
+import { PostData } from "@/Interface/interfaces";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -11,6 +11,7 @@ import { useQuery } from "react-query";
 import { useSetAtom } from "jotai";
 import { descriptionAtom, filesAtom, ryokanAtom } from "@/atoms/atoms";
 import Cookies from "js-cookie";
+import { Post } from "@/components/Post/Post";
 
 const ShowPostDetail = () => {
   const router = useRouter();
@@ -63,26 +64,8 @@ const ShowPostDetail = () => {
   };
 
   return ( 
-    data?.attributes?.user?.data?.attributes?.username && data?.attributes?.createdAt &&
-    <div className="text-white mb-12">
-      <PostHeader username={data?.attributes?.user?.data?.attributes?.username} createdAt={data?.attributes?.createdAt}/>
-      <div className="flex">
-        <Link className="mr-3" href={`/post/${id}/Edit`} onClick={()=>{handleGetContent()}}>
-          <Image src='/edit.svg' height={20} width={20} alt="編集"/>
-        </Link>
-        <Image className="mr-3" src={'/delete.svg'} height={20} width={20} alt='削除' onClick={()=> handleDeletePost()}/>
-      </div>
-      <p>{data?.attributes?.description}</p>
-      {data?.attributes?.ryokan && 
-        <PlaceLink ryokan={data?.attributes?.ryokan}/>
-      }
-      {data?.attributes?.Image?.data?.map((eachImage)=> {
-        return (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img className='w-full' key={eachImage.id} src={`${API_URL}${eachImage.attributes?.url}`} alt="" />
-        );
-      })}
-    </div>
+    router.isReady &&
+    <Post post={data} isDetailPage={true} postId={id} handleGetContent={handleGetContent} handleDeletePost={handleDeletePost}/>
   );
 };
 

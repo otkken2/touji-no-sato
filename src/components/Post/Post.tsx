@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { PostData } from "@/Interface/interfaces";
 import { API_URL } from "const";
 import Link from "next/link";
@@ -8,48 +9,61 @@ import { useFavorite } from "lib/useFavorite";
 import Cookies from "js-cookie";
 import { useAtomValue } from "jotai";
 import { userAtom } from "@/atoms/atoms";
+import { IconsContainer } from "./IconsContainer";
+import { HeaderAndDescription } from "./HeaderAndDescription";
 
 interface PostsProps{
   post: PostData | undefined;
-  index: number | undefined;
-
+  index?: number | undefined;
+  isDetailPage?: boolean;
+  isReply?: boolean;
+  postId?: string | string[] | undefined;
+  handleGetContent?: () => void;
+  handleDeletePost?: () => Promise<void>;
 }
 export const Post = (props: PostsProps) => {
-  const {post, index} = props;
+  const {post, index, isDetailPage = false, isReply= false, postId, handleGetContent, handleDeletePost} = props;
   const token = Cookies.get('token');
   const user = useAtomValue(userAtom);
   
   const { handleClickFavorite } = useFavorite();
   if(post === undefined)return <></>;
-  if(!post?.attributes?.user?.data?.attributes?.username || !post?.attributes?.createdAt)return <></>;
+  if(!post?.attributes?.user?.data?.attributes?.username || !post?.attributes?.createdAt || !post?.attributes?.description)return <></>;
   return(
     <div key={index} className={`post-${index} text-white mb-10`}>
       <Link  href={`post/${post.id}`}>
-        <PostHeader username={post?.attributes?.user?.data?.attributes?.username} createdAt={post?.attributes?.createdAt}/>
-        {/* 投稿本文 */}
-        <p className='mb-1'>
-          {post?.attributes?.description}
-        </p>
+        <HeaderAndDescription username={post.attributes.user.data.attributes.username} createdAt={post.attributes.createdAt} description={post.attributes.description}/>
       </Link>
+      {/* 編集と削除(detailPageの場合のみ) */}
+      {isDetailPage && handleGetContent && handleDeletePost &&
+        <div className="flex">
+          <Link className="mr-3" href={`/post/${postId}/Edit`} onClick={()=>{handleGetContent()}}>
+            <Image src='/edit.svg' height={20} width={20} alt="編集"/>
+          </Link>
+          <Image className="mr-3" src={'/delete.svg'} height={20} width={20} alt='削除' onClick={()=> handleDeletePost()}/>
+        </div>
+      }
         {/* 旅館情報 */}
       {
         post.attributes?.ryokan && 
         <PlaceLink ryokan={post.attributes?.ryokan}/>
       }
-      <Link href={`post/${post.id}`}>
         {/* 画像 */}
         {post?.attributes?.Image?.data?.map((eachData:any,ImageIndex:number)=>{
+          // 詳細画面ならリンクなし
+          if(isDetailPage){
+            return (
+              <img key={ImageIndex} src={`${API_URL}${eachData.attributes.url}`} alt="" className='w-full' />
+            )
+          }
+          // リンクあり
           return(
-            // eslint-disable-next-line @next/next/no-img-element
-            <img key={ImageIndex} src={`${API_URL}${eachData.attributes.url}`} alt="" className='w-full' />
+            <Link key={ImageIndex} href={`post/${post.id}`}>
+              <img  src={`${API_URL}${eachData.attributes.url}`} alt="" className='w-full' />
+            </Link>
             );
         })}
-      </Link>
-      {/* お気に入り登録・解除 */}
-      <div className='favorite-container flex items-center' onClick={()=> handleClickFavorite(post?.id, post?.attributes?.favoriteCount,token, user?.id)}>
-        <Image src='/favorite.svg' alt='お気に入りに追加' width={20} height={20} className='m-3'/>
-        <p>{post?.attributes?.favoriteCount}</p>
-      </div>
+      <IconsContainer postId={post?.id} token={token} userId={user?.id} replyCount={0} favoriteCount={post?.attributes?.favoriteCount} handleClickFavorite={handleClickFavorite}/>
     </div>
   );
 };
