@@ -1,8 +1,8 @@
 import { PostHeader } from "./PostHeader";
 interface HeaderAndDescriptionProps{
-  username: string;
-  createdAt: Date;
-  description: string;
+  username?: string;
+  createdAt?: Date;
+  description?: string;
 }
 
 export const HeaderAndDescription = (props: HeaderAndDescriptionProps) => {
