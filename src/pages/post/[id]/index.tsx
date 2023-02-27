@@ -9,12 +9,15 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
-import { useSetAtom } from "jotai";
-import { descriptionAtom, filesAtom, ryokanAtom } from "@/atoms/atoms";
+import { useAtomValue, useSetAtom } from "jotai";
+import { descriptionAtom, filesAtom, ryokanAtom, userAtom } from "@/atoms/atoms";
 import Cookies from "js-cookie";
 import { Post } from "@/components/Post/Post";
 import { Reply, ReplyData } from "@/Interface/reply";
 import { HeaderAndDescription } from "@/components/Post/HeaderAndDescription";
+import { TextFieldsTwoTone } from "@mui/icons-material";
+import { Button, TextField } from "@mui/material";
+import { MuiFileInput } from "mui-file-input";
 
 const ShowPostDetail = () => {
   const router = useRouter();
@@ -25,6 +28,9 @@ const ShowPostDetail = () => {
   const setFiles = useSetAtom(filesAtom);
   const token = Cookies.get('token');
   const [replies, setReplies] = useState<ReplyData[]>([]);
+  const [replyText, setReplyText] = useState<string>('');
+  const [replyFiles, setReplyFiles] = useState<File[]>([]);
+  const user = useAtomValue(userAtom);
 
   const handleGetContent = () => {
     setRyokan(data?.attributes?.ryokan);
@@ -71,6 +77,34 @@ const ShowPostDetail = () => {
     })
   };
 
+  const handleSubmit = async(e:any) => {
+    e.preventDefault();
+    // alert("仮処理")
+    const formData = new FormData();
+    replyFiles.map((file: File)=>{
+      formData.append('files.Image', file);
+    });
+    console.log("replyText")
+    console.log(replyText)
+    console.log("user.id")
+    console.log(user?.id)
+    console.log("PostId")
+    console.log(id)
+    const data = {
+      text: replyText,
+      user: user?.id,
+      post: id
+    }
+    formData.append('data', JSON.stringify(data));
+    await fetch(`${API_URL}/api/replies`,{
+      method: 'post',
+      body: formData,
+      headers:{
+        Authorization: `Bearer ${token}`
+      }
+    }).then(res => console.log('リプの投稿に成功しました。'))
+  };
+
   return ( 
     <>
       {
@@ -78,6 +112,27 @@ const ShowPostDetail = () => {
         <Post post={data} isDetailPage={true} postId={id} handleGetContent={handleGetContent} handleDeletePost={handleDeletePost}/>
       }
       <hr />
+      {/* リプライ作成フォーム */}
+      <form onSubmit={handleSubmit} className='w-full flex flex-col text-white'>
+        <TextField 
+          required
+          multiline
+          placeholder="返信を入力"
+          name='text'
+          variant="filled"
+          value={replyText}
+          onChange={e => setReplyText(e.target.value)}
+          className='text-white'
+        />
+        <MuiFileInput
+          multiple
+          variant="filled"
+          placeholder="ファイルを選択"
+          onChange={e => setReplyFiles(e)}
+        />
+        <Button type="submit" variant="contained">返信</Button>
+      </form>
+      {/* リプライ一覧 */}
       <div className="mb-20 text-white mt-5">
         {replies.length > 0 && 
           replies.map(eachReply => {

@@ -22,7 +22,10 @@ const Footer = () => {
       <Link href='/'>
         <Image src='/home.svg' height={FOOTER_ICON_HEIGHT} width={FOOTER_ICON_WIDTH} alt="ホーム"/>
       </Link>
-      
+      <Link href='/Search'>
+        <Image src='/search.svg' height={FOOTER_ICON_HEIGHT} width={FOOTER_ICON_WIDTH} alt="ホーム"/>
+      </Link>
+
       {/* TODO 追々、未ログイン状態でのみ表示するようにする */}
       {!user ?
         <>
