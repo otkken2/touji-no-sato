@@ -4,7 +4,7 @@ import { useState } from "react";
 const Search = ()=>{
   const [searchWord, setSearchWord] = useState('')
   const {search} = useSearch();
-  const handleSubmit = (e) => {
+  const handleSubmit = (e:any) => {
     // alert(searchWord);
     e.preventDefault();
     search(searchWord);

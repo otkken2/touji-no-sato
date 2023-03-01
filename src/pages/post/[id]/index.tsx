@@ -27,15 +27,15 @@ const ShowPostDetail = () => {
   const setDescription = useSetAtom(descriptionAtom);
   const setFiles = useSetAtom(filesAtom);
   const token = Cookies.get('token');
-  const [replies, setReplies] = useState<ReplyData[]>([]);
+  const [replies, setReplies] = useState<PostData[]>([]);
   const [replyText, setReplyText] = useState<string>('');
   const [replyFiles, setReplyFiles] = useState<File[]>([]);
   const user = useAtomValue(userAtom);
+  const [hasPostedReply, setHasPostedReply] = useState<boolean>(false);
 
   const handleGetContent = () => {
     setRyokan(data?.attributes?.ryokan);
     setDescription(data?.attributes?.description);
-    // setFiles();
   };
 
   useEffect(()=>{
@@ -55,15 +55,15 @@ const ShowPostDetail = () => {
   useEffect(()=>{
     if(!router.isReady)return;
     const getReplies = async() => {
-      const res = await axios.get(`${API_URL}/api/replies?populate[post][populate]=*&populate[user]=*&populate[Image]=*&filters[post][id][$eq]=${id}`);
+      const res = await axios.get(`${API_URL}/api/posts?populate=*&filters[parentPostId][$eq]=${id}`);
       console.log('ReplyData[]');
       console.log(res.data?.data);
       if(res.data === undefined)return;
       setReplies(res.data.data);
     };
     getReplies()
-  },[id, router]);
-  
+  },[id, router, hasPostedReply]);
+
   const handleDeletePost = async () => {
     await fetch(`${API_URL}/api/posts/${id}`,{
       method: 'delete',
@@ -79,33 +79,29 @@ const ShowPostDetail = () => {
 
   const handleSubmit = async(e:any) => {
     e.preventDefault();
-    // alert("仮処理")
     const formData = new FormData();
     replyFiles.map((file: File)=>{
       formData.append('files.Image', file);
     });
-    console.log("replyText")
-    console.log(replyText)
-    console.log("user.id")
-    console.log(user?.id)
-    console.log("PostId")
-    console.log(id)
     const data = {
-      text: replyText,
+      description: replyText,
       user: user?.id,
-      post: id
+      parentPostId: id,
     }
     formData.append('data', JSON.stringify(data));
-    await fetch(`${API_URL}/api/replies`,{
+    await fetch(`${API_URL}/api/posts`,{
       method: 'post',
       body: formData,
       headers:{
         Authorization: `Bearer ${token}`
       }
-    }).then(res => console.log('リプの投稿に成功しました。'))
+    }).then(res => {
+      console.log('リプの投稿に成功しました。')
+      setHasPostedReply(true);
+    })
   };
 
-  return ( 
+  return (
     <>
       {
         router.isReady &&
@@ -114,7 +110,7 @@ const ShowPostDetail = () => {
       <hr />
       {/* リプライ作成フォーム */}
       <form onSubmit={handleSubmit} className='w-full flex flex-col text-white'>
-        <TextField 
+        <TextField
           required
           multiline
           placeholder="返信を入力"
@@ -134,15 +130,15 @@ const ShowPostDetail = () => {
       </form>
       {/* リプライ一覧 */}
       <div className="mb-20 text-white mt-5">
-        {replies.length > 0 && 
+        {replies.length > 0 &&
           replies.map(eachReply => {
-            if(eachReply.attributes?.user?.data?.attributes?.username && 
+            if(eachReply.attributes?.user?.data?.attributes?.username &&
                eachReply.attributes?.createdAt &&
-               eachReply.attributes?.text
+               eachReply.attributes?.description
             ){
               return (
                 <div key={eachReply.id} className='mb-5'>
-                  <HeaderAndDescription key={eachReply.id} username={eachReply.attributes.user.data.attributes.username} createdAt={eachReply.attributes.createdAt} description={eachReply.attributes.text}/>
+                  <HeaderAndDescription key={eachReply.id} username={eachReply.attributes.user.data.attributes.username} createdAt={eachReply.attributes.createdAt} description={eachReply.attributes.description}/>
                   {
                     eachReply.attributes.Image?.data &&
                     eachReply.attributes.Image?.data.map(eachImage => {

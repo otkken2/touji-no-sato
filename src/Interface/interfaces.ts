@@ -43,6 +43,7 @@ export interface PostAttributes {
   Image?:         Images;
   user?:          User;
   localizations?: Images;
+  parentPostId?:  number;
 }
 
 export interface Images {
