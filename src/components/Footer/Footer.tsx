@@ -38,7 +38,7 @@ const Footer = () => {
         </>
         :
         <>
-          <Link href='/Mypage'>
+          <Link href={`/profile/${user.id}`}>
               <Image src='/mypage.svg' height={FOOTER_ICON_HEIGHT} width={FOOTER_ICON_WIDTH} alt="プロフィール"/>
           </Link>
           {/* // <Link href='/Mypage'> */}

@@ -11,6 +11,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { getGeocode, getLatLng, LatLng } from "use-places-autocomplete";
 import Link from "next/link";
+import router from "next/router";
 
 interface MyOnsenInterface{
   data: PostData,
@@ -18,7 +19,8 @@ interface MyOnsenInterface{
 };
 
 const MyOnsenCollection = () => {
-  const user =  useAtomValue(userAtom);
+  // const user =  useAtomValue(userAtom);
+  const {id} = router.query;
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process?.env?.NEXT_PUBLIC_GOOGLE_API_KEY ?? '',
     libraries: ["places"],
@@ -27,7 +29,7 @@ const MyOnsenCollection = () => {
   const [idOfVisibleInfoWindow,setIdOfVisibleInfoWindow] = useState<number>(0);
   const [myOnsens, setMyOnsens] = useState<MyOnsenInterface[]>([]);
   const fetchMyPosts = async () => {
-    const response = await axios.get(`${API_URL}/api/posts?populate=*&filters[user][id][$eq]=${user?.id}`)
+    const response = await axios.get(`${API_URL}/api/posts?populate=*&filters[user][id][$eq]=${id}`)
     return response.data;
   }
   const { isLoading, data } = useQuery('fetchMyPosts',fetchMyPosts);
@@ -54,7 +56,7 @@ const MyOnsenCollection = () => {
   const handleSelectInfoWindow = (idOfVisibleInfoWindow: number) => {
     setIdOfVisibleInfoWindow(idOfVisibleInfoWindow + 1);
   };
-  
+
   if(!isLoaded)return <p>Mapを準備中。。。</p>
   if(isLoading)return;
   return (
@@ -66,9 +68,9 @@ const MyOnsenCollection = () => {
       >
         {myOnsens && myOnsens.map((eachMyOnsen,index) => {
           return (
-            
+
             <div key={index}>
-              {index + 1 === idOfVisibleInfoWindow && 
+              {index + 1 === idOfVisibleInfoWindow &&
                 <InfoWindow position={eachMyOnsen.latLng}>
                 {/* <div className="bg-red-300 absolute h-[100vh]"> */}
                   <div className="max-w-[350px] max-h-[540px] overflow-y-scroll">
@@ -90,10 +92,10 @@ const MyOnsenCollection = () => {
             </div>
           );
         })}
-        
+
       </GoogleMap>
     </div>
   );
-  } 
+  }
 
 export default MyOnsenCollection;

@@ -8,31 +8,33 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Post } from "@/Interface/interfaces";
 import Link from "next/link";
+import router from "next/router";
 
-export const Mypage = () => {
-  const user =  useAtomValue(userAtom)
-  const [myPosts,setMyPosts] = useAtom(myPostsAtom)
+interface ProfileProps{
+  userId: number,
+}
+
+export const Profile = () => {
+  const {id} = router.query;
+  console.log(id)
   const fetchMyPosts = async () => {
-    return await axios.get(`${API_URL}/api/posts?populate=*&filters[user][id][$eq]=${user?.id}`)
+    return await axios.get(`${API_URL}/api/posts?populate=*&filters[user][id][$eq]=${id}`)
       .then(res =>{
         return res.data.data
       });
   }
   const {isLoading, data} = useQuery('myPosts',fetchMyPosts)
-  console.log(data)
 
   if(isLoading)return <p>loading now...</p>
   return (
     <main>
       <h1>マイページ</h1>
-      <Link href='/MyOnsenCollection'>
+      <Link href={`/profile/${id}/MyOnsenCollection`}>
         <h2>温泉コレクションを見る</h2>
       </Link>
       <div>
-        <h2>{user?.username}</h2>
-        <p>{user?.email}</p>
         <div>
-          {data.map((eachdata: any)=>{
+          {data?.map((eachdata: any)=>{
             return (
               <div key={eachdata.id} className={`mb-20`}>
                 <div >
@@ -47,10 +49,10 @@ export const Mypage = () => {
               </div>
             )
           })}
-        </div> 
+        </div>
       </div>
     </main>
   );
 }
 
-export default Mypage;
+export default Profile;

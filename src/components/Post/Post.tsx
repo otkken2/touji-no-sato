@@ -35,9 +35,15 @@ export const Post = (props: PostsProps) => {
   if(!post?.attributes?.user?.data?.attributes?.username || !post?.attributes?.createdAt || !post?.attributes?.description)return <></>;
   return(
     <div key={index} className={`post-${index} text-white mb-10`}>
-      <Link  href={`post/${post.id}`}>
-        <HeaderAndDescription username={post.attributes.user.data.attributes.username} createdAt={post.attributes.createdAt} description={post.attributes.description}/>
-      </Link>
+      {/* <Link  href={`post/${post.id}`}> */}
+        <HeaderAndDescription
+          username={post.attributes.user.data.attributes.username}
+          createdAt={post.attributes.createdAt}
+          description={post.attributes.description}
+          userId={post.attributes.user.data.id}
+          postId={post.id}
+        />
+      {/* </Link> */}
       {/* 編集と削除(detailPageの場合のみ) */}
       {isDetailPage && handleGetContent && handleDeletePost &&
         <div className="flex">
