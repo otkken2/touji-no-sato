@@ -28,6 +28,9 @@ export const Post = (props: PostsProps) => {
   const user = useAtomValue(userAtom);
 
   const { handleClickFavorite } = useFavorite();
+  const isMovie = (url:string) => {
+    return url.includes('.mp4') || url.includes('.MP4') || url.includes('.mov') || url.includes('MOV') || url.includes('WMV') || url.includes('AVI') || url.includes('FLV') || url.includes('MPEG');
+  };
   if(post === undefined)return <></>;
   if(!post?.attributes?.user?.data?.attributes?.username || !post?.attributes?.createdAt || !post?.attributes?.description)return <></>;
   return(
@@ -55,21 +58,23 @@ export const Post = (props: PostsProps) => {
           // 詳細画面ならリンクなし
           if(isDetailPage){
             return (
-              eachData.attributes.url.includes('mp4') ?
-                <video src={`${API_URL}${eachData.attributes.url}`}></video>
-                :
-                <img  src={`${API_URL}${eachData.attributes.url}`} alt="" className='w-full' />
+              isMovie(eachData.attributes.url) ?
+              <div className="w-full">
+                <ReactPlayer width='100%' url={`${API_URL}${eachData.attributes.url}`} controls={true}/>
+              </div>
+              :
+              <img key={ImageIndex} src={`${API_URL}${eachData.attributes.url}`} alt="" className='w-full' />
             )
           }
           // リンクあり
           return(
+            isMovie(eachData.attributes.url) ?
+            <div className="w-full">
+              <ReactPlayer width='100%' url={`${API_URL}${eachData.attributes.url}`} controls={true}/>
+            </div>
+            :
             <Link key={ImageIndex} href={`post/${post.id}`}>
-              {String(eachData.attributes.url).includes('mp4') ?
-                // <video className="w-full h-full"  controls src={`${API_URL}${eachData.attributes.url}`}></video>
-                <ReactPlayer url={`${API_URL}${eachData.attributes.url}`} controls={true}/>
-                :
-                <img  src={`${API_URL}${eachData.attributes.url}`} alt="" className='w-full' />
-              }
+              <img  src={`${API_URL}${eachData.attributes.url}`} alt="" className='w-full' />
             </Link>
             );
         })}
