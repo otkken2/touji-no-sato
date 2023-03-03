@@ -1,12 +1,9 @@
 import Footer from "@/components/Footer/Footer";
 import { Layout } from "@/layouts/Layout";
 import "@/styles/globals.css";
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import type { AppProps } from "next/app";
-import withData from "../../lib/apollo";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import axios from "axios";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { useAtom } from "jotai";
 import { userAtom } from "@/atoms/atoms";
@@ -15,11 +12,6 @@ import { LoadScriptNext, LoadScript } from "@react-google-maps/api";
 import Script from "next/script";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337";
 
-const cache = new InMemoryCache();
-const client = new ApolloClient({
-  uri: `${API_URL}/graphql`,
-  cache,
-});
 
 function App({ Component, pageProps }: AppProps) {
   const [user, setUser] = useAtom(userAtom);
@@ -55,10 +47,8 @@ function App({ Component, pageProps }: AppProps) {
         {/* <LoadScript googleMapsApiKey={API_KEY}> */}
           <Client>
             <QueryClientProvider client={queryClient}>
-              <ApolloProvider client={client}>
                 <Component {...pageProps} />
                 <Footer />
-              </ApolloProvider>
             </QueryClientProvider>
           </Client>
         {/* </LoadScript> */}

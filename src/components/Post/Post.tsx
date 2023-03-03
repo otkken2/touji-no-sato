@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { PostData } from "@/Interface/interfaces";
+import { Image as ImageInterface, PostData } from "@/Interface/interfaces";
 import { API_URL } from "const";
 import Link from "next/link";
 import { PlaceLink } from "./PlaceLink";
@@ -11,6 +11,7 @@ import { useAtomValue } from "jotai";
 import { userAtom } from "@/atoms/atoms";
 import { IconsContainer } from "./IconsContainer";
 import { HeaderAndDescription } from "./HeaderAndDescription";
+import ReactPlayer from 'react-player';
 
 interface PostsProps{
   post: PostData | undefined;
@@ -25,7 +26,7 @@ export const Post = (props: PostsProps) => {
   const {post, index, isDetailPage = false, isReply= false, postId, handleGetContent, handleDeletePost} = props;
   const token = Cookies.get('token');
   const user = useAtomValue(userAtom);
-  
+
   const { handleClickFavorite } = useFavorite();
   if(post === undefined)return <></>;
   if(!post?.attributes?.user?.data?.attributes?.username || !post?.attributes?.createdAt || !post?.attributes?.description)return <></>;
@@ -45,21 +46,30 @@ export const Post = (props: PostsProps) => {
       }
         {/* 旅館情報 */}
       {
-        post.attributes?.ryokan && 
+        post.attributes?.ryokan &&
         <PlaceLink ryokan={post.attributes?.ryokan}/>
       }
         {/* 画像 */}
-        {post?.attributes?.Image?.data?.map((eachData:any,ImageIndex:number)=>{
+        {post?.attributes?.Image?.data?.map((eachData: ImageInterface,ImageIndex:number)=>{
+          if(eachData?.attributes?.url === undefined)return <></>;
           // 詳細画面ならリンクなし
           if(isDetailPage){
             return (
-              <img key={ImageIndex} src={`${API_URL}${eachData.attributes.url}`} alt="" className='w-full' />
+              eachData.attributes.url.includes('mp4') ?
+                <video src={`${API_URL}${eachData.attributes.url}`}></video>
+                :
+                <img  src={`${API_URL}${eachData.attributes.url}`} alt="" className='w-full' />
             )
           }
           // リンクあり
           return(
             <Link key={ImageIndex} href={`post/${post.id}`}>
-              <img  src={`${API_URL}${eachData.attributes.url}`} alt="" className='w-full' />
+              {String(eachData.attributes.url).includes('mp4') ?
+                // <video className="w-full h-full"  controls src={`${API_URL}${eachData.attributes.url}`}></video>
+                <ReactPlayer url={`${API_URL}${eachData.attributes.url}`} controls={true}/>
+                :
+                <img  src={`${API_URL}${eachData.attributes.url}`} alt="" className='w-full' />
+              }
             </Link>
             );
         })}
