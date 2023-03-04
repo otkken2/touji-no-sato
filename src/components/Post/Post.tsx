@@ -12,6 +12,7 @@ import { userAtom } from "@/atoms/atoms";
 import { IconsContainer } from "./IconsContainer";
 import { HeaderAndDescription } from "./HeaderAndDescription";
 import ReactPlayer from 'react-player';
+import { usePosts } from "lib/usePosts";
 
 interface PostsProps{
   post: PostData | undefined;
@@ -28,9 +29,10 @@ export const Post = (props: PostsProps) => {
   const user = useAtomValue(userAtom);
 
   const { handleClickFavorite } = useFavorite();
-  const isMovie = (url:string) => {
-    return url.includes('.mp4') || url.includes('.MP4') || url.includes('.mov') || url.includes('MOV') || url.includes('WMV') || url.includes('AVI') || url.includes('FLV') || url.includes('MPEG');
-  };
+  const { isMovie } = usePosts();
+  // const isMovie = (url:string) => {
+  //   return url.includes('.mp4') || url.includes('.MP4') || url.includes('.mov') || url.includes('MOV') || url.includes('WMV') || url.includes('AVI') || url.includes('FLV') || url.includes('MPEG');
+  // };
   if(post === undefined)return <></>;
   if(!post?.attributes?.user?.data?.attributes?.username || !post?.attributes?.createdAt || !post?.attributes?.description)return <></>;
   return(
