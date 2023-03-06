@@ -1,11 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
-import { PlaceLink } from "@/components/Post/PlaceLink";
-import { PostHeader } from "@/components/Post/PostHeader";
 import axios, { AxiosResponse } from "axios";
 import { API_URL } from "const";
 import { PostData } from "@/Interface/interfaces";
-import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
@@ -13,9 +9,6 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { descriptionAtom, filesAtom, ryokanAtom, userAtom } from "@/atoms/atoms";
 import Cookies from "js-cookie";
 import { Post } from "@/components/Post/Post";
-import { Reply, ReplyData } from "@/Interface/reply";
-import { HeaderAndDescription } from "@/components/Post/HeaderAndDescription";
-import { TextFieldsTwoTone } from "@mui/icons-material";
 import { Button, TextField } from "@mui/material";
 import { MuiFileInput } from "mui-file-input";
 

@@ -17,18 +17,16 @@ export const PostHeader = (props: PostHeaderProps) => {
   const createdAt = props.createdAt;
   if(!username)return <p>投稿者情報がありません</p>
   return(
-    <div className='flex items-center justify-between mb-5'>
+    <div className='flex items-center justify-between mb-5 mx-[16px]'>
       <div className='flex'>
         <div className={`w-10 h-10 bg- rounded-full bg_primary`}>
           <Link href={`/profile/${userId}`}>
-            <Image src='/mypage.svg' height={100} width={100} alt="プロフィール"/>
+            {/* TODO: イメージをユーザーが設定できるようにする。 */}
+            <Image src='/sample.JPG' height={100} width={100} alt="プロフィール" className="rounded-full"/>
           </Link>
         </div>
         <p className='ml-3 my-auto'>{username}</p>
       </div>
-      <Moment format='YYYY/MM/DD hh:mm' tz='Asia/Tokyo'>
-        {createdAt}
-      </Moment>
     </div>
   );
 }
