@@ -56,7 +56,7 @@ export const Post = (props: PostsProps) => {
   const renderMedia = useCallback(()=>{
     return(
       <>
-        <div className='keen-slider mb-5' ref={sliderRef}>
+        <div className='keen-slider mb-3' ref={sliderRef}>
           {post?.attributes?.Image?.data?.map((eachData: ImageInterface,ImageIndex:number)=>{
             if(eachData?.attributes?.url === undefined)return <></>;
             // 詳細画面ならリンクなし
@@ -87,9 +87,11 @@ export const Post = (props: PostsProps) => {
               );
           })}
         </div>
+        {/* ドット */}
         {loaded && instanceRef.current && instanceRef.current.track?.details?.slides?.length > 0 &&
           <div className="dots flex justify-center">
           {[
+            // @ts-ignore
             ...Array(instanceRef.current.track?.details?.slides?.length).keys(),
           ].map((idx) => {
             return (
@@ -98,7 +100,7 @@ export const Post = (props: PostsProps) => {
                 onClick={() => {
                   instanceRef.current?.moveToIdx(idx)
                 }}
-                className={`dot w-[8px] mx-[5px] h-[8px] cursor-pointer bg-white rounded-full ${idx === currentSlide && 'bg-green-400'}`}
+                className={`dot w-[8px] mx-[5px] h-[8px] cursor-pointer bg-white rounded-full ${idx === currentSlide && 'bg-primary'}`}
               ></button>
             )
           })}
@@ -106,7 +108,7 @@ export const Post = (props: PostsProps) => {
         }
       </>
     );
-  },[isDetailPage, isMovie, post?.attributes?.Image?.data, post?.id, sliderRef]);
+  },[currentSlide, instanceRef, isDetailPage, isMovie, loaded, post?.attributes?.Image?.data, post?.id, sliderRef]);
 
   if(post === undefined)return <></>;
   if(!post?.attributes?.user?.data?.attributes?.username || !post?.attributes?.createdAt || !post?.attributes?.description)return <></>;
@@ -117,11 +119,12 @@ export const Post = (props: PostsProps) => {
           <PostHeader username={post.attributes.user.data.attributes.username} createdAt={post.attributes.createdAt} userId={post.attributes.user.data.id}/>
           {/* 画像もしくは動画 */}
           {renderMedia()}
+          <IconsContainer postId={post?.id} token={token} userId={user?.id} replyCount={0} favoriteCount={post?.attributes?.favoriteCount} handleClickFavorite={handleClickFavorite}/>
 
 
           <div className='mx-[16px]'>
             {/* 日付 */}
-            <Moment format='YYYY/MM/DD hh:mm' tz='Asia/Tokyo'>
+            <Moment format='YYYY/MM/DD hh:mm' tz='Asia/Tokyo' className='text-opacity-80 text-sm text-white'>
               {post.attributes.createdAt}
             </Moment>
             {/* 投稿本文 */}
@@ -150,7 +153,6 @@ export const Post = (props: PostsProps) => {
           }
         </div>
 
-      <IconsContainer postId={post?.id} token={token} userId={user?.id} replyCount={0} favoriteCount={post?.attributes?.favoriteCount} handleClickFavorite={handleClickFavorite}/>
     </div>
   );
 };

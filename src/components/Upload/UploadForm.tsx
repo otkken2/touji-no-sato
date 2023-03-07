@@ -28,6 +28,7 @@ export const UploadForm = (props: UploadFormProps) => {
 
   const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if(!e.target.files)return;
+    // @ts-ignore
     const fileURLs: PreviewFilesInterface[] = [...e.target.files].map((eachFile: File) => {
       return {
         URL: URL.createObjectURL(eachFile),

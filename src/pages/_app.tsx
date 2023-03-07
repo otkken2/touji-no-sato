@@ -47,7 +47,7 @@ function App({ Component, pageProps }: AppProps) {
         {/* <LoadScript googleMapsApiKey={API_KEY}> */}
           <Client>
             <QueryClientProvider client={queryClient}>
-                <Component {...pageProps} />
+                <Component {...pageProps}/>
                 <Footer />
             </QueryClientProvider>
           </Client>
