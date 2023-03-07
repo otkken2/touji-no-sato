@@ -14,7 +14,13 @@ import { userAtom } from "@/atoms/atoms";
 import { IconsContainer } from "./IconsContainer";
 import ReactPlayer from 'react-player';
 import { usePosts } from "lib/usePosts";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
+import { Splide, SplideSlide } from "@splidejs/react-splide";
+// import { Splide, SplideSlide } from 'splide-nextjs/react-splide';
+// import '@splidejs/splide/css';
+import "@splidejs/splide/dist/css/themes/splide-default.min.css";
+import {useKeenSlider} from 'keen-slider/react'
+import 'keen-slider/keen-slider.min.css'
 
 interface PostsProps{
   post: PostData | undefined;
@@ -32,41 +38,75 @@ export const Post = (props: PostsProps) => {
 
   const { handleClickFavorite } = useFavorite();
   const { isMovie } = usePosts();
-  // const isMovie = (url:string) => {
-  //   return url.includes('.mp4') || url.includes('.MP4') || url.includes('.mov') || url.includes('MOV') || url.includes('WMV') || url.includes('AVI') || url.includes('FLV') || url.includes('MPEG');
-  // };
+  const [loaded, setLoaded] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState<number>(0);
+  const [sliderRef, instanceRef] = useKeenSlider(
+    {
+      slideChanged(slider){
+        setCurrentSlide(slider.track.details.rel);
+        console.log(slider.track.details.rel);
+      },
+      slides: { perView: 1 },
+      created() {
+        setLoaded(true);
+      },
+    },
+  )
 
   const renderMedia = useCallback(()=>{
     return(
-      <div className='mb-10'>
-        {post?.attributes?.Image?.data?.map((eachData: ImageInterface,ImageIndex:number)=>{
-          if(eachData?.attributes?.url === undefined)return <></>;
-          // 詳細画面ならリンクなし
-          if(isDetailPage){
-            return (
+      <>
+        <div className='keen-slider mb-5' ref={sliderRef}>
+          {post?.attributes?.Image?.data?.map((eachData: ImageInterface,ImageIndex:number)=>{
+            if(eachData?.attributes?.url === undefined)return <></>;
+            // 詳細画面ならリンクなし
+            if(isDetailPage){
+              return (
+                isMovie(eachData.attributes.url) ?
+                <div className="w-[100vw] keen-slider__slide" >
+                  <ReactPlayer width='100%' url={`${API_URL}${eachData.attributes.url}`} controls={true}/>
+                </div>
+                :
+                <div className="w-[100vw] keen-slider__slide" >
+                  <img key={ImageIndex}  src={`${API_URL}${eachData.attributes.url}`} alt="" className='w-full h-full' />
+                </div>
+              )
+            }
+            // リンクあり
+            return(
               isMovie(eachData.attributes.url) ?
-              <div className="w-full">
+              <div className="w-full keen-slider__slide" >
                 <ReactPlayer width='100%' url={`${API_URL}${eachData.attributes.url}`} controls={true}/>
               </div>
               :
-              <img key={ImageIndex} src={`${API_URL}${eachData.attributes.url}`} alt="" className='w-full' />
+                <Link key={ImageIndex} href={`post/${post.id}`}>
+                  <div className="w-screen h-auto keen-slider__slide" >
+                    <img  src={`${API_URL}${eachData.attributes.url}`} alt="" className='w-full h-auto' />
+                  </div>
+                </Link>
+              );
+          })}
+        </div>
+        {loaded && instanceRef.current && instanceRef.current.track?.details?.slides?.length > 0 &&
+          <div className="dots flex justify-center">
+          {[
+            ...Array(instanceRef.current.track?.details?.slides?.length).keys(),
+          ].map((idx) => {
+            return (
+              <button
+                key={idx}
+                onClick={() => {
+                  instanceRef.current?.moveToIdx(idx)
+                }}
+                className={`dot w-[8px] mx-[5px] h-[8px] cursor-pointer bg-white rounded-full ${idx === currentSlide && 'bg-green-400'}`}
+              ></button>
             )
-          }
-          // リンクあり
-          return(
-            isMovie(eachData.attributes.url) ?
-            <div className="w-full">
-              <ReactPlayer width='100%' url={`${API_URL}${eachData.attributes.url}`} controls={true}/>
-            </div>
-            :
-            <Link key={ImageIndex} href={`post/${post.id}`}>
-              <img  src={`${API_URL}${eachData.attributes.url}`} alt="" className='w-full' />
-            </Link>
-            );
-        })}
-      </div>
+          })}
+          </div>
+        }
+      </>
     );
-  },[isDetailPage, isMovie, post?.attributes?.Image?.data, post?.id]);
+  },[isDetailPage, isMovie, post?.attributes?.Image?.data, post?.id, sliderRef]);
 
   if(post === undefined)return <></>;
   if(!post?.attributes?.user?.data?.attributes?.username || !post?.attributes?.createdAt || !post?.attributes?.description)return <></>;
