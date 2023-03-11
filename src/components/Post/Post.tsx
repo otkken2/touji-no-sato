@@ -21,6 +21,7 @@ import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/splide/dist/css/themes/splide-default.min.css";
 import {useKeenSlider} from 'keen-slider/react'
 import 'keen-slider/keen-slider.min.css'
+import { Media } from "./Media";
 
 interface PostsProps{
   post: PostData | undefined;
@@ -53,62 +54,6 @@ export const Post = (props: PostsProps) => {
     },
   )
 
-  const renderMedia = useCallback(()=>{
-    return(
-      <>
-        <div className='keen-slider mb-3' ref={sliderRef}>
-          {post?.attributes?.Image?.data?.map((eachData: ImageInterface,ImageIndex:number)=>{
-            if(eachData?.attributes?.url === undefined)return <></>;
-            // 詳細画面ならリンクなし
-            if(isDetailPage){
-              return (
-                isMovie(eachData.attributes.url) ?
-                <div className="w-[100vw] keen-slider__slide" >
-                  <ReactPlayer width='100%' url={`${API_URL}${eachData.attributes.url}`} controls={true}/>
-                </div>
-                :
-                <div className="w-[100vw] keen-slider__slide" >
-                  <img key={ImageIndex}  src={`${API_URL}${eachData.attributes.url}`} alt="" className='w-full h-full' />
-                </div>
-              )
-            }
-            // リンクあり
-            return(
-              isMovie(eachData.attributes.url) ?
-              <div className="w-full keen-slider__slide" >
-                <ReactPlayer width='100%' url={`${API_URL}${eachData.attributes.url}`} controls={true}/>
-              </div>
-              :
-                <Link key={ImageIndex} href={`post/${post.id}`}>
-                  <div className="w-screen h-auto keen-slider__slide" >
-                    <img  src={`${API_URL}${eachData.attributes.url}`} alt="" className='w-full h-auto' />
-                  </div>
-                </Link>
-              );
-          })}
-        </div>
-        {/* ドット */}
-        {loaded && instanceRef.current && instanceRef.current.track?.details?.slides?.length > 0 &&
-          <div className="dots flex justify-center">
-          {[
-            // @ts-ignore
-            ...Array(instanceRef.current.track?.details?.slides?.length).keys(),
-          ].map((idx) => {
-            return (
-              <button
-                key={idx}
-                onClick={() => {
-                  instanceRef.current?.moveToIdx(idx)
-                }}
-                className={`dot w-[8px] mx-[5px] h-[8px] cursor-pointer bg-white rounded-full ${idx === currentSlide && 'bg-primary'}`}
-              ></button>
-            )
-          })}
-          </div>
-        }
-      </>
-    );
-  },[currentSlide, instanceRef, isDetailPage, isMovie, loaded, post?.attributes?.Image?.data, post?.id, sliderRef]);
 
   if(post === undefined)return <></>;
   if(!post?.attributes?.user?.data?.attributes?.username || !post?.attributes?.createdAt || !post?.attributes?.description)return <></>;
@@ -118,7 +63,7 @@ export const Post = (props: PostsProps) => {
         <>
           <PostHeader username={post.attributes.user.data.attributes.username} createdAt={post.attributes.createdAt} userId={post.attributes.user.data.id}/>
           {/* 画像もしくは動画 */}
-          {renderMedia()}
+          <Media post={post} isDetailPage={isDetailPage}/>
           <IconsContainer postId={post?.id} token={token} userId={user?.id} replyCount={0} favoriteCount={post?.attributes?.favoriteCount} handleClickFavorite={handleClickFavorite}/>
 
 
