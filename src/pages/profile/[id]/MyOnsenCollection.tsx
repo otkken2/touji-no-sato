@@ -57,6 +57,7 @@ const MyOnsenCollection = () => {
       const data = await fetchMyPosts();
       if(window.google === undefined)return;
       return data?.data?.map(async(eachPost: PostData)=>{
+        if(!eachPost?.attributes?.ryokan)return;
         const address = eachPost?.attributes?.ryokan;
         const geoCode = await getGeocode({address});
         const latLng = await getLatLng(geoCode[0]);
@@ -70,31 +71,26 @@ const MyOnsenCollection = () => {
     LatLngFromAddress();
   },[LatLngFromAddress, id]);
 
-  const getPostsGroupsByLatLng = async () => {
-    if(myOnsens.length === 0)return;
-    const myLatLngs = Array.from(
-      new Map(
-        myOnsens.map((each,id) =>
-          [`${each.latLng.lat}${each.latLng.lng}`,each.latLng]
-        )
-      ).values()
-    );
-    console.log("myLatLngs");
-    console.log(myLatLngs);
-    myLatLngs.map((latLng)=>{
-      setPostsGroupsByLatLng((prevPostsGroups)=>{
-        console.log("latLng↓")
-        console.log(latLng)
-        const filteredOnsensByLatLng = myOnsens.filter((onsen)=> onsen.latLng.lat === latLng.lat && onsen.latLng.lng === latLng.lng);
-
-        console.log("filteredOnsensByLatLng↓")
-        console.log(filteredOnsensByLatLng)
-        const posts = filteredOnsensByLatLng.map((eachOnsens)=> eachOnsens.data)
-        return [...prevPostsGroups,{latLng: latLng, posts: posts}];
-      })
-    });
-  };
   useEffect(()=>{
+    const getPostsGroupsByLatLng = async () => {
+      if(myOnsens.length === 0)return;
+      const myLatLngs = Array.from(
+        new Map(
+          myOnsens.map((each,id) =>
+            [`${each.latLng.lat}${each.latLng.lng}`,each.latLng]
+          )
+        ).values()
+      );
+      console.log("myLatLngs");
+      console.log(myLatLngs);
+      myLatLngs.map((latLng)=>{
+        setPostsGroupsByLatLng((prevPostsGroups)=>{
+          const filteredOnsensByLatLng = myOnsens.filter((onsen)=> onsen.latLng.lat === latLng.lat && onsen.latLng.lng === latLng.lng);
+          const posts = filteredOnsensByLatLng.map((eachOnsens)=> eachOnsens.data)
+          return [...prevPostsGroups,{latLng: latLng, posts: posts}];
+        })
+      });
+    };
     getPostsGroupsByLatLng();
     console.log("postsGroupsByLatLng");
     console.log(postsGroupsByLatLng);
@@ -113,7 +109,35 @@ const MyOnsenCollection = () => {
         center={center}
         mapContainerClassName='h-[calc(100vh_-_52px)] w-[100vw] relative'
       >
-        {myOnsens && myOnsens.map((eachMyOnsen,index) => {
+        {
+          postsGroupsByLatLng && postsGroupsByLatLng.map((postGroupByLatLng,index)=>{
+            return (
+              <div key={index} className='text-white'>
+                <Marker position={postGroupByLatLng.latLng} onClick={()=> handleSelectInfoWindow(index)}/>
+                {
+                  index + 1 === idOfVisibleInfoWindow &&
+                  <div className='absolute bottom-0 bg-background h-[40vh] w-[100vw] overflow-scroll'>
+                    <h1 className='text-xl mb-5'>{postGroupByLatLng.posts[0].attributes?.ryokan}</h1>
+                    {postGroupByLatLng.posts.map((eachPost,postIndex)=>{
+                      return (
+                        <div key={postIndex} className='mb-5'>
+                          {/* <h1>{eachPost.attributes?.ryokan}</h1> */}
+                          <Moment  format='YYYY/MM/DD hh:mm' tz='Asia/Tokyo' className='text-opacity-80 text-sm text-white'>
+                            {eachPost?.attributes?.createdAt}
+                          </Moment>
+                          <Media post={eachPost}/>
+                          <p>{eachPost.attributes?.description}</p>
+                          {/* <small></small> */}
+                        </div>
+                      );
+                    })}
+                  </div>
+                }
+              </div>
+            );
+          })
+        }
+        {/* {myOnsens && myOnsens.map((eachMyOnsen,index) => {
           return (
 
             <div key={index} className='text-white'>
@@ -131,8 +155,7 @@ const MyOnsenCollection = () => {
               }
             </div>
           );
-        })}
-
+        })} */}
       </GoogleMap>
     </div>
   );
