@@ -7,7 +7,7 @@ import { API_URL } from "const";
 import { PostData } from "@/Interface/interfaces";
 import { useAtomValue } from "jotai";
 import { usePosts } from "lib/usePosts";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { getGeocode, getLatLng, LatLng } from "use-places-autocomplete";
 import Link from "next/link";
@@ -21,13 +21,21 @@ interface MyOnsenInterface{
   data: PostData,
   latLng: LatLng
 };
-
+interface PostsGroupsByLatLngInterface{
+  latLng: LatLng,
+  posts: PostData[],
+}
 
 const postsGroupsByLatLng = [
   {
     latLng: { lat: 37.0, lng: 139.2 },
+    posts: [{},{}]
+  },
+  {
+    latLng: { lat: 37.1, lng: 139.3 },
     posts: [{},{},{}]
-  }
+  },
+
 ];
 
 const MyOnsenCollection = () => {
@@ -43,33 +51,60 @@ const MyOnsenCollection = () => {
     const response = await axios.get(`${API_URL}/api/posts?populate=*&filters[user][id][$eq]=${id}`)
     return response.data;
   }
-  const { isLoading, data } = useQuery('fetchMyPosts',fetchMyPosts);
-  const [] = useState<boolean>(false);
-  const LatLngFromAddress = async () => {
-    if(isLoading)return;
-    if(!data.data === undefined)return;
-    if(window.google === undefined)return;
-    return data?.data?.map(async(eachPost: PostData)=>{
-      const address = eachPost?.attributes?.ryokan;
-      const geoCode = await getGeocode({address});
-      const latLng = await getLatLng(geoCode[0]);
-      setMyOnsens((prevState) => [...prevState,{data: eachPost, latLng: latLng}]);
-      // setMyOnsens((myOnsens)=>[...myOnsens,latLng]);
-    });
-  }
+  const [postsGroupsByLatLng, setPostsGroupsByLatLng] = useState<PostsGroupsByLatLngInterface[]>([]);
+  const LatLngFromAddress = useCallback(
+    async () => {
+      const data = await fetchMyPosts();
+      if(window.google === undefined)return;
+      return data?.data?.map(async(eachPost: PostData)=>{
+        const address = eachPost?.attributes?.ryokan;
+        const geoCode = await getGeocode({address});
+        const latLng = await getLatLng(geoCode[0]);
+        setMyOnsens((prevState) => [...prevState,{data: eachPost, latLng: latLng}]);
+      });
+    },[id]
+  )
+
 
   useEffect(()=>{
-    if(isLoading)return;
     LatLngFromAddress();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[data, isLoading,window.google]);
+  },[LatLngFromAddress, id]);
+
+  const getPostsGroupsByLatLng = async () => {
+    if(myOnsens.length === 0)return;
+    const myLatLngs = Array.from(
+      new Map(
+        myOnsens.map((each,id) =>
+          [`${each.latLng.lat}${each.latLng.lng}`,each.latLng]
+        )
+      ).values()
+    );
+    console.log("myLatLngs");
+    console.log(myLatLngs);
+    myLatLngs.map((latLng)=>{
+      setPostsGroupsByLatLng((prevPostsGroups)=>{
+        console.log("latLng↓")
+        console.log(latLng)
+        const filteredOnsensByLatLng = myOnsens.filter((onsen)=> onsen.latLng.lat === latLng.lat && onsen.latLng.lng === latLng.lng);
+
+        console.log("filteredOnsensByLatLng↓")
+        console.log(filteredOnsensByLatLng)
+        const posts = filteredOnsensByLatLng.map((eachOnsens)=> eachOnsens.data)
+        return [...prevPostsGroups,{latLng: latLng, posts: posts}];
+      })
+    });
+  };
+  useEffect(()=>{
+    getPostsGroupsByLatLng();
+    console.log("postsGroupsByLatLng");
+    console.log(postsGroupsByLatLng);
+  },[myOnsens])
 
   const handleSelectInfoWindow = (idOfVisibleInfoWindow: number) => {
     setIdOfVisibleInfoWindow(idOfVisibleInfoWindow + 1);
   };
 
   if(!isLoaded)return <p>Mapを準備中。。。</p>
-  if(isLoading)return;
   return (
     <div className="pb-12">
       <GoogleMap
