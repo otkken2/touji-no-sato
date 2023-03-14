@@ -44,7 +44,7 @@ const MyOnsenCollection = () => {
     googleMapsApiKey: process?.env?.NEXT_PUBLIC_GOOGLE_API_KEY ?? '',
     libraries: ["places"],
   });
-  const center: LatLng = { lat: 37.0, lng: 139.2 };
+  const [center, setCenter] = useState<LatLng>({ lat: 37.0, lng: 139.2 });
   const [idOfVisibleInfoWindow,setIdOfVisibleInfoWindow] = useState<number>(0);
   const [myOnsens, setMyOnsens] = useState<MyOnsenInterface[]>([]);
   const fetchMyPosts = async () => {
@@ -72,6 +72,7 @@ const MyOnsenCollection = () => {
   },[LatLngFromAddress, id]);
 
   useEffect(()=>{
+    setPostsGroupsByLatLng([]);
     const getPostsGroupsByLatLng = async () => {
       if(myOnsens.length === 0)return;
       const myLatLngs = Array.from(
@@ -96,7 +97,8 @@ const MyOnsenCollection = () => {
     console.log(postsGroupsByLatLng);
   },[myOnsens])
 
-  const handleSelectInfoWindow = (idOfVisibleInfoWindow: number) => {
+  const handleSelectMarker = (idOfVisibleInfoWindow: number, latLng: LatLng) => {
+    setCenter(latLng);
     setIdOfVisibleInfoWindow(idOfVisibleInfoWindow + 1);
   };
 
@@ -107,13 +109,27 @@ const MyOnsenCollection = () => {
         onClick={()=>setIdOfVisibleInfoWindow(0)}
         zoom={5}
         center={center}
-        mapContainerClassName='h-[calc(100vh_-_52px)] w-[100vw] relative'
+        mapContainerClassName={`w-[100vw] relative ${'h-[calc(100vh_-_52px)]'}`}
       >
         {
           postsGroupsByLatLng && postsGroupsByLatLng.map((postGroupByLatLng,index)=>{
             return (
               <div key={index} className='text-white'>
-                <Marker position={postGroupByLatLng.latLng} onClick={()=> handleSelectInfoWindow(index)}/>
+                {
+                  index + 1 === idOfVisibleInfoWindow
+                  ?
+                  <Marker
+                    icon='/onsen.png'
+                    position={postGroupByLatLng.latLng}
+                    onClick={()=> handleSelectMarker(index,postGroupByLatLng.latLng)}
+                    zIndex={10}
+                  />
+                  :
+                  <Marker
+                    position={postGroupByLatLng.latLng}
+                    onClick={()=> handleSelectMarker(index,postGroupByLatLng.latLng)}
+                  />
+                }
                 {
                   index + 1 === idOfVisibleInfoWindow &&
                   <div className='absolute bottom-0 bg-background h-[40vh] w-[100vw] overflow-scroll'>
@@ -125,9 +141,8 @@ const MyOnsenCollection = () => {
                           <Moment  format='YYYY/MM/DD hh:mm' tz='Asia/Tokyo' className='text-opacity-80 text-sm text-white'>
                             {eachPost?.attributes?.createdAt}
                           </Moment>
-                          <Media post={eachPost}/>
                           <p>{eachPost.attributes?.description}</p>
-                          {/* <small></small> */}
+                          <Media post={eachPost}/>
                         </div>
                       );
                     })}
