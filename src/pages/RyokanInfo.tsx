@@ -37,7 +37,7 @@ const RyokanInfo = () => {
   //   }catch( error ){
   //   }
   // };
-  
+
   // useEffect(()=>{
   //   getRyokanData();
   //   // console.log(RyokanData);
@@ -47,7 +47,7 @@ const RyokanInfo = () => {
 
   if(!isLoaded)return <p>loading now...</p>
 
-  
+
   return (
     <Map/>
   );
@@ -75,7 +75,7 @@ const Map = () => {
       </GoogleMap>
     </>
   );
-} 
+}
 
 
 interface PlacesAutocompleteProps{
@@ -112,16 +112,17 @@ export const PlacesAutoComplete = () => {
   return (
     // TODO: ユーザーの投稿ページにこの自動補完機能を実装する！
     <Combobox onSelect={handleSelect}>
+      <label>旅館・公共浴場etc</label>
       <ComboboxInput
         value={value}
         onChange={(e)=> setValue(e.target.value)}
         disabled={!ready}
-        className='w-full p-3 text-center'
-        placeholder='泊まった旅館・入った公共浴場を入力してみんなに教えよう！'
+        className='w-full p-3 text-center bg-background-secondary rounded-md'
+        // placeholder='旅館・公共浴場etc...'
       />
         <ComboboxPopover>
           <ComboboxList>
-            {status === 'OK' && 
+            {status === 'OK' &&
               data.map(({place_id, description})=>(
                 <ComboboxOption key={place_id} value={description} />
               ))

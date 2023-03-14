@@ -14,7 +14,8 @@ module.exports = {
         'secondary': '#F2F0FF',
         'accent': '#221C3E',
         'input': '#252836',
-        'background': '#221c3e'
+        'background': '#221c3e',
+        'background-secondary': '#252836'
       },
       textColor: {
         'primay': '#F2F0FF',

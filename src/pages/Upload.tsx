@@ -71,8 +71,11 @@ const Upload = () => {
   };
 
   return (
-    isLoaded && 
+    isLoaded &&
+    <div className="text-white text-center">
+      <h1>新規投稿</h1>
       <UploadForm handleSubmit={handleSubmit}/>
+    </div>
   );
 }
 
