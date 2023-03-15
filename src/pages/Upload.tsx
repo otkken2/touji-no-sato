@@ -47,7 +47,7 @@ const Upload = () => {
     console.log(selectedPlace);
     const formData = new FormData();
 
-    files.map((file:any)=> {
+    files?.map((file:any)=> {
       formData.append('files.Image',file, file.name);
     })
     // formData.append('files.Image', files);
@@ -66,7 +66,7 @@ const Upload = () => {
       }
     }).then(res => {
       alert('投稿に成功しました');
-      router.push('/Mypage')
+      router.push('/')
     });
   };
 

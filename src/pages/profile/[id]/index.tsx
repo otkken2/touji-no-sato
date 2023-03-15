@@ -6,50 +6,65 @@ import { useAtom, useAtomValue } from "jotai";
 import { useQuery } from "react-query";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Post } from "@/Interface/interfaces";
 import Link from "next/link";
 import router from "next/router";
+import { Post } from "@/components/Post/Post";
+import { PostData } from "@/Interface/interfaces";
+import MyOnsenCollection from "./MyOnsenCollection";
 
 interface ProfileProps{
   userId: number,
 }
 
+type ShowMode = "ALL_MY_POSTS" | "ONSEN_COLLECTION";
+
 export const Profile = () => {
   const {id} = router.query;
   console.log(id)
-  const fetchMyPosts = async () => {
-    return await axios.get(`${API_URL}/api/posts?populate=*&filters[user][id][$eq]=${id}`)
-      .then(res =>{
-        return res.data.data
-      });
-  }
-  const {isLoading, data} = useQuery('myPosts',fetchMyPosts)
+  const [data, setData] = useState<PostData[]>([])
+  const [showMode, setShowMode] = useState<ShowMode>('ONSEN_COLLECTION');
+  useEffect(()=>{
+    const fetchMyPosts = async () => {
+      if(!router.isReady)return;
+      return await axios.get(`${API_URL}/api/posts?populate=*&filters[user][id][$eq]=${id}`)
+        .then(res =>{
+          setData(res.data.data);
+        });
+    }
+    fetchMyPosts();
+  },[id]);
 
-  if(isLoading)return <p>loading now...</p>
+  console.log(data);
   return (
-    <main>
+    <main className='text-white'>
       <h1>マイページ</h1>
-      <Link href={`/profile/${id}/MyOnsenCollection`}>
-        <h2>温泉コレクションを見る</h2>
-      </Link>
-      <div>
-        <div>
-          {data?.map((eachdata: any)=>{
-            return (
-              <div key={eachdata.id} className={`mb-20`}>
-                <div >
-                  {eachdata?.attributes?.Image?.data?.map((eachImage:any)=>{
-                    return (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img className="w-full" key={eachImage.id} src={`${API_URL}${eachImage.attributes.url}`} alt={eachImage.attributes.name}/>
-                      )
-                    })}
-                </div>
-                <p>{eachdata.attributes.description}</p>
-              </div>
-            )
-          })}
+      <div className='flex justify-around '>
+        <div
+          className={`${ showMode === 'ONSEN_COLLECTION' && 'border-b-4 border-solid border-primary'}`}
+          onClick={()=>setShowMode('ONSEN_COLLECTION')}
+        >
+          温泉コレクション
         </div>
+        <div
+          className={`${ showMode === 'ALL_MY_POSTS' && 'border-b-4 border-solid border-primary'}`}
+          onClick={()=>setShowMode('ALL_MY_POSTS')}
+        >
+          投稿一覧
+        </div>
+      </div>
+      <div>
+        {
+          showMode === 'ALL_MY_POSTS' ?
+          <div>
+            {data?.map((eachdata: PostData,index)=>{
+              return (
+                <Post key={index} post={eachdata}/>
+              )
+            })}
+          </div>
+          :
+          <MyOnsenCollection/>
+        }
       </div>
     </main>
   );

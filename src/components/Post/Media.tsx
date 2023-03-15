@@ -41,7 +41,7 @@ export const Media = (props: MediaProps)=>{
           if(isDetailPage){
             return (
               isMovie(eachData.attributes.url) ?
-              <div className="w-[100vw] keen-slider__slide" >
+              <div key={ImageIndex} className="w-[100vw] keen-slider__slide" >
                 <ReactPlayer width='100%' url={`${API_URL}${eachData.attributes.url}`} controls={true}/>
               </div>
               :

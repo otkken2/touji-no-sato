@@ -101,7 +101,7 @@ export const PlacesAutoComplete = () => {
     console.log("address")
     console.log(address)
     setValue(address, false);
-    setSelectedPlace(value);
+    setSelectedPlace(address);
     clearSuggestions();
 
     const results = await getGeocode({address});

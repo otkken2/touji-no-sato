@@ -26,7 +26,7 @@ const Login = () => {
       <h1 className='mb-10 text-2xl text-center mt-10 text-white'>ログイン</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col w-11/12 m-auto">
-          <Controller 
+          <Controller
             name="identifier"
             control={control}
             render={( {field} ) =>
@@ -39,7 +39,7 @@ const Login = () => {
               />
             }
           />
-          <Controller 
+          <Controller
             name="password"
             control={control}
             render={( {field} ) =>

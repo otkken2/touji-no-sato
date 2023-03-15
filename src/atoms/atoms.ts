@@ -8,6 +8,7 @@ export const myPostsAtom = atom<Post[] | undefined>(undefined);
 export const ryokanAtom = atom<string | undefined>(undefined);
 export const descriptionAtom = atom<string | undefined>(undefined);
 export const filesAtom = atom<File[]>([]);
+// export const filesAtom = atom<FileList[] | undefined>(undefined);
 
 export const selectedPlaceAtom = atom<string>('');
 

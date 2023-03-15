@@ -109,7 +109,7 @@ const MyOnsenCollection = () => {
         onClick={()=>setIdOfVisibleInfoWindow(0)}
         zoom={5}
         center={center}
-        mapContainerClassName={`w-[100vw] relative ${'h-[calc(100vh_-_52px)]'}`}
+        mapContainerClassName={`w-[100vw] relative ${'h-[calc(100vh_-_52px_-_52px)]'}`}
       >
         {
           postsGroupsByLatLng && postsGroupsByLatLng.map((postGroupByLatLng,index)=>{
@@ -132,7 +132,7 @@ const MyOnsenCollection = () => {
                 }
                 {
                   index + 1 === idOfVisibleInfoWindow &&
-                  <div className='absolute bottom-0 bg-background h-[40vh] w-[100vw] overflow-scroll'>
+                  <div className='absolute bottom-0 bg-background h-[40vh] w-[100vw] overflow-scroll rounded-t-lg pt-3'>
                     <h1 className='text-xl mb-5'>{postGroupByLatLng.posts[0].attributes?.ryokan}</h1>
                     {postGroupByLatLng.posts.map((eachPost,postIndex)=>{
                       return (
@@ -152,25 +152,6 @@ const MyOnsenCollection = () => {
             );
           })
         }
-        {/* {myOnsens && myOnsens.map((eachMyOnsen,index) => {
-          return (
-
-            <div key={index} className='text-white'>
-              <Marker key={index} position={eachMyOnsen.latLng} onClick={() => handleSelectInfoWindow(index)}/>
-              {
-                index + 1 === idOfVisibleInfoWindow &&
-                <div className='absolute bottom-0 bg-background h-[40vh] w-[100vw] overflow-scroll'>
-
-                  <Moment format='YYYY/MM/DD hh:mm' tz='Asia/Tokyo' className='text-opacity-80 text-sm text-white'>
-                    {eachMyOnsen?.data?.attributes?.createdAt}
-                  </Moment>
-                  <Media post={eachMyOnsen.data}/>
-                  <p>{eachMyOnsen.data.attributes?.description}</p>
-                </div>
-              }
-            </div>
-          );
-        })} */}
       </GoogleMap>
     </div>
   );

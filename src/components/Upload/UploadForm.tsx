@@ -33,6 +33,7 @@ export const UploadForm = (props: UploadFormProps) => {
 
 
   const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+  // const onFileInputChange = (e: any) => {
     if(!e.target.files)return;
     // @ts-ignore
     const fileURLs: PreviewFilesInterface[] = [...e.target.files].map((eachFile: File) => {
@@ -42,6 +43,9 @@ export const UploadForm = (props: UploadFormProps) => {
       }
     })
     setPreviews(fileURLs);
+    console.log("e.target.files");
+    console.log(e.target.files);
+    setFiles(Array.from(e.target.files));
   };
 
   const [sliderRef, instanceRef] = useKeenSlider(
@@ -96,6 +100,13 @@ export const UploadForm = (props: UploadFormProps) => {
               id=""
               onChange={onFileInputChange}
             />
+            {/* <MuiFileInput
+              multiple
+              variant="filled"
+              className="bg-white w-full hidden"
+              placeholder="ファイルを選択してください"
+              onChange={e => onFileInputChange}
+            /> */}
             <img src="/pictures.svg" alt="" className="h-[25px] mr-3"/>
             <p className="my-auto align-middlle">写真・動画を選択</p>
           </label>
