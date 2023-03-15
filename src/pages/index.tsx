@@ -23,24 +23,24 @@ export default function Home() {
   const token = Cookies.get('token');
   const { handleClickFavorite, myFavorites, getMyFavorites } = useFavorite()
   const user = useAtomValue(userAtom);
-  
+
   const getPosts = async () => {
-    await axios.get(`${API_URL}/api/posts?populate=*`).then(res => {
+    await axios.get(`${API_URL}/api/posts?populate=*&sort=createdAt%3Adesc`).then(res => {
       setPosts(res.data.data);
-    }) 
+    })
   }
 
   useEffect(()=>{
     getPosts();
   },[myFavorites]);
-  
+
   useEffect(()=>{
     getMyFavorites();
   },[]);
 
   const {isLoading, data} = useQuery('posts',getPosts);
   if(isLoading) return <h1>loading now...</h1>
-
+console.log(posts);
   return (
     <>
       <Head>
@@ -54,7 +54,8 @@ export default function Home() {
         {
           posts.map((post,index)=>{
           return(
-            <Post key={index} post={post} index={index}/>
+              !post.attributes?.parentPostId &&
+              <Post key={index} post={post} index={index}/>
           );
         })
         }

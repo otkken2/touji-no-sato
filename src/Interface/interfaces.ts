@@ -44,6 +44,7 @@ export interface PostAttributes {
   user?:          User;
   localizations?: Images;
   parentPostId?:  number;
+  bathingDay?:    Date;
 }
 
 export interface Images {

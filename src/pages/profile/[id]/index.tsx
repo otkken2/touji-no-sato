@@ -37,7 +37,7 @@ export const Profile = () => {
   console.log(data);
   return (
     <main className='text-white'>
-      <h1>マイページ</h1>
+      <h1 className="text-center">マイページ</h1>
       <div className='flex justify-around '>
         <div
           className={`${ showMode === 'ONSEN_COLLECTION' && 'border-b-4 border-solid border-primary'}`}
