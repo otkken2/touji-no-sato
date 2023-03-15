@@ -38,21 +38,6 @@ export const Post = (props: PostsProps) => {
   const user = useAtomValue(userAtom);
 
   const { handleClickFavorite } = useFavorite();
-  const { isMovie } = usePosts();
-  const [loaded, setLoaded] = useState(false);
-  const [currentSlide, setCurrentSlide] = useState<number>(0);
-  const [sliderRef, instanceRef] = useKeenSlider(
-    {
-      slideChanged(slider){
-        setCurrentSlide(slider.track.details.rel);
-        console.log(slider.track.details.rel);
-      },
-      slides: { perView: 1 },
-      created() {
-        setLoaded(true);
-      },
-    },
-  )
 
 
   if(post === undefined)return <></>;
@@ -64,7 +49,6 @@ export const Post = (props: PostsProps) => {
           <PostHeader username={post.attributes.user.data.attributes.username} createdAt={post.attributes.createdAt} userId={post.attributes.user.data.id}/>
           {/* 画像もしくは動画 */}
           <Media post={post} isDetailPage={isDetailPage}/>
-          <IconsContainer postId={post?.id} token={token} userId={user?.id} replyCount={0} favoriteCount={post?.attributes?.favoriteCount} handleClickFavorite={handleClickFavorite}/>
 
 
           <div className='mx-[16px]'>
@@ -97,6 +81,7 @@ export const Post = (props: PostsProps) => {
             <PlaceLink ryokan={post.attributes?.ryokan}/>
           }
         </div>
+        <IconsContainer postId={post?.id} token={token} userId={user?.id} replyCount={0} favoriteCount={post?.attributes?.favoriteCount} handleClickFavorite={handleClickFavorite}/>
 
     </div>
   );
