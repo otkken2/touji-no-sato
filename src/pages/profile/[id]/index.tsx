@@ -47,6 +47,20 @@ export const Profile = () => {
       setIsEditProfile(false);
     });
   };
+
+  useEffect(()=>{
+    const fetchUserInfo = async () => {
+      return await axios.get(`${API_URL}/api/users?populate=*&filters[id][$eq]=${id}`)
+        .then(res => {
+          console.log('fetchUserInfo↓');
+          console.log(res.data);
+          setUsername(res.data[0]?.username);
+          setSelfIntroduction(res.data[0]?.selfIntroduction);
+        });
+    };
+    fetchUserInfo();
+  },[id]);
+
   useEffect(()=>{
     const fetchMyPosts = async () => {
       if(!router.isReady)return;
@@ -140,17 +154,23 @@ export const Profile = () => {
                 <div className='profile-header flex items-center mb-5 justify-between'>
                   <div className='header-icon-username flex items-center'>
                     <img src="/mypage.svg" alt="" className="bg-red-300 rounded-full mr-5"/>
-                    <p className='font-bold mr-20 text-lg'>{user?.username}</p>
+                    <p className='font-bold mr-20 text-lg'>{username}</p>
                   </div>
                   <div className='flex w-[40%] justify-between'>
                     <div className="profile-posts-length">
                       <span className='font-bold'>{data.length}</span>投稿
                     </div>
-                    <p className='border border-white rounded-full px-3' onClick={() => setIsEditProfile(true)}>編集</p>
+                    {Number(id) === user?.id &&
+                      <p className='border border-white rounded-full px-3' onClick={() => setIsEditProfile(true)}>編集</p>
+                    }
                   </div>
                 </div>
                 <div className='profile-text '>
-                  {user?.selfIntroduction}
+                  {selfIntroduction ?
+                    selfIntroduction
+                    :
+                    'まだ自己紹介文が作成されていません。'
+                  }
                 </div>
               </div>
             }
