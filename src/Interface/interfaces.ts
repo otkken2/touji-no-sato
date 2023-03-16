@@ -9,6 +9,7 @@ export interface UserInterface{
   updatedAt?: string;
   posts?: Post[];
   role?: Role;
+  selfIntroduction?: string;
 }
 
 export interface Role{

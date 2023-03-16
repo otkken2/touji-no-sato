@@ -32,6 +32,8 @@ export const Media = (props: MediaProps)=>{
       },
     },
   )
+  if(post?.attributes?.Image?.data === undefined)return <></>;
+  if(post?.attributes?.Image?.data?.length === 0)return <></>;
   return(
     <>
       <div className='keen-slider mb-3' ref={sliderRef}>

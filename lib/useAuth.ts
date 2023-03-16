@@ -53,5 +53,5 @@ export const useAuth = () => {
     setUser(undefined)
     router.push('/')
   }
-  return {login, registUser, logout};
+  return {login, registUser, logout, fetchUser};
 }

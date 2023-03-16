@@ -19,7 +19,7 @@ export const useFavorite = () => {
       `${API_URL}/api/posts/${postId}`,
       {
         data:{
-        favoriteCount: newFavoriteCount,
+          favoriteCount: newFavoriteCount,
         },
         headers:{
           Authorization: `Bearer ${token}`
@@ -66,11 +66,11 @@ export const useFavorite = () => {
         handleFavoriteCount('decrease', postId, favoriteCount, token);
       })
   };
-  
+
   const handleClickFavorite = async (
     postId:        number | undefined,
-    favoriteCount: number | undefined, 
-    token:         string | undefined, 
+    favoriteCount: number | undefined,
+    token:         string | undefined,
     userId:        number | undefined
   ) => {
     if(favoriteCount === undefined)return;
@@ -80,7 +80,7 @@ export const useFavorite = () => {
     const myFavoritesIds = myFavorites.map((eachFavorite,index)=> {
       return eachFavorite.attributes?.post?.data?.id;
     });
-    
+
     if(myFavoritesIds.includes(postId)){
       clearFavorite(postId,favoriteCount, token);
     }else{
