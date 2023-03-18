@@ -48,19 +48,6 @@ export const UploadForm = (props: UploadFormProps) => {
     setFiles(Array.from(e.target.files));
   };
 
-  const [sliderRef, instanceRef] = useKeenSlider(
-    {
-      slideChanged(slider){
-        setCurrentSlide(slider.track.details.rel);
-        console.log(slider.track.details.rel);
-      },
-      slides: { perView: 1 },
-      created() {
-        setLoaded(true);
-      },
-    },
-  )
-
   return (
     <form onSubmit={handleSubmit}>
       <div className="flex flex-col mt-12">

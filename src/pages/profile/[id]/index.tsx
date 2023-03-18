@@ -4,7 +4,7 @@ import { TextField } from "@mui/material";
 import axios from "axios";
 import { API_URL } from "const";
 import { useAtomValue } from "jotai";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import router from "next/router";
 import { Post } from "@/components/Post/Post";
 import { PostData } from "@/Interface/interfaces";
@@ -24,21 +24,33 @@ export const Profile = () => {
   const [isEditProfile, setIsEditProfile] = useState<boolean>(false);
   const [selfIntroduction, setSelfIntroduction] = useState<string>('');
   const [username, setUsername] = useState<string>('');
+  const [iconPreviewUrl, setIconPreviewUrl] = useState<string>('');
+  const [iconFile, setIconFile] = useState<File[]>([]);
   const handleEditProfile = async(e:any) => {
     e.preventDefault()
+    const formData = new FormData();
+
+    iconFile.map((file:any)=> {
+      formData.append('files.profileIcon',file, file.name);
+    })
+    // formData.append('files.profileIcon', iconFile as Blob, iconFile?.name);
+    const data = {
+      ...user,
+      username: username,
+      selfIntroduction: selfIntroduction,
+    }
+
+    console.log("data");
+    console.log(data);
+    formData.append('data',JSON.stringify(data));
+
     await fetch(`${API_URL}/api/users-permissions/users/me`, {
       method: 'put',
-      mode: 'cors',
-      body: JSON.stringify(
-        {
-          ...user,
-          username: username,
-          selfIntroduction: selfIntroduction,
-        }
-      ),
+      // mode: 'cors',
+      body: formData,
       headers:{
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
+        // 'Content-Type': 'application/json'
       }
     }).then(res => {
       if(res.status !== 200)return;
@@ -46,6 +58,18 @@ export const Profile = () => {
       fetchUser(Number(id));
       setIsEditProfile(false);
     });
+  };
+
+  const onFileInputChange = (e :ChangeEvent<HTMLInputElement>) => {
+    console.log("e.target.files");
+    console.log(e.target.files);
+    if(!e.target.files)return;
+    // setIconFile(e.target.files[0]);
+    setIconFile(Array.from(e.target.files));
+    const iconUrl = URL.createObjectURL(e.target.files[0]);
+    console.log("iconUrl");
+    console.log(iconUrl);
+    setIconPreviewUrl(iconUrl);
   };
 
   useEffect(()=>{
@@ -59,7 +83,7 @@ export const Profile = () => {
         });
     };
     fetchUserInfo();
-  },[id]);
+  },[id,user]);
 
   useEffect(()=>{
     const fetchMyPosts = async () => {
@@ -109,6 +133,21 @@ export const Profile = () => {
                       <p className='mb-3 cursor-pointer' onClick={()=> setIsEditProfile(false)}>キャンセル</p>
                       <button type="submit" className='border border-white rounded-full px-3 h-full cursor-pointer'>保存</button>
                     </div>
+                    {/* <div className="mb-5"> */}
+                      <label className=' mb-5'>
+                        <input type="file" className='hidden' onChange={onFileInputChange}/>
+                          {iconPreviewUrl
+                            ?
+                            // <img src={iconPreviewUrl} alt="" width={50} height={50} className='rounded-full'/>
+                            <div className='w-[50px] h-[50px] rounded-full bg-red-300 overflow-hidden'>
+                              <img src={iconPreviewUrl} alt="" className="h-full w-full"/>
+                            </div>
+                            :
+                            <img src='/mypage.svg' alt="" />
+                          }
+                        {/* <img src={`${API_URL}${iconUrl || user?.profileIcon?.attributes?.url || '/mypage.svg' }`} alt="" /> */}
+                      </label>
+                    {/* </div> */}
                     <TextField
                       label='ユーザー名'
                       placeholder='例)温泉太郎'
