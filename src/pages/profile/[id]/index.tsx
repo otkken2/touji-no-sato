@@ -19,32 +19,38 @@ export const Profile = () => {
   const user = useAtomValue(userAtom);
   const {fetchUser} = useAuth();
   const {id} = router.query;
-  const [data, setData] = useState<PostData[]>([])
+  const [data, setData] = useState<PostData[]>([]);
   const [showMode, setShowMode] = useState<ShowMode>('ONSEN_COLLECTION');
   const [isEditProfile, setIsEditProfile] = useState<boolean>(false);
   const [selfIntroduction, setSelfIntroduction] = useState<string>('');
   const [username, setUsername] = useState<string>('');
   const [iconPreviewUrl, setIconPreviewUrl] = useState<string>('');
-  const [iconFile, setIconFile] = useState<File[]>([]);
-  const handleEditProfile = async(e:any) => {
-    e.preventDefault()
+  const [profileIcon, setProfileIcon] = useState<File[] | null>(null);
+  const [userIconUrl, setUserIconUrl] = useState<string>('');
+
+  const handleSubmit = async (e:any) => {
+    e.preventDefault();
+
     const formData = new FormData();
 
-    iconFile.map((file:any)=> {
-      formData.append('files.profileIcon',file, file.name);
-    })
-    // formData.append('files.profileIcon', iconFile as Blob, iconFile?.name);
+    if(profileIcon){
+      profileIcon.map((eachIcon:any)=> {
+        formData.append('files.profileIcon',eachIcon, eachIcon.name)
+      })
+    }
+
     const data = {
-      ...user,
       username: username,
       selfIntroduction: selfIntroduction,
     }
 
     console.log("data");
     console.log(data);
-    formData.append('data',JSON.stringify(data));
+    formData.append('username',username);
+    formData.append('selfIntroduction', selfIntroduction);
 
-    await fetch(`${API_URL}/api/users-permissions/users/me`, {
+    await fetch(`${API_URL}/api/users-permissions/user/me`, {
+    // await fetch(`${API_URL}/api/user/me`, {
       method: 'put',
       // mode: 'cors',
       body: formData,
@@ -64,8 +70,8 @@ export const Profile = () => {
     console.log("e.target.files");
     console.log(e.target.files);
     if(!e.target.files)return;
-    // setIconFile(e.target.files[0]);
-    setIconFile(Array.from(e.target.files));
+    setProfileIcon(Array.from(e.target.files));
+    // setProfileIcon(Array.from(e.target.files));
     const iconUrl = URL.createObjectURL(e.target.files[0]);
     console.log("iconUrl");
     console.log(iconUrl);
@@ -80,10 +86,14 @@ export const Profile = () => {
           console.log(res.data);
           setUsername(res.data[0]?.username);
           setSelfIntroduction(res.data[0]?.selfIntroduction);
+          setUserIconUrl(res.data[0]?.profileIcon?.url);
         });
     };
     fetchUserInfo();
   },[id,user]);
+
+  console.log("userIconUrl");
+  console.log(userIconUrl);
 
   useEffect(()=>{
     const fetchMyPosts = async () => {
@@ -127,7 +137,7 @@ export const Profile = () => {
             {isEditProfile ?
               <>
               {/* 編集モードON */}
-                <form onSubmit={handleEditProfile}>
+                <form onSubmit={handleSubmit}>
                   <div className='flex flex-col mx-[16px] mb-8'>
                     <div className='flex justify-between h-[27px] mb-5'>
                       <p className='mb-3 cursor-pointer' onClick={()=> setIsEditProfile(false)}>キャンセル</p>
@@ -135,7 +145,7 @@ export const Profile = () => {
                     </div>
                     {/* <div className="mb-5"> */}
                       <label className=' mb-5'>
-                        <input type="file" className='hidden' onChange={onFileInputChange}/>
+                        <input type="file" id="file" className='hidden' onChange={onFileInputChange}/>
                           {iconPreviewUrl
                             ?
                             // <img src={iconPreviewUrl} alt="" width={50} height={50} className='rounded-full'/>
@@ -150,6 +160,7 @@ export const Profile = () => {
                     {/* </div> */}
                     <TextField
                       label='ユーザー名'
+                      id="username"
                       placeholder='例)温泉太郎'
                       inputProps={{
                         style: {
@@ -167,6 +178,7 @@ export const Profile = () => {
                     />
                     <TextField
                       multiline
+                      id="selfIntroduction"
                       label='自己紹介'
                       rows={4}
                       inputProps={{

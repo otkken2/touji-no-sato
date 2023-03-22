@@ -40,7 +40,7 @@ export default function Home() {
 
   const {isLoading, data} = useQuery('posts',getPosts);
   if(isLoading) return <h1>loading now...</h1>
-console.log(posts);
+// console.log(posts);
   return (
     <>
       <Head>

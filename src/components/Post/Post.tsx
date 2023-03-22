@@ -39,14 +39,21 @@ export const Post = (props: PostsProps) => {
 
   const { handleClickFavorite } = useFavorite();
 
-
+  // console.log(user);
+  // if(!user?.profileIcon?.attributes?.url)return <></>
   if(post === undefined)return <></>;
-  if(!post?.attributes?.user?.data?.attributes?.username || !post?.attributes?.createdAt || !post?.attributes?.description)return <></>;
+  if(
+    !post?.attributes?.user?.data?.attributes?.username ||
+    !post?.attributes?.createdAt ||
+    !post?.attributes?.description
+    // || !user?.profileIcon?.attributes?.url
+  )return <></>;
   return(
     <div key={index} className={`post-${index} text-white mb-10`}>
       <div className=''>
         <>
-          <PostHeader username={post.attributes.user.data.attributes.username} createdAt={post.attributes.createdAt} userId={post.attributes.user.data.id}/>
+          <PostHeader profileIcon={user?.profileIcon?.attributes?.url} username={post.attributes.user.data.attributes.username} createdAt={post.attributes.createdAt} userId={post.attributes.user.data.id}/>
+          {/* <PostHeader profileIcon={user.profileIcon.attributes.url} username={post.attributes.user.data.attributes.username} createdAt={post.attributes.createdAt} userId={post.attributes.user.data.id}/> */}
           {/* 画像もしくは動画 */}
           <Media post={post} isDetailPage={isDetailPage}/>
 

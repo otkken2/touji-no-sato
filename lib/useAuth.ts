@@ -10,7 +10,10 @@ export const useAuth = () => {
   const  router  = useRouter();
 
   const fetchUser = async(userId :number) => {
-    const res = await axios.get(`${API_URL}/api/users/${userId}?populate[posts][populate]=*`)
+    // const res = await axios.get(`${API_URL}/api/users/${userId}?populate[posts][populate]=*`)
+    const res = await axios.get(`${API_URL}/api/users/${userId}?populate=*`)
+    // const res = await axios.get(`${API_URL}/api/users/${userId}&populate=*&populate[posts][populate]=*`)
+    // const res = await axios.get(`${API_URL}/api/users?populate=*&filters[id][$eq]=${userId}`)
     console.log(res.data)
     setUser(res.data)
   }
