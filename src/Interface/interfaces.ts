@@ -10,8 +10,39 @@ export interface UserInterface{
   posts?: Post[];
   role?: Role;
   selfIntroduction?: string;
-  profileIcon?: Image;
+  profileIcon?: ProfileIcon;
 }
+
+export interface ProfileIcon {
+  data: ProfileIconData;
+}
+
+export interface ProfileIconData {
+  id?:         number;
+  attributes?: ProfileIconAttributes;
+}
+
+export interface ProfileIconAttributes {
+  name?:              string;
+  alternativeText?:   string;
+  caption?:           null;
+  width?:             number | null;
+  height?:            number | null;
+  formats?:           Formats | null;
+  hash?:              string;
+  ext?:               EXT;
+  mime?:              MIME;
+  size?:              number;
+  url?:               string;
+  previewUrl?:        string;
+  provider?:          string;
+  provider_metadata?: null;
+  createdAt?:         Date;
+  updatedAt?:         Date;
+}
+
+export type MIME = "image/png" | "image/jpeg" | "video/quicktime";
+export type EXT = ".jpeg" | ".png" | ".mov";
 
 export interface Role{
   createdAt?: string;
@@ -99,18 +130,9 @@ export interface User {
 
 export interface UserData {
   id?:         number;
-  attributes?: UserAttributes;
+  attributes?: UserInterface;
 }
 
-export interface UserAttributes {
-  username?:  string;
-  email?:     string;
-  provider?:  string;
-  confirmed?: boolean;
-  blocked?:   boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
 
 export interface Meta {
 }

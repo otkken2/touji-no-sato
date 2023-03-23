@@ -50,13 +50,11 @@ export const Profile = () => {
     formData.append('selfIntroduction', selfIntroduction);
 
     await fetch(`${API_URL}/api/users-permissions/user/me`, {
-    // await fetch(`${API_URL}/api/user/me`, {
       method: 'put',
-      // mode: 'cors',
+
       body: formData,
       headers:{
         Authorization: `Bearer ${token}`,
-        // 'Content-Type': 'application/json'
       }
     }).then(res => {
       if(res.status !== 200)return;
@@ -71,10 +69,7 @@ export const Profile = () => {
     console.log(e.target.files);
     if(!e.target.files)return;
     setProfileIcon(Array.from(e.target.files));
-    // setProfileIcon(Array.from(e.target.files));
     const iconUrl = URL.createObjectURL(e.target.files[0]);
-    console.log("iconUrl");
-    console.log(iconUrl);
     setIconPreviewUrl(iconUrl);
   };
 
@@ -86,14 +81,10 @@ export const Profile = () => {
           console.log(res.data);
           setUsername(res.data[0]?.username);
           setSelfIntroduction(res.data[0]?.selfIntroduction);
-          setUserIconUrl(res.data[0]?.profileIcon?.url);
         });
     };
     fetchUserInfo();
   },[id,user]);
-
-  console.log("userIconUrl");
-  console.log(userIconUrl);
 
   useEffect(()=>{
     const fetchMyPosts = async () => {
@@ -125,7 +116,7 @@ export const Profile = () => {
         </div>
         <div
           className={`${ showMode === 'ALL_MY_POSTS' && 'border-b-4 border-solid border-primary'} w-1/2 text-center cursor-pointer`}
-          onClick={()=>setShowMode('ALL_MY_POSTS')}
+          onClick={()=> setShowMode('ALL_MY_POSTS')}
         >
           投稿一覧
         </div>

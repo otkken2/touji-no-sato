@@ -25,7 +25,7 @@ export default function Home() {
   const user = useAtomValue(userAtom);
 
   const getPosts = async () => {
-    await axios.get(`${API_URL}/api/posts?populate=*&sort=createdAt%3Adesc`).then(res => {
+    await axios.get(`${API_URL}/api/posts?populate[user][populate]=*&populate=Image&sort=createdAt%3Adesc`).then(res => {
       setPosts(res.data.data);
     })
   }
@@ -40,7 +40,6 @@ export default function Home() {
 
   const {isLoading, data} = useQuery('posts',getPosts);
   if(isLoading) return <h1>loading now...</h1>
-// console.log(posts);
   return (
     <>
       <Head>

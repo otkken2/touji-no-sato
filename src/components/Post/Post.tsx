@@ -1,8 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import Moment from "react-moment";
 import 'moment-timezone';
-import { Image as ImageInterface, PostData } from "@/Interface/interfaces";
-import { API_URL } from "const";
+import { PostData } from "@/Interface/interfaces";
 import Link from "next/link";
 import { PlaceLink } from "./PlaceLink";
 import { PostHeader } from "./PostHeader";
@@ -12,15 +11,7 @@ import Cookies from "js-cookie";
 import { useAtomValue } from "jotai";
 import { userAtom } from "@/atoms/atoms";
 import { IconsContainer } from "./IconsContainer";
-import ReactPlayer from 'react-player';
-import { usePosts } from "lib/usePosts";
-import { useCallback, useState } from "react";
-import { Splide, SplideSlide } from "@splidejs/react-splide";
-// import { Splide, SplideSlide } from 'splide-nextjs/react-splide';
-// import '@splidejs/splide/css';
-import "@splidejs/splide/dist/css/themes/splide-default.min.css";
-import {useKeenSlider} from 'keen-slider/react'
-import 'keen-slider/keen-slider.min.css'
+
 import { Media } from "./Media";
 
 interface PostsProps{
@@ -29,31 +20,40 @@ interface PostsProps{
   isDetailPage?: boolean;
   isReply?: boolean;
   postId?: string | string[] | undefined;
+  userIconUrl?: string | undefined;
   handleGetContent?: () => void;
   handleDeletePost?: () => Promise<void>;
 }
 export const Post = (props: PostsProps) => {
-  const {post, index, isDetailPage = false, isReply= false, postId, handleGetContent, handleDeletePost} = props;
+  const {
+    post, 
+    index, 
+    isDetailPage = false, 
+    isReply= false, 
+    postId, 
+    handleGetContent, 
+    handleDeletePost,
+  } = props;
   const token = Cookies.get('token');
   const user = useAtomValue(userAtom);
 
   const { handleClickFavorite } = useFavorite();
-
-  // console.log(user);
-  // if(!user?.profileIcon?.attributes?.url)return <></>
   if(post === undefined)return <></>;
   if(
     !post?.attributes?.user?.data?.attributes?.username ||
     !post?.attributes?.createdAt ||
-    !post?.attributes?.description
-    // || !user?.profileIcon?.attributes?.url
+    !post?.attributes?.description 
   )return <></>;
   return(
     <div key={index} className={`post-${index} text-white mb-10`}>
       <div className=''>
         <>
-          <PostHeader profileIcon={user?.profileIcon?.attributes?.url} username={post.attributes.user.data.attributes.username} createdAt={post.attributes.createdAt} userId={post.attributes.user.data.id}/>
-          {/* <PostHeader profileIcon={user.profileIcon.attributes.url} username={post.attributes.user.data.attributes.username} createdAt={post.attributes.createdAt} userId={post.attributes.user.data.id}/> */}
+          <PostHeader 
+            userIconUrl={post?.attributes?.user?.data?.attributes?.profileIcon?.data?.attributes?.url} 
+            username={post.attributes.user.data.attributes.username} 
+            createdAt={post.attributes.createdAt} 
+            userId={post.attributes.user.data.id}
+          />
           {/* 画像もしくは動画 */}
           <Media post={post} isDetailPage={isDetailPage}/>
 
