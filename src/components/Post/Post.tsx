@@ -45,7 +45,7 @@ export const Post = (props: PostsProps) => {
     !post?.attributes?.description 
   )return <></>;
   return(
-    <div key={index} className={`post-${index} text-white mb-10`}>
+    <div key={index} className={`post-${index} text-white mb-10 border-b border-white/40`}>
       <div className=''>
         <>
           <PostHeader 
@@ -55,6 +55,7 @@ export const Post = (props: PostsProps) => {
             userId={post.attributes.user.data.id}
           />
           {/* 画像もしくは動画 */}
+
           <Media post={post} isDetailPage={isDetailPage}/>
 
 
@@ -89,7 +90,6 @@ export const Post = (props: PostsProps) => {
           }
         </div>
         <IconsContainer postId={post?.id} token={token} userId={user?.id} replyCount={0} favoriteCount={post?.attributes?.favoriteCount} handleClickFavorite={handleClickFavorite}/>
-
     </div>
   );
 };

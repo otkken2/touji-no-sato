@@ -35,6 +35,7 @@ export const Media = (props: MediaProps)=>{
   if(post?.attributes?.Image?.data === undefined)return <></>;
   if(post?.attributes?.Image?.data?.length === 0)return <></>;
   return(
+    post?.attributes?.Image?.data?.length > 0 ?
     <>
       <div className='keen-slider mb-3' ref={sliderRef}>
         {post?.attributes?.Image?.data?.map((eachData: ImageInterface,ImageIndex:number)=>{
@@ -87,5 +88,7 @@ export const Media = (props: MediaProps)=>{
         </div>
       }
     </>
+    :
+    <></>
   );
 };

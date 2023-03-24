@@ -89,8 +89,11 @@ export const Profile = () => {
   useEffect(()=>{
     const fetchMyPosts = async () => {
       if(!router.isReady)return;
-      return await axios.get(`${API_URL}/api/posts?populate=*&filters[user][id][$eq]=${id}`)
+      // return await axios.get(`${API_URL}/api/posts?populate=*&filters[user][id][$eq]=${id}`)
+      return await axios.get(`${API_URL}/api/posts?populate[user][populate]=*&populate=Image&filters[user][id][$eq]=${id}`)
         .then(res =>{
+          console.log('myPosts↓');
+          console.log(res.data.data);
           setData(res.data.data);
         });
     }
