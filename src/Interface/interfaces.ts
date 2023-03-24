@@ -10,7 +10,7 @@ export interface UserInterface{
   posts?: Post[];
   role?: Role;
   selfIntroduction?: string;
-  profileIcon?: ProfileIcon;
+  profileIcon?: string;
 }
 
 export interface ProfileIcon {

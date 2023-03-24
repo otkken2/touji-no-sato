@@ -49,7 +49,7 @@ export const Post = (props: PostsProps) => {
       <div className=''>
         <>
           <PostHeader 
-            userIconUrl={post?.attributes?.user?.data?.attributes?.profileIcon?.data?.attributes?.url} 
+            userIconUrl={post?.attributes?.user?.data?.attributes?.profileIcon} 
             username={post.attributes.user.data.attributes.username} 
             createdAt={post.attributes.createdAt} 
             userId={post.attributes.user.data.id}

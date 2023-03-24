@@ -28,41 +28,50 @@ export const Profile = () => {
   const [profileIcon, setProfileIcon] = useState<File[] | null>(null);
   const [userIconUrl, setUserIconUrl] = useState<string>('');
 
+  const uploadProfileIcon = async (profileIcon: File[]) => {
+    const formData = new FormData();
+    formData.append('files',profileIcon[0], profileIcon[0].name);
+    const response = await fetch(`${API_URL}/api/upload`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      body: formData,
+    });
+    const uploadedFile = await response.json();
+    return uploadedFile;
+  };
+
   const handleSubmit = async (e:any) => {
     e.preventDefault();
 
-    const formData = new FormData();
-
+    let profileIconUrl = null;
     if(profileIcon){
-      profileIcon.map((eachIcon:any)=> {
-        formData.append('files.profileIcon',eachIcon, eachIcon.name)
-      })
+      const uploadedFile = await uploadProfileIcon(profileIcon);
+      if(uploadedFile){
+        profileIconUrl = uploadedFile[0].url;
+      }
     }
 
     const data = {
       username: username,
       selfIntroduction: selfIntroduction,
-    }
-
-    console.log("data");
-    console.log(data);
-    formData.append('username',username);
-    formData.append('selfIntroduction', selfIntroduction);
-
-    await fetch(`${API_URL}/api/users-permissions/user/me`, {
+      profileIcon: profileIconUrl,
+    };
+    await fetch(`${API_URL}/api/users-permissions/users/me`,{
       method: 'put',
-
-      body: formData,
-      headers:{
+      headers: {
         Authorization: `Bearer ${token}`,
-      }
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
     }).then(res => {
       if(res.status !== 200)return;
       if(!id)return;
       fetchUser(Number(id));
       setIsEditProfile(false);
     });
-  };
+  }
 
   const onFileInputChange = (e :ChangeEvent<HTMLInputElement>) => {
     console.log("e.target.files");
@@ -79,6 +88,7 @@ export const Profile = () => {
         .then(res => {
           console.log('fetchUserInfo↓');
           console.log(res.data);
+          setUserIconUrl(res.data[0]?.profileIcon);
           setUsername(res.data[0]?.username);
           setSelfIntroduction(res.data[0]?.selfIntroduction);
         });
@@ -89,7 +99,6 @@ export const Profile = () => {
   useEffect(()=>{
     const fetchMyPosts = async () => {
       if(!router.isReady)return;
-      // return await axios.get(`${API_URL}/api/posts?populate=*&filters[user][id][$eq]=${id}`)
       return await axios.get(`${API_URL}/api/posts?populate[user][populate]=*&populate=Image&filters[user][id][$eq]=${id}`)
         .then(res =>{
           console.log('myPosts↓');
@@ -137,21 +146,17 @@ export const Profile = () => {
                       <p className='mb-3 cursor-pointer' onClick={()=> setIsEditProfile(false)}>キャンセル</p>
                       <button type="submit" className='border border-white rounded-full px-3 h-full cursor-pointer'>保存</button>
                     </div>
-                    {/* <div className="mb-5"> */}
                       <label className=' mb-5'>
                         <input type="file" id="file" className='hidden' onChange={onFileInputChange}/>
                           {iconPreviewUrl
                             ?
-                            // <img src={iconPreviewUrl} alt="" width={50} height={50} className='rounded-full'/>
                             <div className='w-[50px] h-[50px] rounded-full bg-red-300 overflow-hidden'>
                               <img src={iconPreviewUrl} alt="" className="h-full w-full"/>
                             </div>
                             :
                             <img src='/mypage.svg' alt="" />
                           }
-                        {/* <img src={`${API_URL}${iconUrl || user?.profileIcon?.attributes?.url || '/mypage.svg' }`} alt="" /> */}
                       </label>
-                    {/* </div> */}
                     <TextField
                       label='ユーザー名'
                       id="username"
@@ -198,13 +203,13 @@ export const Profile = () => {
               <div className='profile-container mx-[16px] mb-5'>
                 <div className='profile-header flex items-center mb-5 justify-between'>
                   <div className='header-icon-username flex items-center'>
-                    <img src="/mypage.svg" alt="" className="bg-red-300 rounded-full mr-5"/>
-                    <p className='font-bold mr-20 text-lg'>{username}</p>
+                    <img src={userIconUrl ? `${API_URL}${userIconUrl}` : '/mypage.svg'} alt="" className="rounded-full w-10 h-10 mr-2"/>
+                    <p className='font-bold text-md whitespace-nowrap overflow-hidden'>{username}</p>
                   </div>
-                  <div className='flex w-[40%] justify-between'>
-                    <div className="profile-posts-length">
+                  <div className='flex justify-between'>
+                    {/* <div className="profile-posts-length">
                       <span className='font-bold'>{data.length}</span>投稿
-                    </div>
+                    </div> */}
                     {Number(id) === user?.id &&
                       <p className='border border-white rounded-full px-3' onClick={() => setIsEditProfile(true)}>編集</p>
                     }
