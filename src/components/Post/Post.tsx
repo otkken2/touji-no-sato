@@ -36,8 +36,7 @@ export const Post = (props: PostsProps) => {
   } = props;
   const token = Cookies.get('token');
   const user = useAtomValue(userAtom);
-
-  const { handleClickFavorite } = useFavorite();
+  
   if(post === undefined)return <></>;
   if(
     !post?.attributes?.user?.data?.attributes?.username ||
@@ -89,7 +88,7 @@ export const Post = (props: PostsProps) => {
             <PlaceLink ryokan={post.attributes?.ryokan}/>
           }
         </div>
-        <IconsContainer postId={post?.id} token={token} userId={user?.id} replyCount={0} favoriteCount={post?.attributes?.favoriteCount} handleClickFavorite={handleClickFavorite}/>
+        <IconsContainer postId={post?.id} token={token} userId={user?.id} replyCount={0} favoriteCount={post?.attributes?.favoriteCount}/>
     </div>
   );
 };

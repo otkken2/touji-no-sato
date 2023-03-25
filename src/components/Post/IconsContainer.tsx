@@ -1,3 +1,5 @@
+import { useAtomValue } from "jotai";
+import { useFavorite } from "lib/useFavorite";
 import Image from "next/image";
 interface IconsContainerProps{
   postId: number | undefined;
@@ -5,15 +7,10 @@ interface IconsContainerProps{
   userId: number | undefined;
   replyCount: number | undefined;
   favoriteCount: number | undefined;
-  handleClickFavorite: (
-    postId:          number | undefined, 
-    favoriteCount:   number | undefined, 
-    token:           string | undefined, 
-    userId:          number | undefined
-  ) => Promise<void>
 }
 export const IconsContainer = (props: IconsContainerProps) => {
-  const {postId, token, userId, replyCount = 0, favoriteCount, handleClickFavorite} = props;
+  const {postId, token, userId, replyCount = 0, favoriteCount} = props;
+  const { handleClickFavorite, myFavoritesIds} = useFavorite();
   return (
     <div className="icons-container flex justify-around">
       {/* リプライ */}
@@ -23,7 +20,12 @@ export const IconsContainer = (props: IconsContainerProps) => {
       </div>
       {/* お気に入り登録・解除 */}
       <div className='favorite-container flex items-center' onClick={()=> handleClickFavorite(postId, favoriteCount, token, userId)}>
-        <Image src='/favorite.svg' alt='お気に入りに追加' width={20} height={20} className='m-3'/>
+        { myFavoritesIds.includes(postId)
+        ?
+          <Image src='/favorite-red.png' alt='お気に入り追加済み' width={20} height={20} className='m-3'/>
+        : 
+          <Image src='/favorite.svg' alt='お気に入りに追加' width={20} height={20} className='m-3'/>
+        }
         <p>{favoriteCount}</p>
       </div>
     </div>

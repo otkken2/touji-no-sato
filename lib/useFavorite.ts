@@ -2,11 +2,15 @@ import { myFavoritesAtom, userAtom } from "@/atoms/atoms";
 import axios from "axios";
 import { API_URL } from "const";
 import { useAtom, useAtomValue } from "jotai";
+import { useState } from "react";
 
 export const useFavorite = () => {
   const [myFavorites,setMyFavorites] = useAtom(myFavoritesAtom);
   const user = useAtomValue(userAtom);
   type UpdateCountType = 'increase' | 'decrease'
+  const myFavoritesIds = myFavorites.map((eachFavorite,index)=> {
+    return eachFavorite.attributes?.post?.data?.id;
+  });
 
   const handleFavoriteCount = async (type: UpdateCountType ,postId: number, favoriteCount: number, token: string) => {
     let newFavoriteCount;
@@ -77,9 +81,6 @@ export const useFavorite = () => {
     if(postId === undefined)return;
     if(token === undefined)return;
     if(userId === undefined)return;
-    const myFavoritesIds = myFavorites.map((eachFavorite,index)=> {
-      return eachFavorite.attributes?.post?.data?.id;
-    });
 
     if(myFavoritesIds.includes(postId)){
       clearFavorite(postId,favoriteCount, token);
@@ -93,5 +94,5 @@ export const useFavorite = () => {
     setMyFavorites((prevState) => myFavorites);
   };
 
-  return {myFavorites, setMyFavorites, handleClickFavorite, getMyFavorites}
+  return {myFavorites, setMyFavorites, handleClickFavorite, getMyFavorites, myFavoritesIds}
 }

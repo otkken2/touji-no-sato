@@ -12,4 +12,4 @@ export const filesAtom = atom<File[]>([]);
 
 export const selectedPlaceAtom = atom<string>('');
 
-export const myFavoritesAtom = atom<FavoriteData[]>([])
+export const myFavoritesAtom = atom<FavoriteData[]>([]);
