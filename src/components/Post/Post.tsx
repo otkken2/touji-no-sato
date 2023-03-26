@@ -19,7 +19,7 @@ interface PostsProps{
   index?: number | undefined;
   isDetailPage?: boolean;
   isReply?: boolean;
-  postId?: string | string[] | undefined;
+  postId?: string | undefined;
   userIconUrl?: string | undefined;
   handleGetContent?: () => void;
   handleDeletePost?: () => Promise<void>;
@@ -52,6 +52,10 @@ export const Post = (props: PostsProps) => {
             username={post.attributes.user.data.attributes.username} 
             createdAt={post.attributes.createdAt} 
             userId={post.attributes.user.data.id}
+            isDetailPage={isDetailPage}
+            ryokan={post.attributes?.ryokan}
+            description={post.attributes?.description}
+            postId={postId}
           />
           {/* 画像もしくは動画 */}
 
@@ -64,7 +68,7 @@ export const Post = (props: PostsProps) => {
               {post.attributes.createdAt}
             </Moment>
             {/* 投稿本文 */}
-            <Link href={`post/${postId}`}>
+            <Link href={`/post/${postId}`}>
               <p className='mb-1'>
                 {post.attributes.description}
               </p>
@@ -72,15 +76,6 @@ export const Post = (props: PostsProps) => {
           </div>
         </>
       </div>
-      {/* 編集と削除(detailPageの場合のみ) */}
-      {isDetailPage && handleGetContent && handleDeletePost &&
-        <div className="flex">
-          <Link className="mr-3" href={`/post/${postId}/Edit`} onClick={()=>{handleGetContent()}}>
-            <Image src='/edit.svg' height={20} width={20} alt="編集"/>
-          </Link>
-          <Image className="mr-3" src={'/delete.svg'} height={20} width={20} alt='削除' onClick={()=> handleDeletePost()}/>
-        </div>
-      }
         {/* 旅館情報 */}
         <div className='mx-[16px]'>
           {

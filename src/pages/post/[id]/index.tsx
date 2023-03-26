@@ -16,8 +16,6 @@ const ShowPostDetail = () => {
   const router = useRouter();
   const { id } = router.query;
   const [data, setData] = useState<PostData>();
-  const setRyokan = useSetAtom(ryokanAtom);
-  const setDescription = useSetAtom(descriptionAtom);
   const setFiles = useSetAtom(filesAtom);
   const token = Cookies.get('token');
   const [replies, setReplies] = useState<PostData[]>([]);
@@ -26,11 +24,6 @@ const ShowPostDetail = () => {
   const user = useAtomValue(userAtom);
   const [hasPostedReply, setHasPostedReply] = useState<boolean>(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
-
-  const handleGetContent = () => {
-    setRyokan(data?.attributes?.ryokan);
-    setDescription(data?.attributes?.description);
-  };
 
   useEffect(()=>{
     const getPostDetail = async() => {
@@ -58,18 +51,6 @@ const ShowPostDetail = () => {
     getReplies()
   },[id, router, hasPostedReply]);
 
-  const handleDeletePost = async () => {
-    await fetch(`${API_URL}/api/posts/${id}`,{
-      method: 'delete',
-      headers:{
-        Authorization: `Bearer ${token}`
-      }
-    }).then(res=> {
-      console.log('記事の削除成功！')
-      alert('記事の削除に成功しました。Topページへ戻ります。')
-      router.push('/')
-    })
-  };
 
   const handleSubmit = async(e:any) => {
     e.preventDefault();
@@ -104,7 +85,7 @@ const ShowPostDetail = () => {
     <>
       {
         router.isReady &&
-        <Post post={data} isDetailPage={true} postId={id} handleGetContent={handleGetContent} handleDeletePost={handleDeletePost}/>
+        <Post post={data} isDetailPage={true} postId={String(id)}/>
       }
       <hr />
       {/* リプライ作成フォーム */}

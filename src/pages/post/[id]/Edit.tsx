@@ -1,5 +1,6 @@
-import { descriptionAtom, filesAtom, ryokanAtom, userAtom } from "@/atoms/atoms";
+import { descriptionAtom, filesAtom, ryokanAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
 import { UploadForm } from "@/components/Upload/UploadForm";
+import { useLoadScript } from "@react-google-maps/api";
 import { API_URL } from "const";
 import { useAtom, useAtomValue } from "jotai";
 import Cookies from "js-cookie";
@@ -7,13 +8,17 @@ import router from "next/router";
 import { useEffect } from "react";
 
 const Edit = () => {
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: process?.env?.NEXT_PUBLIC_GOOGLE_API_KEY ?? '',
+    libraries: ["places"],
+  });
   const [files, setFiles] = useAtom(filesAtom);
   const [ryokan, setRyokan] = useAtom(ryokanAtom);
   const [description, setDescription] = useAtom(descriptionAtom);
   const user = useAtomValue(userAtom);
   const token = Cookies.get('token');
   const { id } = router.query;
-
+  const selectedPlace = useAtomValue(selectedPlaceAtom);
 
   useEffect(()=>{
 
@@ -31,7 +36,7 @@ const Edit = () => {
     // formData.append('files.Image', files);
 
     const textData = {
-      ryokan: ryokan,
+      ryokan: selectedPlace,
       description: description,
       user: user?.id,
     }
@@ -42,10 +47,14 @@ const Edit = () => {
       headers:{
         Authorization: `Bearer ${token}`
       }
-    }).then(res => console.log('成功！'));
+    }).then(res => {
+      console.log('成功！');
+      router.push(`/post/${id}`);
+    });
   };
 
   return (
+    isLoaded &&
     <UploadForm handleSubmit={handleSubmit}/>
   );
 };

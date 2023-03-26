@@ -60,7 +60,7 @@ export const Media = (props: MediaProps)=>{
               <ReactPlayer width='100%' url={`${API_URL}${eachData.attributes.url}`} controls={true}/>
             </div>
             :
-              <Link key={ImageIndex} href={`post/${post.id}`}>
+              <Link key={ImageIndex} href={`/post/${post.id}`}>
                 <div className="w-screen h-auto keen-slider__slide" >
                   <img  src={`${API_URL}${eachData.attributes.url}`} alt="" className='w-full h-auto' />
                 </div>

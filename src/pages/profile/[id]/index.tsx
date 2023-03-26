@@ -228,7 +228,7 @@ export const Profile = () => {
             {/* 投稿一覧 */}
             {data?.map((eachdata: PostData,index)=>{
               return (
-                <Post key={index} post={eachdata}/>
+                <Post key={index} post={eachdata} postId={String(eachdata.id)}/>
               )
             })}
           </div>

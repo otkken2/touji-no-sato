@@ -6,7 +6,7 @@ import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
 import usePlacesAutocomplete, {getGeocode, getLatLng} from "use-places-autocomplete";
 import { Combobox, ComboboxInput, ComboboxPopover, ComboboxList, ComboboxOption } from "@reach/combobox";
 import "@reach/combobox/styles.css"
-import { SetStateAction, useAtomValue, useSetAtom } from "jotai";
+import { SetStateAction, useAtom, useAtomValue, useSetAtom } from "jotai";
 import { ryokanAtom, selectedPlaceAtom } from "@/atoms/atoms";
 
 // const options = {
@@ -86,14 +86,16 @@ interface PlacesAutocompleteProps{
 // export const PlacesAutocomplete = ({setSelected, setCenter}: PlacesAutocompleteProps) => {
 // export const PlacesAutoComplete = ({setSelected}: PlacesAutocompleteProps) => {
 export const PlacesAutoComplete = () => {
-  const setSelectedPlace = useSetAtom(selectedPlaceAtom);
+  const [selectedPlace,setSelectedPlace] = useAtom(selectedPlaceAtom);
+  const [ryokan,setRyokan] = useAtom(ryokanAtom);
   const {
     ready,
     value,
     setValue,
     suggestions: {status, data},
     clearSuggestions,
-  } = usePlacesAutocomplete();
+  } = usePlacesAutocomplete({defaultValue: selectedPlace});
+  // } = usePlacesAutocomplete();
 
   // console.log(data);
 
@@ -109,15 +111,19 @@ export const PlacesAutoComplete = () => {
     // setSelected({lat, lng})
     // setCenter({lat, lng})
   };
+
+  console.log();
   return (
     // TODO: ユーザーの投稿ページにこの自動補完機能を実装する！
     <Combobox onSelect={handleSelect}>
       <label>旅館・公共浴場etc</label>
       <ComboboxInput
         value={value}
+        // value={ryokan}
         onChange={(e)=> setValue(e.target.value)}
-        disabled={!ready}
-        className='w-full p-3 text-center bg-background-secondary rounded-md'
+        // onChange={(e)=> setRyokan(e.target.value)}
+        // disabled={!ready}
+        className='w-full p-3 text-center text-white bg-background-secondary rounded-md'
         // placeholder='旅館・公共浴場etc...'
       />
         <ComboboxPopover>
