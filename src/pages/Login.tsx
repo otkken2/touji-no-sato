@@ -1,4 +1,7 @@
+import { userAtom } from "@/atoms/atoms";
 import { Button, Input, TextField } from "@mui/material";
+import { useAtomValue } from "jotai";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { isIdentifier } from "typescript";
@@ -11,51 +14,83 @@ interface LoginInfoInterface{
 
 const Login = () => {
   const { login } = useAuth()
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const user = useAtomValue(userAtom);
+  const router = useRouter();
   const { register, handleSubmit, watch, formState: { errors }, control} = useForm<LoginInfoInterface>({
     defaultValues: {
       identifier: '',
       password: ''
     }
   });
-  const onSubmit: SubmitHandler<LoginInfoInterface> = async (data) => {
-    await login(data.identifier,data.password)
+  const onSubmit = async (e:any) => {
+    e.preventDefault();
+    await login(email,password);
   };
 
+  if(user)router.push('/')
   return (
-    <>
-      <h1 className='mb-10 text-2xl text-center mt-10 text-white'>ログイン</h1>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col w-11/12 m-auto">
-          <Controller
-            name="identifier"
-            control={control}
-            render={( {field} ) =>
+    !user &&
+    <div className=" h-[100vh] flex items-center">
+      <div className="h-[50vh] w-[100vw]">
+        <h1 className='mb-5 flex justify-center text-white'>
+          <img src="logo.svg" alt="" />
+        </h1>
+        <h2 className="text-white text-center mb-3">ログイン</h2>
+        <form onSubmit={onSubmit}>
+          <div className="flex flex-col w-11/12 max-w-[500px] m-auto">
+            <div className="mb-5">
               <TextField
-                type="email"
+                // type="email"
                 variant="filled"
                 label="Eメール"
-                className='mb-10 bg-white rounded-lg'
-                {...field}
+                value={email}
+                onChange={(e)=> {
+                  setEmail(e.target.value)
+                  console.log(e.target.value)
+                }}
+                InputLabelProps={{
+                  style: {
+                    color: 'white'
+                  }
+                }}
+                inputProps={{
+                  style: {
+                    color: 'white',
+                  }
+                }}
+                className='mb-10 bg-background-secondary w-full rounded-lg'
               />
-            }
-          />
-          <Controller
-            name="password"
-            control={control}
-            render={( {field} ) =>
+            </div>
+            <div className="mb-5">
               <TextField
                 type="password"
                 variant="filled"
                 label="パスワード"
-                className='mb-10 bg-white rounded-lg'
-                {...field}
+                value={password}
+                onChange={(e)=> {
+                  setPassword(e.target.value)
+                  console.log(e.target.value)
+                }}
+                InputLabelProps={{
+                  style: {
+                    color: 'white'
+                  }
+                }}
+                inputProps={{
+                  style: {
+                    color: 'white',
+                  }
+                }}
+                className='mb-10 bg-background-secondary w-full rounded-lg'
               />
-            }
-          />
-          <Button className='bg-sky-400 rounded-lg' variant="contained" type="submit">ログインする</Button>
-        </div>
-      </form>
-    </>
+            </div>
+            <button className='bg-primary rounded-md h-[56px] text-white' type="submit">ログインする</button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }
 

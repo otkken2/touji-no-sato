@@ -1,14 +1,5 @@
-import { Button, Input,InputProps, TextField, Typography} from "@mui/material";
-import GoogleMapReact from "google-map-react";
 import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
-import usePlacesAutocomplete, {getGeocode, getLatLng} from "use-places-autocomplete";
 
-import { Controller, useForm } from "react-hook-form"
-import { MuiFileInput } from "mui-file-input";
-import { Combobox, ComboboxInput, ComboboxList, ComboboxOption, ComboboxPopover } from "@reach/combobox";
-import { PlacesAutoComplete } from "./RyokanInfo";
-import { useState } from "react";
-import { LatLng } from "use-places-autocomplete";
 import { API_URL } from "const";
 import { Image, Post } from "@/Interface/interfaces";
 import axios from "axios";
@@ -17,7 +8,6 @@ import { useAtom, useAtomValue } from "jotai";
 import { descriptionAtom, filesAtom, ryokanAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
 import { UploadForm } from "@/components/Upload/UploadForm";
 import { useRouter } from "next/router";
-import { usePosts } from "lib/usePosts";
 
 interface PostInterface{
   description: string;
@@ -30,7 +20,6 @@ const Upload = () => {
     libraries: ["places"],
   });
   const files = useAtomValue(filesAtom);
-  // const ryokan = useAtomValue(ryokanAtom);
   const selectedPlace = useAtomValue(selectedPlaceAtom);
   const description = useAtomValue(descriptionAtom);
 
@@ -69,9 +58,9 @@ const Upload = () => {
       router.push('/')
     });
   };
-
+  if(!user)router.push('/Login');
   return (
-    isLoaded &&
+    isLoaded && user &&
     <div className="text-white text-center">
       <h1>新規投稿</h1>
       <UploadForm handleSubmit={handleSubmit}/>

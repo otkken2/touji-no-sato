@@ -13,12 +13,16 @@ const Footer = () => {
 
   return (
     <footer className="text-center flex flex-row justify-around py-2 bg-slate-700 rounded-full">
-      <Link href='/Favorite'>
-        <Image src='/favorite.svg' height={FOOTER_ICON_HEIGHT} width={FOOTER_ICON_WIDTH} alt="お気に入り"/>
-      </Link>
-      <Link href='/Upload'>
-        <Image src='/upload.svg' height={FOOTER_ICON_HEIGHT} width={FOOTER_ICON_WIDTH} alt="投稿する"/>
-      </Link>
+      {user &&
+        <>
+          <Link href='/Favorite'>
+            <Image src='/favorite.svg' height={FOOTER_ICON_HEIGHT} width={FOOTER_ICON_WIDTH} alt="お気に入り"/>
+          </Link>
+          <Link href='/Upload'>
+            <Image src='/upload.svg' height={FOOTER_ICON_HEIGHT} width={FOOTER_ICON_WIDTH} alt="投稿する"/>
+          </Link>
+        </>
+      }
       <Link href='/'>
         <Image src='/home.svg' height={FOOTER_ICON_HEIGHT} width={FOOTER_ICON_WIDTH} alt="ホーム"/>
       </Link>
