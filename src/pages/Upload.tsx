@@ -5,7 +5,7 @@ import { Image, Post } from "@/Interface/interfaces";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useAtom, useAtomValue } from "jotai";
-import { descriptionAtom, filesAtom, ryokanAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
+import { descriptionAtom, filesAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
 import { UploadForm } from "@/components/Upload/UploadForm";
 import { useRouter } from "next/router";
 

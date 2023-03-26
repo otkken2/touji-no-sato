@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { useAtomValue, useSetAtom } from "jotai";
-import { descriptionAtom, filesAtom, ryokanAtom, userAtom } from "@/atoms/atoms";
+import { descriptionAtom, filesAtom, userAtom } from "@/atoms/atoms";
 import Cookies from "js-cookie";
 import { Post } from "@/components/Post/Post";
 import { Button, TextField } from "@mui/material";

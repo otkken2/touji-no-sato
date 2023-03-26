@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { descriptionAtom, filesAtom, ryokanAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
+import { descriptionAtom, filesAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
 import { PlacesAutoComplete } from "@/pages/RyokanInfo";
 import { Button, TextField } from "@mui/material";
 import { API_URL } from "const";
@@ -29,7 +29,6 @@ export const UploadForm = (props: UploadFormProps) => {
     libraries: ["places"],
   });
   const user = useAtomValue(userAtom);
-  const [ryokan, setRyokan] = useAtom(ryokanAtom);
   const selectedPlace = useAtomValue(selectedPlaceAtom);
   const [description, setDescription] = useAtom(descriptionAtom);
   const [files, setFiles] = useAtom(filesAtom);

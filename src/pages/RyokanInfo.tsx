@@ -7,7 +7,7 @@ import usePlacesAutocomplete, {getGeocode, getLatLng} from "use-places-autocompl
 import { Combobox, ComboboxInput, ComboboxPopover, ComboboxList, ComboboxOption } from "@reach/combobox";
 import "@reach/combobox/styles.css"
 import { SetStateAction, useAtom, useAtomValue, useSetAtom } from "jotai";
-import { ryokanAtom, selectedPlaceAtom } from "@/atoms/atoms";
+import { selectedPlaceAtom } from "@/atoms/atoms";
 
 // const options = {
 //   method: 'GET',
@@ -57,7 +57,6 @@ const Map = () => {
   // const center = useMemo(()=>({ lat: 35.6, lng: 138.9 }),[]);
   const [center, setCenter] = useState<LatLng>({ lat: 35.6, lng: 138.9 })
   const [selected, setSelected] = useState<null | LatLng>(null);
-  const ryokanName = useAtomValue(ryokanAtom);
   const selectedPlace  = useAtomValue(selectedPlaceAtom);
 
   return (
@@ -87,7 +86,6 @@ interface PlacesAutocompleteProps{
 // export const PlacesAutoComplete = ({setSelected}: PlacesAutocompleteProps) => {
 export const PlacesAutoComplete = () => {
   const [selectedPlace,setSelectedPlace] = useAtom(selectedPlaceAtom);
-  const [ryokan,setRyokan] = useAtom(ryokanAtom);
   const {
     ready,
     value,

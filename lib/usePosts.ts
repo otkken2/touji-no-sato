@@ -4,13 +4,12 @@ import { UserData } from "@/Interface/interfaces";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { useSetAtom } from "jotai";
-import { descriptionAtom, ryokanAtom, selectedPlaceAtom } from "@/atoms/atoms";
+import { descriptionAtom, selectedPlaceAtom } from "@/atoms/atoms";
 import { selectAtom } from "jotai/utils";
 
 export const usePosts = () => {
   const token = Cookies.get('token');
   const router = useRouter();
-  // const setRyokan = useSetAtom(ryokanAtom);
   const setSelectedPlace = useSetAtom(selectedPlaceAtom);
   const setDescription = useSetAtom(descriptionAtom);
   const fetchMyPosts = async (userId: number | undefined) => {

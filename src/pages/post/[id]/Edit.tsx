@@ -1,4 +1,4 @@
-import { descriptionAtom, filesAtom, ryokanAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
+import { descriptionAtom, filesAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
 import { UploadForm } from "@/components/Upload/UploadForm";
 import { useLoadScript } from "@react-google-maps/api";
 import { API_URL } from "const";
@@ -13,7 +13,6 @@ const Edit = () => {
     libraries: ["places"],
   });
   const [files, setFiles] = useAtom(filesAtom);
-  const [ryokan, setRyokan] = useAtom(ryokanAtom);
   const [description, setDescription] = useAtom(descriptionAtom);
   const user = useAtomValue(userAtom);
   const token = Cookies.get('token');
