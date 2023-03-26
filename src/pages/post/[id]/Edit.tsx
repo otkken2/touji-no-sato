@@ -33,7 +33,6 @@ const Edit = () => {
     files.map((file:any)=> {
       formData.append('files.Image',file, file.name);
     })
-    // formData.append('files.Image', files);
 
     const textData = {
       ryokan: selectedPlace,
@@ -54,8 +53,7 @@ const Edit = () => {
   };
 
   return (
-    isLoaded &&
-    <UploadForm handleSubmit={handleSubmit}/>
+    <UploadForm handleSubmit={handleSubmit} title='編集'/>
   );
 };
 

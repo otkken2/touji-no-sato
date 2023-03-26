@@ -15,10 +15,6 @@ interface PostInterface{
       images: Image | undefined;
 }
 const Upload = () => {
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey: process?.env?.NEXT_PUBLIC_GOOGLE_API_KEY ?? '',
-    libraries: ["places"],
-  });
   const files = useAtomValue(filesAtom);
   const selectedPlace = useAtomValue(selectedPlaceAtom);
   const description = useAtomValue(descriptionAtom);
@@ -32,14 +28,12 @@ const Upload = () => {
     e.preventDefault();
     console.log('handleSubmit')
     console.log(files);
-    console.log(user);
     console.log(selectedPlace);
     const formData = new FormData();
 
     files?.map((file:any)=> {
       formData.append('files.Image',file, file.name);
     })
-    // formData.append('files.Image', files);
 
     const textData = {
       ryokan: selectedPlace,
@@ -58,13 +52,9 @@ const Upload = () => {
       router.push('/')
     });
   };
-  if(!user)router.push('/Login');
+
   return (
-    isLoaded && user &&
-    <div className="text-white text-center">
-      <h1>新規投稿</h1>
-      <UploadForm handleSubmit={handleSubmit}/>
-    </div>
+    <UploadForm handleSubmit={handleSubmit} title='新規投稿'/>
   );
 }
 
