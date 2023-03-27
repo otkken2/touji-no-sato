@@ -30,7 +30,7 @@ export const usePosts = () => {
     })
   };
 
-  const handleGetContent = (ryokanData: string, descriptionData: string) => {
+  const handleGetContent = (ryokanData: string = '', descriptionData: string = '') => {
     // setRyokan(ryokanData);
     setSelectedPlace(ryokanData);
     setDescription(descriptionData);

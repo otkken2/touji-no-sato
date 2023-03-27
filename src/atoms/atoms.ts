@@ -1,5 +1,5 @@
 import { FavoriteData } from "@/Interface/favorite";
-import { Post, UserInterface } from "@/Interface/interfaces";
+import { Post, PreviewFilesInterface, UserInterface } from "@/Interface/interfaces";
 import { atom } from "jotai";
 import { atomWithStorage } from 'jotai/utils'
 
@@ -7,6 +7,9 @@ export const userAtom = atomWithStorage<UserInterface | undefined>('authUser',un
 export const myPostsAtom = atom<Post[] | undefined>(undefined);
 export const descriptionAtom = atom<string | undefined>(undefined);
 export const filesAtom = atom<File[]>([]);
+export const previewsAtom = atom<PreviewFilesInterface[]>([]);
+export const latAtom = atom<number>(0);
+export const lngAtom = atom<number>(0);
 
 export const selectedPlaceAtom = atom<string>('');
 

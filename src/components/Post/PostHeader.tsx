@@ -59,7 +59,7 @@ export const PostHeader = (props: PostHeaderProps) => {
           <img src="/ellipsis.png" alt="" className='w-5 h-5 cursor-pointer m-3' onClick={()=> setShowEditDelete(prevState => !prevState)}/>
         }
         {/* 編集と削除(detailPageの場合のみ) */}
-        {isDetailPage && postId && ryokan && description && showEditDelete &&
+        {isDetailPage && postId && showEditDelete &&
           <div className="flex edit-delete absolute justify-around bg-background-secondary rounded-md right-3 w-32 h-12 z-10">
             {/* <Link className="mr-3  bg-red-200" href={`/post/${postId}/Edit`} onClick={()=>{handleGetContent(ryokan,description)}}> */}
               <img src='/edit.svg' className='cursor-pointer' height={20} width={20} alt="編集" onClick={() => handelClickEditIcon()}/>

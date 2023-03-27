@@ -1,6 +1,5 @@
-import { descriptionAtom, filesAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
+import { descriptionAtom, filesAtom, latAtom, lngAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
 import { UploadForm } from "@/components/Upload/UploadForm";
-import { useLoadScript } from "@react-google-maps/api";
 import { API_URL } from "const";
 import { useAtom, useAtomValue } from "jotai";
 import Cookies from "js-cookie";
@@ -8,16 +7,14 @@ import router from "next/router";
 import { useEffect } from "react";
 
 const Edit = () => {
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey: process?.env?.NEXT_PUBLIC_GOOGLE_API_KEY ?? '',
-    libraries: ["places"],
-  });
   const [files, setFiles] = useAtom(filesAtom);
   const [description, setDescription] = useAtom(descriptionAtom);
   const user = useAtomValue(userAtom);
   const token = Cookies.get('token');
   const { id } = router.query;
   const selectedPlace = useAtomValue(selectedPlaceAtom);
+  const lat = useAtomValue(latAtom);
+  const lng = useAtomValue(lngAtom);
 
   useEffect(()=>{
 
@@ -37,6 +34,8 @@ const Edit = () => {
       ryokan: selectedPlace,
       description: description,
       user: user?.id,
+      lat: lat,
+      lng: lng,
     }
     formData.append('data', JSON.stringify(textData));
     await fetch(`${API_URL}/api/posts/${id}`, {
@@ -47,6 +46,7 @@ const Edit = () => {
       }
     }).then(res => {
       console.log('成功！');
+      setFiles([]);
       router.push(`/post/${id}`);
     });
   };

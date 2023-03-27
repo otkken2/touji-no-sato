@@ -78,6 +78,8 @@ export interface PostAttributes {
   localizations?: Images;
   parentPostId?:  number;
   bathingDay?:    Date;
+  lat?:           number;
+  lng?:           number;
 }
 
 export interface Images {
@@ -137,5 +139,8 @@ export interface UserData {
 export interface Meta {
 }
 
-
+export interface PreviewFilesInterface{
+  URL: string,
+  isMovie: boolean
+}
 

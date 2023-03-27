@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { descriptionAtom, filesAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
+import { descriptionAtom, filesAtom, previewsAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
 import { PlacesAutoComplete } from "@/pages/RyokanInfo";
 import { Button, TextField } from "@mui/material";
 import { API_URL } from "const";
@@ -19,10 +19,7 @@ interface UploadFormProps{
   title?: string;
   handleSubmit: (e: any) => Promise<void>;
 }
-interface PreviewFilesInterface{
-  URL: string,
-  isMovie: boolean
-}
+
 export const UploadForm = (props: UploadFormProps) => {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process?.env?.NEXT_PUBLIC_GOOGLE_API_KEY ?? '',
@@ -33,7 +30,7 @@ export const UploadForm = (props: UploadFormProps) => {
   const [description, setDescription] = useAtom(descriptionAtom);
   const [files, setFiles] = useAtom(filesAtom);
   const {handleSubmit, title} = props;
-  const [previews, setPreviews] = useState<PreviewFilesInterface[]>([]);
+  const [previews, setPreviews] = useAtom(previewsAtom);
   const { isMovie } = usePosts();
   const [currentSlide, setCurrentSlide] = useState<number>(0);
   const [loaded, setLoaded] = useState(false);

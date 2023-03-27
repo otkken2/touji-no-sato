@@ -48,24 +48,28 @@ const MyOnsenCollection = () => {
   const [idOfVisibleInfoWindow,setIdOfVisibleInfoWindow] = useState<number>(0);
   const [myOnsens, setMyOnsens] = useState<MyOnsenInterface[]>([]);
   const fetchMyPosts = async () => {
-    const response = await axios.get(`${API_URL}/api/posts?populate=*&filters[user][id][$eq]=${id}`)
+    const response = await axios.get(`${API_URL}/api/posts?populate=*&filters[user][id][$eq]=${id}`);
     return response.data;
   }
   const [postsGroupsByLatLng, setPostsGroupsByLatLng] = useState<PostsGroupsByLatLngInterface[]>([]);
   const LatLngFromAddress = useCallback(
     async () => {
-      const data = await fetchMyPosts();
+      const myPosts = await fetchMyPosts();
       if(window.google === undefined)return;
-      return data?.data?.map(async(eachPost: PostData)=>{
-        if(!eachPost?.attributes?.ryokan)return;
-        const address = eachPost?.attributes?.ryokan;
-        const geoCode = await getGeocode({address});
-        const latLng = await getLatLng(geoCode[0]);
-        setMyOnsens((prevState) => [...prevState,{data: eachPost, latLng: latLng}]);
+      return myPosts?.data?.map(async(eachPost: PostData)=>{
+        if(eachPost?.attributes?.lat && eachPost?.attributes?.lng){
+          const latLng: LatLng = {lat: eachPost.attributes.lat, lng: eachPost.attributes.lng};
+          setMyOnsens((prevState) => [...prevState,{data: eachPost, latLng: latLng}]);
+        }else{
+          if(!eachPost?.attributes?.ryokan)return;
+          const address = eachPost?.attributes?.ryokan;;
+          const geoCode = await getGeocode({address});
+          const latLng = await getLatLng(geoCode[0]);
+          setMyOnsens((prevState) => [...prevState,{data: eachPost, latLng: latLng}]);
+        }
       });
     },[id]
   )
-
 
   useEffect(()=>{
     LatLngFromAddress();
@@ -82,8 +86,6 @@ const MyOnsenCollection = () => {
           )
         ).values()
       );
-      console.log("myLatLngs");
-      console.log(myLatLngs);
       myLatLngs.map((latLng)=>{
         setPostsGroupsByLatLng((prevPostsGroups)=>{
           const filteredOnsensByLatLng = myOnsens.filter((onsen)=> onsen.latLng.lat === latLng.lat && onsen.latLng.lng === latLng.lng);
@@ -93,8 +95,6 @@ const MyOnsenCollection = () => {
       });
     };
     getPostsGroupsByLatLng();
-    console.log("postsGroupsByLatLng");
-    console.log(postsGroupsByLatLng);
   },[myOnsens])
 
   const handleSelectMarker = (idOfVisibleInfoWindow: number, latLng: LatLng) => {

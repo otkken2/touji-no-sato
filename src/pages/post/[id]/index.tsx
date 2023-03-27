@@ -5,12 +5,14 @@ import { PostData } from "@/Interface/interfaces";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
-import { useAtomValue, useSetAtom } from "jotai";
-import { descriptionAtom, filesAtom, userAtom } from "@/atoms/atoms";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { descriptionAtom, filesAtom, previewsAtom, userAtom } from "@/atoms/atoms";
 import Cookies from "js-cookie";
 import { Post } from "@/components/Post/Post";
 import { Button, TextField } from "@mui/material";
 import { MuiFileInput } from "mui-file-input";
+import { FileInput } from "@/components/Post/FileInput";
+import { SetStateAction } from "jotai/vanilla";
 
 const ShowPostDetail = () => {
   const router = useRouter();
@@ -20,10 +22,12 @@ const ShowPostDetail = () => {
   const token = Cookies.get('token');
   const [replies, setReplies] = useState<PostData[]>([]);
   const [replyText, setReplyText] = useState<string>('');
-  const [replyFiles, setReplyFiles] = useState<File[]>([]);
+  // const [replyFiles, setReplyFiles] = useState<File[]>([]);
+  const [replyFiles, setReplyFiles] = useAtom(filesAtom);
   const user = useAtomValue(userAtom);
   const [hasPostedReply, setHasPostedReply] = useState<boolean>(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [previews, setPreviews] = useAtom(previewsAtom);
 
   useEffect(()=>{
     const getPostDetail = async() => {
@@ -49,7 +53,7 @@ const ShowPostDetail = () => {
       setReplies(res.data.data);
     };
     getReplies()
-  },[id, router, hasPostedReply]);
+  },[id, router, hasPostedReply, previews]);
 
 
   const handleSubmit = async(e:any) => {
@@ -78,6 +82,7 @@ const ShowPostDetail = () => {
       console.log('リプの投稿に成功しました。')
       setHasPostedReply(true);
       setIsUploading(false);
+      setPreviews([]);
     })
   };
 
@@ -87,7 +92,6 @@ const ShowPostDetail = () => {
         router.isReady &&
         <Post post={data} isDetailPage={true} postId={String(id)}/>
       }
-      <hr />
       {/* リプライ作成フォーム */}
       <form onSubmit={handleSubmit} className='w-full flex flex-col text-white'>
         <TextField
@@ -98,14 +102,19 @@ const ShowPostDetail = () => {
           variant="filled"
           value={replyText}
           onChange={e => setReplyText(e.target.value)}
-          className='text-white'
+          inputProps={{
+            style: {
+              color: 'white'
+            }
+          }}
+          className="bg-background-secondary text-white w-full rounded-lg"
+          InputLabelProps={{
+            style: {
+              color: 'white'
+            }
+          }}
         />
-        <MuiFileInput
-          multiple
-          variant="filled"
-          placeholder="ファイルを選択"
-          onChange={e => setReplyFiles(e)}
-        />
+        <FileInput onFileInputChange={(e)=> setReplyFiles(e as SetStateAction<File[]>)}/>
         <Button type="submit" variant="contained">返信</Button>
       </form>
       {isUploading && <p className="text-white font-bold">アップロード中です。しばらくお待ちください。。。</p>}

@@ -5,7 +5,7 @@ import { Image, Post } from "@/Interface/interfaces";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useAtom, useAtomValue } from "jotai";
-import { descriptionAtom, filesAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
+import { descriptionAtom, filesAtom, latAtom, lngAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
 import { UploadForm } from "@/components/Upload/UploadForm";
 import { useRouter } from "next/router";
 
@@ -18,6 +18,8 @@ const Upload = () => {
   const files = useAtomValue(filesAtom);
   const selectedPlace = useAtomValue(selectedPlaceAtom);
   const description = useAtomValue(descriptionAtom);
+  const lat = useAtomValue(latAtom);
+  const lng = useAtomValue(lngAtom);
 
   const user = useAtomValue(userAtom);
   const token = Cookies.get('token');
@@ -39,6 +41,8 @@ const Upload = () => {
       ryokan: selectedPlace,
       description: description,
       user: user?.id,
+      lat: lat,
+      lng: lng,
     }
     formData.append('data', JSON.stringify(textData));
     await fetch(`${API_URL}/api/posts`, {

@@ -7,7 +7,7 @@ import usePlacesAutocomplete, {getGeocode, getLatLng} from "use-places-autocompl
 import { Combobox, ComboboxInput, ComboboxPopover, ComboboxList, ComboboxOption } from "@reach/combobox";
 import "@reach/combobox/styles.css"
 import { SetStateAction, useAtom, useAtomValue, useSetAtom } from "jotai";
-import { selectedPlaceAtom } from "@/atoms/atoms";
+import { latAtom, lngAtom, selectedPlaceAtom } from "@/atoms/atoms";
 
 // const options = {
 //   method: 'GET',
@@ -86,13 +86,16 @@ interface PlacesAutocompleteProps{
 // export const PlacesAutoComplete = ({setSelected}: PlacesAutocompleteProps) => {
 export const PlacesAutoComplete = () => {
   const [selectedPlace,setSelectedPlace] = useAtom(selectedPlaceAtom);
+  const [lat,setLat] = useAtom(latAtom);
+  const [lng,setLng] = useAtom(lngAtom);
+
   const {
     ready,
     value,
     setValue,
     suggestions: {status, data},
     clearSuggestions,
-  } = usePlacesAutocomplete({defaultValue: selectedPlace});
+  } = usePlacesAutocomplete({defaultValue: selectedPlace || ''});
   // } = usePlacesAutocomplete();
 
   // console.log(data);
@@ -106,8 +109,8 @@ export const PlacesAutoComplete = () => {
 
     const results = await getGeocode({address});
     const {lat, lng} = await getLatLng(results[0]);
-    // setSelected({lat, lng})
-    // setCenter({lat, lng})
+    setLat(lat);
+    setLng(lng);
   };
 
   console.log();
