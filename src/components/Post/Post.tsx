@@ -56,6 +56,7 @@ export const Post = (props: PostsProps) => {
             ryokan={post.attributes?.ryokan}
             description={post.attributes?.description}
             postId={postId}
+            post={post}
           />
           {/* 画像もしくは動画 */}
 

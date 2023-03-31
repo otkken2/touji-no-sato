@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { useAtomValue } from "jotai";
 import { userAtom } from "@/atoms/atoms";
+import { PostData } from "@/Interface/interfaces";
 
 interface PostHeaderProps{
   userId?: number;
@@ -17,6 +18,7 @@ interface PostHeaderProps{
   postId?: string;
   ryokan?: string;
   description?: string;
+  post?: PostData;
 }
 
 export const PostHeader = (props: PostHeaderProps) => {
@@ -26,16 +28,7 @@ export const PostHeader = (props: PostHeaderProps) => {
   const router = useRouter();
   const user = useAtomValue(userAtom);
 
-  // console.log("ryokan")
-  // console.log(ryokan)
-  // console.log("description")
-  // console.log(description)
-  // console.log("isDetailPage")
-  // console.log(isDetailPage)
-  // console.log("postId")
-  // console.log(postId)
   const handelClickEditIcon = () => {
-    if(!ryokan && !description)return;
     handleGetContent(ryokan,description);
     router.push(`/post/${postId}/Edit`);
   };
@@ -61,9 +54,7 @@ export const PostHeader = (props: PostHeaderProps) => {
         {/* 編集と削除(detailPageの場合のみ) */}
         {isDetailPage && postId && showEditDelete &&
           <div className="flex edit-delete absolute justify-around bg-background-secondary rounded-md right-3 w-32 h-12 z-10">
-            {/* <Link className="mr-3  bg-red-200" href={`/post/${postId}/Edit`} onClick={()=>{handleGetContent(ryokan,description)}}> */}
               <img src='/edit.svg' className='cursor-pointer' height={20} width={20} alt="編集" onClick={() => handelClickEditIcon()}/>
-            {/* </Link> */}
             <Image className="mr-3 cursor-pointer" src={'/delete.svg'} height={20} width={20} alt='削除' onClick={()=> handleDeletePost(postId)}/>
           </div>
         }

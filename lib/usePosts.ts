@@ -30,6 +30,13 @@ export const usePosts = () => {
     })
   };
 
+  const getPostByPostId = async (id: string)=> {
+    const postDetail = await axios.get(`${API_URL}/api/posts/${id}?populate=*`).then(
+      (res) => res.data.data
+    );
+    return postDetail;
+  };
+
   const handleGetContent = (ryokanData: string = '', descriptionData: string = '') => {
     // setRyokan(ryokanData);
     setSelectedPlace(ryokanData);
@@ -40,5 +47,39 @@ export const usePosts = () => {
     return url.includes('.mp4') || url.includes('.MP4') || url.includes('.mov') || url.includes('MOV') || url.includes('WMV') || url.includes('AVI') || url.includes('FLV') || url.includes('MPEG');
   };
 
-  return {fetchMyPosts, isMovie, handleDeletePost, handleGetContent};
+  const uploadMediaFile = async (profileIcon: File) => {
+    const formData = new FormData();
+    formData.append('files',profileIcon, profileIcon.name);
+    const response = await fetch(`${API_URL}/api/upload`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      body: formData,
+    });
+    const uploadedFile = await response.json();
+    return uploadedFile[0];
+  };
+  const uploadMediaFiles = async (files: File[]) => {
+    const uploadedFiles = files.map(async(eachFile)=>{//ここのブロック内で１ファイルごとにpostした方が良いのかも？どっちも試してみよう。
+      const formData = new FormData();
+      formData.append('files',eachFile, eachFile.name);
+      const response = await fetch(`${API_URL}/api/upload`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        body: formData,
+      });
+      const uploadedFile = await response.json();
+      console.log('from usePosts↓');
+      console.log(uploadedFile);
+      return uploadedFile;
+    });
+    console.log('array from usePosts↓')
+    console.log(uploadedFiles);
+    return uploadedFiles;
+  };
+
+  return {fetchMyPosts, isMovie, handleDeletePost, handleGetContent, getPostByPostId,uploadMediaFiles,uploadMediaFile};
 };

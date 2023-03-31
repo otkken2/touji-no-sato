@@ -1,13 +1,15 @@
 import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
 
 import { API_URL } from "const";
-import { Image, Post } from "@/Interface/interfaces";
+import { Image, ImageAttributes, Post } from "@/Interface/interfaces";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useAtom, useAtomValue } from "jotai";
 import { descriptionAtom, filesAtom, latAtom, lngAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
 import { UploadForm } from "@/components/Upload/UploadForm";
 import { useRouter } from "next/router";
+import { usePosts } from "lib/usePosts";
+import { useState } from "react";
 
 interface PostInterface{
   description: string;
@@ -25,18 +27,32 @@ const Upload = () => {
   const token = Cookies.get('token');
   const router = useRouter();
 
+  const [uploadedFiles, setUploadedFiles] = useState<ImageAttributes[]>([]);
+  const uploadMediaFile = async (profileIcon: File) => {
+    const formData = new FormData();
+    formData.append('files',profileIcon, profileIcon.name);
+    const response = await fetch(`${API_URL}/api/upload`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      body: formData,
+    });
+    const uploadedFile = await response.json();
+    return uploadedFile;
+  };
 
   const handleSubmit = async(e: any) => {
     e.preventDefault();
-    console.log('handleSubmit')
-    console.log(files);
-    console.log(selectedPlace);
     const formData = new FormData();
 
-    files?.map((file:any)=> {
-      formData.append('files.Image',file, file.name);
-    })
-
+    if(files){
+      files.map(async(file) => {
+        const uploadedFile: ImageAttributes[] = await uploadMediaFile(file);
+        setUploadedFiles(prev => [...prev,uploadedFile[0]]);
+      });
+    }
+    
     const textData = {
       ryokan: selectedPlace,
       description: description,
@@ -51,12 +67,36 @@ const Upload = () => {
       headers:{
         Authorization: `Bearer ${token}`
       }
-    }).then(res => {
-      alert('投稿に成功しました');
-      router.push('/')
+    }).then(async res => {
+      const post: Post = await res.json();
+      if(!post)return;
+      const postId = post.data?.id;
+      if(!uploadedFiles)return;
+      uploadedFiles.map(async eachFile => {
+        const data = {
+          postId: postId,
+          mediaAssetId: eachFile.id,
+        };
+
+        await axios.post(`${API_URL}/api/media-urls-of-posts`,
+          {
+            data: data,
+          },
+          {
+            headers:
+              {
+                Authorization: `Bearer ${token}`
+              }
+          }
+          ).then(res =>console.log('mediaUrlsOfPostsの投稿に成功しました'))
+          .catch(err => console.log(err));
+      })
+      alert('Postの投稿に成功しました');
+      setUploadedFiles([]);
+      router.push('/');
     });
   };
-
+  
   return (
     <UploadForm handleSubmit={handleSubmit} title='新規投稿'/>
   );

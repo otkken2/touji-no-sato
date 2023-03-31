@@ -108,6 +108,7 @@ export interface ImageAttributes {
   provider_metadata?: null;
   createdAt?:         Date;
   updatedAt?:         Date;
+  id?:                number;
 }
 
 export interface Formats {
