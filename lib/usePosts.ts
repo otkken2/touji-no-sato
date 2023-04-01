@@ -6,6 +6,8 @@ import { useRouter } from "next/router";
 import { useSetAtom } from "jotai";
 import { descriptionAtom, selectedPlaceAtom } from "@/atoms/atoms";
 import { selectAtom } from "jotai/utils";
+import { SetStateAction } from "jotai/vanilla";
+import { useState } from "react";
 
 export const usePosts = () => {
   const token = Cookies.get('token');
@@ -16,6 +18,7 @@ export const usePosts = () => {
     const response = await axios.get(`${API_URL}/api/posts?populate=*&filters[user][id][$eq]=${userId}`)
     return response.data;
   }
+  const [MediaUrls, setMediaUrls] = useState<string[]>([]);
 
   const handleDeletePost = async (postId: string) => {
     await fetch(`${API_URL}/api/posts/${postId}`,{
@@ -81,5 +84,22 @@ export const usePosts = () => {
     return uploadedFiles;
   };
 
-  return {fetchMyPosts, isMovie, handleDeletePost, handleGetContent, getPostByPostId,uploadMediaFiles,uploadMediaFile};
+  const fetchMediaUrlsOfPost = async (postId: number|undefined) => {
+    if(!postId)return;
+    const res = await axios.get(`${API_URL}/api/media-urls-of-posts?filters[postId][$eq]=${postId}`);
+    const urls = res.data.data.map((each: any) => each?.attributes?.url);
+    setMediaUrls(urls);
+  };
+
+  return {
+    fetchMyPosts, 
+    isMovie, 
+    handleDeletePost, 
+    handleGetContent, 
+    getPostByPostId,
+    uploadMediaFiles,
+    uploadMediaFile,
+    fetchMediaUrlsOfPost,
+    MediaUrls,
+  };
 };

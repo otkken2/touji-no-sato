@@ -18,7 +18,7 @@ export const Media = (props: MediaProps)=>{
   const {post, isDetailPage = false} = props;
   const [currentSlide, setCurrentSlide] = useState<number>(0);
   const [loaded, setLoaded] = useState(false);
-  const { isMovie } = usePosts();
+  const { isMovie, fetchMediaUrlsOfPost, MediaUrls } = usePosts();
   const [urls, setUrls] = useState<string[]>();
 
   const [sliderRef, instanceRef] = useKeenSlider(
@@ -33,27 +33,20 @@ export const Media = (props: MediaProps)=>{
       },
     },
   )
-  const fetchMediaUrlsOfPost = async () => {
-    const res = await axios.get(`${API_URL}/api/media-urls-of-posts?filters[postId][$eq]=${post.id}`);
-    const urls = res.data.data.map((each: any) => each?.attributes?.url);
-    // console.log(urls);
-    setUrls(urls);
-    // return res.data.data.map((each: any) => each?.attributes?.url);
-    // return urls;
-  };
+  
   useEffect(()=>{
-    fetchMediaUrlsOfPost();
+    fetchMediaUrlsOfPost(post.id);
   },[post, post.id]);
 
-  console.log(urls);
+  // console.log(urls);
 
   // if(post?.attributes?.Image?.data === undefined)return <></>;
   // if(post?.attributes?.Image?.data?.length === 0)return <></>;
   return(
-    urls?.length ? 
+    MediaUrls?.length ? 
     <>
       <div className='keen-slider mb-3' ref={sliderRef}>
-         {urls.map((url: string,ImageIndex:number)=>{
+         {MediaUrls.map((url: string,ImageIndex:number)=>{
           if(!url)return <></>;
           // 詳細画面ならリンクなし
           if(isDetailPage){
