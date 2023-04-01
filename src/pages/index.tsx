@@ -23,23 +23,34 @@ export default function Home() {
   const token = Cookies.get('token');
   const { handleClickFavorite, myFavorites, getMyFavorites } = useFavorite()
   const user = useAtomValue(userAtom);
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const getPosts = async () => {
-    await axios.get(`${API_URL}/api/posts?populate[user][populate]=*&populate=Image&sort=createdAt%3Adesc`).then(res => {
-      setPosts(res.data.data);
-    })
+  const handleClickShowMore = () => {
+    // alert('handleClickShowMore!')
+    setCurrentPage(prev => prev + 1);
+  };
+
+  const getPosts = async (pageSize = 100) => {
+    const response = await axios.get(
+      `${API_URL}/api/posts?populate[user][populate]=*&sort=createdAt%3Adesc&pagination[page]=${currentPage}&pagination[pageSize]=10`
+    );
+    const data = response.data.data || [];
+    setPosts(prev => [...prev, ...data]);
   }
 
   useEffect(()=>{
     getPosts();
-  },[myFavorites]);
+  },[myFavorites,currentPage]);
 
   useEffect(()=>{
     getMyFavorites();
   },[]);
 
-  const {isLoading, data} = useQuery('posts',getPosts);
-  if(isLoading) return <h1>loading now...</h1>
+  console.log("posts");
+  console.log(posts);
+
+  // const {isLoading, data} = useQuery('posts',getPosts);
+  // if(isLoading) return <h1>loading now...</h1>
   return (
     <>
       <Head>
@@ -56,7 +67,14 @@ export default function Home() {
               !post.attributes?.parentPostId &&
               <Post key={index} post={post} index={index}/>
           );
-        })
+          })
+        }
+        {
+          posts.length &&
+          <div 
+            className='bg-background-secondary mb-10 text-primary h-[50px] w-[180px] leading-[50px] mx-auto text-center  rounded-full'
+            onClick={()=> handleClickShowMore()}
+          >more</div>
         }
       </main>
     </>
