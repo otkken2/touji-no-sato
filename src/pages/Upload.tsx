@@ -17,7 +17,7 @@ interface PostInterface{
       images: Image | undefined;
 }
 const Upload = () => {
-  const files = useAtomValue(filesAtom);
+  const [files, setFiles] = useAtom(filesAtom);
   const selectedPlace = useAtomValue(selectedPlaceAtom);
   const description = useAtomValue(descriptionAtom);
   const lat = useAtomValue(latAtom);
@@ -42,7 +42,7 @@ const Upload = () => {
     if(uploadedFile)console.log('ファイルアップロードされたよ');
     console.log("uploadedFile in uploadMediaFile()");
     console.log(uploadedFile);
-    setUploadedFiles(prev => [...prev,uploadedFile[0]]);
+    // setUploadedFiles(prev => [...prev,uploadedFile[0]]);
     return uploadedFile;
   };
 
@@ -145,6 +145,7 @@ const Upload = () => {
         const data = {
           postId: postId,
           mediaAssetId: eachFile.id,
+          url: eachFile.url,
         };
   
         await axios
@@ -163,7 +164,8 @@ const Upload = () => {
           .catch((err) => console.log(err));
       }
       // alert("Postの投稿に成功しました");
-      setUploadedFiles([]);
+      // setUploadedFiles([]);
+      setFiles([]);
       // router.push("/");
     });
   };
