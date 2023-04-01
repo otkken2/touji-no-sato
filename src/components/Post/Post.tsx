@@ -69,7 +69,7 @@ export const Post = (props: PostsProps) => {
               {post.attributes.createdAt}
             </Moment>
             {/* 投稿本文 */}
-            <Link href={`/post/${postId}`}>
+            <Link href={`/post/${post?.id}`}>
               <p className='mb-1'>
                 {post.attributes.description}
               </p>

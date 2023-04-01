@@ -26,8 +26,6 @@ const Upload = () => {
   const user = useAtomValue(userAtom);
   const token = Cookies.get('token');
   const router = useRouter();
-
-  const [uploadedFiles, setUploadedFiles] = useState<ImageAttributes[]>([]);
   const uploadMediaFile = async (profileIcon: File) => {
     const formData = new FormData();
     formData.append('files',profileIcon, profileIcon.name);
@@ -166,7 +164,7 @@ const Upload = () => {
       // alert("Postの投稿に成功しました");
       // setUploadedFiles([]);
       setFiles([]);
-      // router.push("/");
+      router.push("/");
     });
   };
   

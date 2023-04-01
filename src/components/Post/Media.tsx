@@ -1,12 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 import {useKeenSlider} from 'keen-slider/react'
 import 'keen-slider/keen-slider.min.css'
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Image as ImageInterface, PostData } from "@/Interface/interfaces";
 import ReactPlayer from 'react-player';
 import { API_URL } from 'const';
 import Link from 'next/link';
 import { usePosts } from 'lib/usePosts';
+import axios from 'axios';
 
 interface MediaProps{
   post: PostData,
@@ -18,7 +19,7 @@ export const Media = (props: MediaProps)=>{
   const [currentSlide, setCurrentSlide] = useState<number>(0);
   const [loaded, setLoaded] = useState(false);
   const { isMovie } = usePosts();
-
+  const [urls, setUrls] = useState<string[]>();
 
   const [sliderRef, instanceRef] = useKeenSlider(
     {
@@ -32,37 +33,51 @@ export const Media = (props: MediaProps)=>{
       },
     },
   )
-  if(post?.attributes?.Image?.data === undefined)return <></>;
-  if(post?.attributes?.Image?.data?.length === 0)return <></>;
+  const fetchMediaUrlsOfPost = async () => {
+    const res = await axios.get(`${API_URL}/api/media-urls-of-posts?filters[postId][$eq]=${post.id}`);
+    const urls = res.data.data.map((each: any) => each?.attributes?.url);
+    // console.log(urls);
+    setUrls(urls);
+    // return res.data.data.map((each: any) => each?.attributes?.url);
+    // return urls;
+  };
+  useEffect(()=>{
+    fetchMediaUrlsOfPost();
+  },[post, post.id]);
+
+  console.log(urls);
+
+  // if(post?.attributes?.Image?.data === undefined)return <></>;
+  // if(post?.attributes?.Image?.data?.length === 0)return <></>;
   return(
-    post?.attributes?.Image?.data?.length > 0 ?
+    urls?.length ? 
     <>
       <div className='keen-slider mb-3' ref={sliderRef}>
-        {post?.attributes?.Image?.data?.map((eachData: ImageInterface,ImageIndex:number)=>{
-          if(eachData?.attributes?.url === undefined)return <></>;
+         {urls.map((url: string,ImageIndex:number)=>{
+          if(!url)return <></>;
           // 詳細画面ならリンクなし
           if(isDetailPage){
             return (
-              isMovie(eachData.attributes.url) ?
+              isMovie(url) ?
               <div key={ImageIndex} className="w-[100vw] keen-slider__slide" >
-                <ReactPlayer width='100%' url={`${API_URL}${eachData.attributes.url}`} controls={true}/>
+                <ReactPlayer width='100%' url={`${API_URL}${url}`} controls={true}/>
               </div>
               :
               <div className="w-[100vw] keen-slider__slide" >
-                <img key={ImageIndex}  src={`${API_URL}${eachData.attributes.url}`} alt="" className='w-full h-full' />
+                <img key={ImageIndex}  src={`${API_URL}${url}`} alt="" className='w-full h-full' />
               </div>
             )
           }
           // リンクあり
           return(
-            isMovie(eachData.attributes.url) ?
+            isMovie(url) ?
             <div className="w-full keen-slider__slide" >
-              <ReactPlayer width='100%' url={`${API_URL}${eachData.attributes.url}`} controls={true}/>
+              <ReactPlayer width='100%' url={`${API_URL}${url}`} controls={true}/>
             </div>
             :
               <Link key={ImageIndex} href={`/post/${post.id}`}>
                 <div className="w-screen h-auto keen-slider__slide" >
-                  <img  src={`${API_URL}${eachData.attributes.url}`} alt="" className='w-full h-auto' />
+                  <img  src={`${API_URL}${url}`} alt="" className='w-full h-auto' />
                 </div>
               </Link>
             );
