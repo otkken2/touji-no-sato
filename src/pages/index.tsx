@@ -26,16 +26,26 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const handleClickShowMore = () => {
-    // alert('handleClickShowMore!')
     setCurrentPage(prev => prev + 1);
   };
 
   const getPosts = async (pageSize = 100) => {
     const response = await axios.get(
-      `${API_URL}/api/posts?populate[user][populate]=*&sort=createdAt%3Adesc&pagination[page]=${currentPage}&pagination[pageSize]=10`
+      `${API_URL}/api/posts?populate[user][populate]=*&sort=createdAt%3Adesc&pagination[page]=${currentPage}&pagination[pageSize]=50`
     );
-    const data = response.data.data || [];
-    setPosts(prev => [...prev, ...data]);
+    const tmpData: PostData[] = response.data.data || [];
+    
+    // 初回読み込み時の重複データを排除
+    const postsIds = posts.map(eachPost => eachPost.id);
+    if(!postsIds.length){ // 初回呼び出し時
+      setPosts(prev => [...prev, ...tmpData]);
+    }else{ //初回以降
+      const data = tmpData.filter(eachData => {
+        return !postsIds.includes(eachData.id);
+      })
+      if(!data.length)alert('これ以上のデータはありません。');
+      setPosts(prev => [...prev,...data]);
+    }
   }
 
   useEffect(()=>{
@@ -45,9 +55,6 @@ export default function Home() {
   useEffect(()=>{
     getMyFavorites();
   },[]);
-
-  console.log("posts");
-  console.log(posts);
 
   // const {isLoading, data} = useQuery('posts',getPosts);
   // if(isLoading) return <h1>loading now...</h1>
