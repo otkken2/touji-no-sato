@@ -52,7 +52,8 @@ const Edit = () => {
   };
 
   return (
-    <UploadForm handleSubmit={handleSubmit} title='編集'/>
+    id && typeof id === 'string' &&
+    <UploadForm handleSubmit={handleSubmit} title='編集' postId={id}/>
   );
 };
 

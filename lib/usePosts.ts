@@ -84,7 +84,7 @@ export const usePosts = () => {
     return uploadedFiles;
   };
 
-  const fetchMediaUrlsOfPost = async (postId: number|undefined) => {
+  const fetchMediaUrlsOfPost = async (postId: number| undefined) => {
     if(!postId)return;
     const res = await axios.get(`${API_URL}/api/media-urls-of-posts?filters[postId][$eq]=${postId}`);
     const urls = res.data.data.map((each: any) => each?.attributes?.url);

@@ -13,11 +13,13 @@ import {useKeenSlider} from 'keen-slider/react'
 import 'keen-slider/keen-slider.min.css'
 import { useLoadScript } from "@react-google-maps/api";
 import { useRouter } from "next/router";
+import {PreviewFilesInterface} from '../../Interface/interfaces'
 
 
 interface UploadFormProps{
   title?: string;
   handleSubmit: (e: any) => Promise<void>;
+  postId?: string;
 }
 
 export const UploadForm = (props: UploadFormProps) => {
@@ -29,12 +31,33 @@ export const UploadForm = (props: UploadFormProps) => {
   const selectedPlace = useAtomValue(selectedPlaceAtom);
   const [description, setDescription] = useAtom(descriptionAtom);
   const [files, setFiles] = useAtom(filesAtom);
-  const {handleSubmit, title} = props;
+  const {handleSubmit, title, postId} = props;
   const [previews, setPreviews] = useAtom(previewsAtom);
-  const { isMovie } = usePosts();
+  const { isMovie, fetchMediaUrlsOfPost,MediaUrls } = usePosts();
   const [currentSlide, setCurrentSlide] = useState<number>(0);
   const [loaded, setLoaded] = useState(false);
   const router = useRouter();
+
+  useEffect(()=>{
+    if(!postId)return;
+    console.log('HOGE');
+    fetchMediaUrlsOfPost(Number(postId))
+  },[postId]);
+
+  useEffect(()=>{
+    if(!MediaUrls)return;
+    const previews: PreviewFilesInterface[] = MediaUrls.map(eachURl => (
+      {
+        URL: `${API_URL}${eachURl}`,
+        isMovie: isMovie(eachURl),
+      }
+    ))
+    if(!previews.length)return;
+    setPreviews(previews);
+  },[MediaUrls]);
+
+  console.log("MediaUrls↓");
+  console.log(MediaUrls);
 
 
   const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -47,8 +70,8 @@ export const UploadForm = (props: UploadFormProps) => {
         }
       })
       setPreviews(fileURLs);
-      console.log("e.target.files");
-      console.log(e.target.files);
+      // console.log("e.target.files");
+      // console.log(e.target.files);
       setFiles(Array.from(e.target.files));
     };
   };

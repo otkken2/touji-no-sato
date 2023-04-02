@@ -24,12 +24,14 @@ export default function Home() {
   const { handleClickFavorite, myFavorites, getMyFavorites } = useFavorite()
   const user = useAtomValue(userAtom);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleClickShowMore = () => {
     setCurrentPage(prev => prev + 1);
   };
 
   const getPosts = async (pageSize = 100) => {
+    setIsLoading(true);
     const response = await axios.get(
       `${API_URL}/api/posts?populate[user][populate]=*&sort=createdAt%3Adesc&pagination[page]=${currentPage}&pagination[pageSize]=50`
     );
@@ -43,9 +45,9 @@ export default function Home() {
       const data = tmpData.filter(eachData => {
         return !postsIds.includes(eachData.id);
       })
-      if(!data.length)alert('これ以上のデータはありません。');
       setPosts(prev => [...prev,...data]);
     }
+    setIsLoading(false);
   }
 
   useEffect(()=>{
@@ -76,6 +78,7 @@ export default function Home() {
           );
           })
         }
+        {isLoading && <p className='text-white text-center mb-10'>...Loading now</p>}
         {
           posts.length &&
           <div 
