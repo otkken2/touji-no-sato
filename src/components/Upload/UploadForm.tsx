@@ -3,23 +3,23 @@ import { descriptionAtom, filesAtom, previewsAtom, selectedPlaceAtom, userAtom }
 import { PlacesAutoComplete } from "@/pages/RyokanInfo";
 import { Button, TextField } from "@mui/material";
 import { API_URL } from "const";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { usePosts } from "lib/usePosts";
-import { MuiFileInput } from "mui-file-input";
-import { ChangeEvent, SetStateAction, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import ReactPlayer from "react-player";
-import { Media } from "../Post/Media";
-import {useKeenSlider} from 'keen-slider/react'
 import 'keen-slider/keen-slider.min.css'
 import { useLoadScript } from "@react-google-maps/api";
 import { useRouter } from "next/router";
 import {PreviewFilesInterface} from '../../Interface/interfaces'
+import axios from "axios";
+import Cookies from "js-cookie";
 
 
 interface UploadFormProps{
   title?: string;
   handleSubmit: (e: any) => Promise<void>;
   postId?: string;
+  isEditPage?: boolean;
 }
 
 export const UploadForm = (props: UploadFormProps) => {
@@ -27,38 +27,44 @@ export const UploadForm = (props: UploadFormProps) => {
     googleMapsApiKey: process?.env?.NEXT_PUBLIC_GOOGLE_API_KEY ?? '',
     libraries: ["places"],
   });
+  const {handleSubmit, title, postId, isEditPage = false} = props;
   const user = useAtomValue(userAtom);
-  const selectedPlace = useAtomValue(selectedPlaceAtom);
+  const setSelectedPlace = useSetAtom(selectedPlaceAtom);
   const [description, setDescription] = useAtom(descriptionAtom);
   const [files, setFiles] = useAtom(filesAtom);
-  const {handleSubmit, title, postId} = props;
   const [previews, setPreviews] = useAtom(previewsAtom);
+  const [existingPreviews, setExistingPreviews] = useState<PreviewFilesInterface[]>([]);
   const { isMovie, fetchMediaUrlsOfPost,MediaUrls } = usePosts();
-  const [currentSlide, setCurrentSlide] = useState<number>(0);
-  const [loaded, setLoaded] = useState(false);
   const router = useRouter();
+  const [selectedMediasForDelete, setSelectedMediasForDelete] = useState<PreviewFilesInterface[]>([]);
+  const token = Cookies.get('token');
+  const [checkedMediasIndex, setCheckedMediasIndex] = useState<number[]>([]);
+  
+  useEffect(()=>{ //Uploadページの場合
+    if(isEditPage)return;
+    setDescription('');
+    setSelectedPlace('');
+    setPreviews([]);
+  },[]);
 
-  useEffect(()=>{
+  useEffect(()=>{ //Editページの場合１
+    if(!isEditPage)return;
     if(!postId)return;
-    console.log('HOGE');
     fetchMediaUrlsOfPost(Number(postId))
   },[postId]);
 
-  useEffect(()=>{
+  useEffect(()=>{ //Editページの場合2 (既存画像データをプレビューとして表示する準備)
+    if(!isEditPage)return;
     if(!MediaUrls)return;
-    const previews: PreviewFilesInterface[] = MediaUrls.map(eachURl => (
+    const existingPreviews: PreviewFilesInterface[] = MediaUrls.map(eachURl => (
       {
         URL: `${API_URL}${eachURl}`,
         isMovie: isMovie(eachURl),
       }
     ))
-    if(!previews.length)return;
-    setPreviews(previews);
+    if(!existingPreviews.length)return;
+    setExistingPreviews(existingPreviews);
   },[MediaUrls]);
-
-  console.log("MediaUrls↓");
-  console.log(MediaUrls);
-
 
   const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if(e.target.files){
@@ -69,12 +75,65 @@ export const UploadForm = (props: UploadFormProps) => {
           isMovie: isMovie(eachFile.name)
         }
       })
-      setPreviews(fileURLs);
-      // console.log("e.target.files");
-      // console.log(e.target.files);
-      setFiles(Array.from(e.target.files));
+      setPreviews([...previews,...fileURLs]);
+      setFiles([...files,...Array.from(e.target.files)]);
     };
   };
+
+  // replaceメソッドで、API_URLを''(空文字)に置換する->残った文字列をキーとして、media-urls-of-postエンドポイントのdeleteメソッドを呼び出して該当レコードを削除。
+  const handleClickDeleteMedia = async () => {
+    if(!postId)return; //Editページではない（＝Uploadページである）場合、postIdが渡されていないので早期リターン。
+    selectedMediasForDelete.map(async eachMedia => {
+      const deleteUrl = eachMedia.URL.replace(`${API_URL}`,'');
+      const deleteId: number = await axios.get(`${API_URL}/api/media-urls-of-posts?filters[url][$eq]=${deleteUrl}`).then(res => {
+        return res.data.data[0].id;
+      })
+      if(!deleteId)return;
+      await axios.delete(`${API_URL}/api/media-urls-of-posts/${deleteId}`,{
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }).then(res => {
+        fetchMediaUrlsOfPost(Number(postId));
+        router.push(`/post/${postId}/Edit`);
+      })
+    });
+  };
+
+  // 削除したい個別画像の選択
+  const handleClickPreviews = async (preview: PreviewFilesInterface,index: number) => {//Editページの場合３
+    if(!postId)return;
+    if(checkedMediasIndex.includes(index)){
+      setCheckedMediasIndex(prev => 
+        prev.filter(eachCheckedIndex => eachCheckedIndex !== index)
+        );
+        setSelectedMediasForDelete(prev => 
+          prev.filter(eachSelectedMedias => eachSelectedMedias.URL !== preview.URL)
+          )
+    }else{
+      console.log('HOGe!!!!!!!!!!!');
+      setCheckedMediasIndex(prev => [...prev,index]);
+      setSelectedMediasForDelete(prev => [...prev,preview]);
+    }
+  };
+
+  const renderPreview = (preview: PreviewFilesInterface, index: number, isExistingMedia: boolean = false) => (
+    <>
+      <div className='relative'>
+        {
+          preview.isMovie ?
+            <div key={index} className='flex justify-center'>
+              <ReactPlayer key={index} width='95%' height={200} url={preview.URL} controls={true}/>
+            </div>
+            :
+            <img className="w-[95%] m-auto" key={index} src={preview.URL} alt="プレビュー" />
+        }
+        {
+          isExistingMedia && <input type="checkbox" name="" id="" className="absolute top-1 right-1 h-5 w-10 " onClick={() => handleClickPreviews(preview,index)}/> 
+        }
+      </div>
+    </>
+  );
 
   if(!user)router.push('/Login');
   return (
@@ -110,6 +169,48 @@ export const UploadForm = (props: UploadFormProps) => {
                 rows={5}
               />
             </div>
+              {
+                isEditPage && existingPreviews.length > 0 &&
+                <div className="w-full">
+                  <p>元の写真</p>
+                  <div className="grid grid-cols-2 mb-10">
+                    {existingPreviews.map((preview,index)=>(
+                      renderPreview(preview,index,true)
+                      ))}
+                  </div>
+                </div>
+              }
+              
+              
+              {selectedMediasForDelete.length > 0 && isEditPage &&
+                <button 
+                  type="submit" 
+                  className='w-[50%] h-[50px] mx-auto bg-background-secondary rounded-full px-3 cursor-pointer text-red-700 mb-10'
+                  onClick={()=> handleClickDeleteMedia()}
+                >
+                  {selectedMediasForDelete.length}枚の写真を削除
+                </button>
+              }
+              {previews.length > 0 &&
+                <>
+                  {isEditPage && <p>新しく選択した写真</p>}
+                  <div className="grid grid-cols-2 mb-10">
+                    {
+                      previews.map((preview,index) => (
+                        renderPreview(preview,index)
+                      ))
+                    }
+                  </div>
+                </>
+              }
+              {previews.length > 0 && 
+                <div className="mb-[50px]">
+                  <Button onClick={() => {
+                    setFiles([])
+                    setPreviews([]);
+                  }}>クリア</Button>
+                </div>
+              }
               <label className="bg-white text-primary font-bold flex justify-center items-center cursor-pointer h-[50px] mx-3 rounded-md outline-cyan-400 outline mb-8">
                 <input
                   className='hidden'
@@ -121,24 +222,7 @@ export const UploadForm = (props: UploadFormProps) => {
                 <img src="/pictures.svg" alt="" className="h-[25px] mr-3"/>
                 <p className="my-auto align-middlle">写真・動画を選択</p>
               </label>
-              {previews &&
-                <div className="grid grid-cols-2 w-screen">
-                  {
-                    previews.map((preview,index) => (
-                      preview.isMovie ?
-                        <div key={index} className='flex justify-center'>
-                          <ReactPlayer key={index} width='95%' height={200} url={preview.URL} controls={true}/>
-                        </div>
-                        :
-                        <img className="w-[95%] m-auto" key={index} src={preview.URL} alt="プレビュー" />
-                    ))
-                  }
-                </div>
-              }
-              <div className="mb-[50px]">
-                <Button onClick={() => setFiles([])}>クリア</Button>
-              </div>
-              <button className='w-[50%] mb-[100px] left-0 m-auto bg-background-secondary h-14 text-primary rounded-full' type="submit">投稿する</button>
+              <button className='w-[50%] mb-[100px] left-0 m-auto bg-background-secondary h-14 text-primary rounded-full' type="submit">{isEditPage ? '更新する':'投稿する'}</button>
           </div>
         </form>
       </div>

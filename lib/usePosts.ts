@@ -50,19 +50,6 @@ export const usePosts = () => {
     return url.includes('.mp4') || url.includes('.MP4') || url.includes('.mov') || url.includes('MOV') || url.includes('WMV') || url.includes('AVI') || url.includes('FLV') || url.includes('MPEG');
   };
 
-  const uploadMediaFile = async (profileIcon: File) => {
-    const formData = new FormData();
-    formData.append('files',profileIcon, profileIcon.name);
-    const response = await fetch(`${API_URL}/api/upload`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
-      body: formData,
-    });
-    const uploadedFile = await response.json();
-    return uploadedFile[0];
-  };
   const uploadMediaFiles = async (files: File[]) => {
     const uploadedFiles = files.map(async(eachFile)=>{//ここのブロック内で１ファイルごとにpostした方が良いのかも？どっちも試してみよう。
       const formData = new FormData();
@@ -89,6 +76,24 @@ export const usePosts = () => {
     const res = await axios.get(`${API_URL}/api/media-urls-of-posts?filters[postId][$eq]=${postId}`);
     const urls = res.data.data.map((each: any) => each?.attributes?.url);
     setMediaUrls(urls);
+  };
+
+  const uploadMediaFile = async (profileIcon: File) => {
+    const formData = new FormData();
+    formData.append('files',profileIcon, profileIcon.name);
+    const response = await fetch(`${API_URL}/api/upload`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      body: formData,
+    });
+    const uploadedFile = await response.json();
+    if(uploadedFile)console.log('ファイルアップロードされたよ');
+    console.log("uploadedFile in uploadMediaFile()");
+    console.log(uploadedFile);
+    // setUploadedFiles(prev => [...prev,uploadedFile[0]]);
+    return uploadedFile;
   };
 
   return {

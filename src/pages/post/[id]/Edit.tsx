@@ -1,8 +1,11 @@
 import { descriptionAtom, filesAtom, latAtom, lngAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
 import { UploadForm } from "@/components/Upload/UploadForm";
+import { ImageAttributes } from "@/Interface/interfaces";
+import axios from "axios";
 import { API_URL } from "const";
 import { useAtom, useAtomValue } from "jotai";
 import Cookies from "js-cookie";
+import { usePosts } from "lib/usePosts";
 import router from "next/router";
 import { useEffect } from "react";
 
@@ -15,20 +18,21 @@ const Edit = () => {
   const selectedPlace = useAtomValue(selectedPlaceAtom);
   const lat = useAtomValue(latAtom);
   const lng = useAtomValue(lngAtom);
+  const {uploadMediaFile} = usePosts();
 
-  useEffect(()=>{
-
-  });
-  const handleSubmit = async(e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log('handleSubmit')
-    console.log(files);
-    console.log(user);
+
     const formData = new FormData();
 
-    files.map((file:any)=> {
-      formData.append('files.Image',file, file.name);
-    })
+    let flattenedUploadedFiles: ImageAttributes[] = [];
+
+    if (files) {
+      console.log("画像ファイルあるよ");
+      const uploadedFilesPromises = files.map((file) => uploadMediaFile(file));
+      const allUploadedFiles: ImageAttributes[][] = await Promise.all(uploadedFilesPromises);
+      flattenedUploadedFiles = allUploadedFiles.flat();
+    }
 
     const textData = {
       ryokan: selectedPlace,
@@ -44,16 +48,43 @@ const Edit = () => {
       headers:{
         Authorization: `Bearer ${token}`
       }
-    }).then(res => {
-      console.log('成功！');
+    }).then(async res => {
+      if (!flattenedUploadedFiles) return;
+      console.log("flattenedUploadedFilesあるよ");
+      console.log("flattenedUploadedFiles↓");
+      console.log(flattenedUploadedFiles);
+      for (const eachFile of flattenedUploadedFiles) {
+        const data = {
+          postId: id,
+          mediaAssetId: eachFile.id,
+          url: eachFile.url,
+        };
+  
+        await axios
+          .post(
+            `${API_URL}/api/media-urls-of-posts`,
+            {
+              data: data,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          )
+          .then((res) => console.log("mediaUrlsOfPostsの投稿に成功しました"))
+          .catch((err) => console.log(err));
+      }
+
+      // console.log('成功！');
       setFiles([]);
       router.push(`/post/${id}`);
     });
-  };
+  }
 
   return (
     id && typeof id === 'string' &&
-    <UploadForm handleSubmit={handleSubmit} title='編集' postId={id}/>
+    <UploadForm handleSubmit={handleSubmit} title='編集' postId={id} isEditPage={true}/>
   );
 };
 
