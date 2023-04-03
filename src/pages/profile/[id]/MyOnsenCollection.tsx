@@ -48,7 +48,7 @@ const MyOnsenCollection = () => {
   const [idOfVisibleInfoWindow,setIdOfVisibleInfoWindow] = useState<number>(0);
   const [myOnsens, setMyOnsens] = useState<MyOnsenInterface[]>([]);
   const fetchMyPosts = async () => {
-    const response = await axios.get(`${API_URL}/api/posts?populate=*&filters[user][id][$eq]=${id}`);
+    const response = await axios.get(`${API_URL}/api/posts?populate=*&filters[user][id][$eq]=${id}&pagination[page]=1&pagination[pageSize]=1000`);
     return response.data;
   }
   const [postsGroupsByLatLng, setPostsGroupsByLatLng] = useState<PostsGroupsByLatLngInterface[]>([]);

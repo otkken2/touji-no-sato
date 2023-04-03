@@ -56,7 +56,8 @@ export const Media = (props: MediaProps)=>{
                 <ReactPlayer width='100%' url={`${API_URL}${url}`} controls={true}/>
               </div>
               :
-              <div className="w-[100vw] keen-slider__slide" >
+              // <div className="w-[100vw] keen-slider__slide" >
+              <div className="w-full keen-slider__slide" >
                 <img key={ImageIndex}  src={`${API_URL}${url}`} alt="" className='w-full h-full' />
               </div>
             )
@@ -69,7 +70,7 @@ export const Media = (props: MediaProps)=>{
             </div>
             :
               <Link key={ImageIndex} href={`/post/${post.id}`}>
-                <div className="w-screen h-auto keen-slider__slide" >
+                <div className="w-full h-auto keen-slider__slide" >
                   <img  src={`${API_URL}${url}`} alt="" className='w-full h-auto' />
                 </div>
               </Link>

@@ -87,33 +87,37 @@ const ShowPostDetail = () => {
   };
 
   return (
-    <>
+    <div className='max-w-[600px] mx-auto'>
       {
         router.isReady &&
-        <Post post={data} isDetailPage={true} postId={String(id)}/>
+        <div className="">
+          <Post post={data} isDetailPage={true} postId={String(id)}/>
+        </div>
       }
       {/* リプライ作成フォーム */}
       <form onSubmit={handleSubmit} className='w-full flex flex-col text-white'>
-        <TextField
-          required
-          multiline
-          placeholder="返信を入力"
-          name='text'
-          variant="filled"
-          value={replyText}
-          onChange={e => setReplyText(e.target.value)}
-          inputProps={{
-            style: {
-              color: 'white'
-            }
-          }}
-          className="bg-background-secondary text-white w-full rounded-lg"
-          InputLabelProps={{
-            style: {
-              color: 'white'
-            }
-          }}
-        />
+        <div className="mb-5">
+          <TextField
+            required
+            multiline
+            placeholder="返信を入力"
+            name='text'
+            variant="filled"
+            value={replyText}
+            onChange={e => setReplyText(e.target.value)}
+            inputProps={{
+              style: {
+                color: 'white'
+              }
+            }}
+            className="bg-background-secondary text-white w-full rounded-lg "
+            InputLabelProps={{
+              style: {
+                color: 'white'
+              }
+            }}
+          />
+        </div>
         <FileInput onFileInputChange={(e)=> setReplyFiles(e as SetStateAction<File[]>)}/>
         <Button type="submit" variant="contained">返信</Button>
       </form>
@@ -133,7 +137,7 @@ const ShowPostDetail = () => {
           })
         }
       </div>
-    </>
+    </div>
   );
 };
 
