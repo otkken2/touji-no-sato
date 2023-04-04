@@ -90,16 +90,16 @@ const ShowPostDetail = () => {
   };
 
   return (
-    <div className='max-w-[600px] mx-auto relative'>
+    <div className='max-w-[600px] mx-auto relative' >
       {
         router.isReady &&
         <div className="">
-          <Post post={data} isDetailPage={true} postId={String(id)}/>
+          <Post post={data} isDetailPage={true} postId={String(id)} replyCount={replies.length}/>
         </div>
       }
       {/* リプライ作成フォーム */}
       {showReplyForm && 
-      <div className="fixed bg-background border-t border-x  rounded-t-lg w-[100%] pt-8 bottom-[50px] h-[40vh]">
+      <div className="fixed bg-background border-t border-x max-w-[600px] rounded-t-lg w-[100%] pt-8 bottom-[50px] md:bottom-[60px] h-[40vh]">
         <form onSubmit={handleSubmit} className='w-[90%] flex flex-col mx-auto text-white '>
           <div className="mb-5">
             <TextField
@@ -126,18 +126,16 @@ const ShowPostDetail = () => {
           <div className="mx-auto w-full">
             <FileInput onFileInputChange={(e)=> setReplyFiles(e as SetStateAction<File[]>)}/>
           </div>
-          <button type="submit" className="bg-primary h-10 w-full mx-auto rounded-lg mb-10">返信</button>
+          <button type="submit" className="bg-primary h-10 w-full mx-auto rounded-lg mb-5">返信</button>
         </form>
-        <div className="text-white text-center mx-auto flex justify-center h-10 bg-background-secondary w-[100px] rounded-full" onClick={()=> setShowReplyForm(false)}>
-          <img src="/arrow_bottom.png" alt="" className='w-7'/>
+        <div className="text-white text-center mx-auto flex justify-center h-7 bg-background-secondary w-[100px] rounded-full" onClick={()=> setShowReplyForm(false)}>
+          <img src="/arrow_bottom.png" alt="" className='w-5'/>
         </div>
       </div>
       }
       {isUploading && <p className="text-white font-bold">アップロード中です。しばらくお待ちください。。。</p>}
       {/* リプライ一覧 */}
-
       <div className={`mb-20 text-white mt-5 ${showReplyForm ? 'mb-[47vh]' : ''}`}>
-        {/* {replies.length > 0 && showReplies && */}
         {replies.length > 0 &&
           replies.map(eachReply => {
             if(eachReply.attributes?.user?.data?.attributes?.username &&
@@ -145,7 +143,7 @@ const ShowPostDetail = () => {
                eachReply.attributes?.description
             ){
               return (
-                <Post post={eachReply} key={eachReply.id} />
+                <Post post={eachReply} key={eachReply.id} isReply={true}/>
               );
             }
           })

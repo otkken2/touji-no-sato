@@ -21,6 +21,7 @@ interface PostsProps{
   isReply?: boolean;
   postId?: string | undefined;
   userIconUrl?: string | undefined;
+  replyCount?: number;
   handleGetContent?: () => void;
   handleDeletePost?: () => Promise<void>;
 }
@@ -31,6 +32,7 @@ export const Post = (props: PostsProps) => {
     isDetailPage = false, 
     isReply= false, 
     postId, 
+    replyCount = 0,
     handleGetContent, 
     handleDeletePost,
   } = props;
@@ -84,7 +86,7 @@ export const Post = (props: PostsProps) => {
             <PlaceLink ryokan={post.attributes?.ryokan}/>
           }
         </div>
-        <IconsContainer postId={post?.id} token={token} userId={user?.id} replyCount={0} favoriteCount={post?.attributes?.favoriteCount}/>
+        <IconsContainer postId={post?.id} isReply={isReply} token={token} userId={user?.id} replyCount={replyCount} favoriteCount={post?.attributes?.favoriteCount}/>
     </div>
   );
 };

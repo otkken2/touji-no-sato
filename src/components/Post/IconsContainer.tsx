@@ -8,22 +8,26 @@ interface IconsContainerProps{
   userId: number | undefined;
   replyCount: number | undefined;
   favoriteCount: number | undefined;
+  isReply?: boolean
 }
 export const IconsContainer = (props: IconsContainerProps) => {
-  const {postId, token, userId, replyCount = 0, favoriteCount} = props;
+  const {postId, token, userId, replyCount = 0, favoriteCount, isReply = false} = props;
   const [showReplyForm, setShowReplyForm] = useAtom(showReplyFormAtom);
   const { handleClickFavorite, myFavoritesIds} = useFavorite();
 
   const handleClickReplyIcon = () => {
+    if(isReply)return;
     setShowReplyForm(!showReplyForm);
   };
   return (
     <div className="icons-container flex justify-around">
       {/* リプライ */}
-      <div className="reply-container flex items-center" onClick={() => handleClickReplyIcon()}>
-        <Image src='/reply.svg' alt='コメント' width={20} height={20} className='m-3'/>
-        <p>{replyCount}</p>
-      </div>
+      {isReply || 
+        <div className="reply-container flex items-center" onClick={() => handleClickReplyIcon()}>
+          <Image src='/reply.svg' alt='コメント' width={20} height={20} className='m-3'/>
+          <p>{replyCount}</p>
+        </div>
+      }
       {/* お気に入り登録・解除 */}
       <div className='favorite-container flex items-center' onClick={()=> handleClickFavorite(postId, favoriteCount, token, userId)}>
         { myFavoritesIds.includes(postId)
