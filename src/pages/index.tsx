@@ -58,6 +58,27 @@ export default function Home() {
     getMyFavorites();
   },[]);
 
+
+// 一時的テスト！
+  // const testApi = async()=> {
+  //   await axios.post(`${API_URL}/api/product`,
+  //   {
+  //     name: 'ヘッドホン',
+  //     price: 2000
+  //   },      
+  //   {
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //     }
+  //   }
+  // ).then(res => console.log('productコンテンツへの投稿に成功しました'))
+  // .catch(err => console.log(err));
+  // };
+
+  // useEffect(()=>{
+  //   testApi();
+  // },[])
+
   // const {isLoading, data} = useQuery('posts',getPosts);
   // if(isLoading) return <h1>loading now...</h1>
   return (

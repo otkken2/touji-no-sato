@@ -63,6 +63,8 @@ const Upload = () => {
       user: user?.id,
       lat: lat,
       lng: lng,
+       // 仮
+       bathingDay: Date(),
     };
     formData.append("data", JSON.stringify(textData));
     await fetch(`${API_URL}/api/posts`, {

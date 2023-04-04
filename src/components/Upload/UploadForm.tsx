@@ -13,6 +13,7 @@ import { useRouter } from "next/router";
 import {PreviewFilesInterface} from '../../Interface/interfaces'
 import axios from "axios";
 import Cookies from "js-cookie";
+import Header from "../Header/Header";
 
 
 interface UploadFormProps{
@@ -138,8 +139,9 @@ export const UploadForm = (props: UploadFormProps) => {
   if(!user)router.push('/Login');
   return (
     isLoaded && user ?
-      <div className="text-white items-center text-center max-h-[100vh] max-w-[560px] m-auto pt-11">
-        <h1 className=' text-xl'>{title}</h1>
+      <div className="text-white items-center text-center max-h-[100vh] max-w-[600px] m-auto">
+        <Header/>
+        <h1 className='mt-8 text-2xl'>{title}</h1>
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col mt-12">
             <div className="mb-10 w-full px-3">

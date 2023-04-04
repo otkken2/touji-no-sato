@@ -1,3 +1,4 @@
+import Header from "@/components/Header/Header";
 import { Post } from "@/components/Post/Post";
 import { Button, TextField } from "@mui/material";
 import useSearch from "lib/useSearch";
@@ -17,6 +18,7 @@ const Search = ()=>{
         <title>湯治の郷 検索</title>
       </Head>
       <div className="max-w-[600px] mx-auto">
+        <Header/>
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col w-[95%] mx-auto my-5 relative">
             {/* <TextField variant="filled" label='検索ワードを入力してください' onChange={(e)=> setSearchWord(e.target.value)}/> */}
