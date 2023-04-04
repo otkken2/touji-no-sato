@@ -14,3 +14,5 @@ export const lngAtom = atom<number>(0);
 export const selectedPlaceAtom = atom<string>('');
 
 export const myFavoritesAtom = atom<FavoriteData[]>([]);
+
+export const showReplyFormAtom = atom<boolean>(false);

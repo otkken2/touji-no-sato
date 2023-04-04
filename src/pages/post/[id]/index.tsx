@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { descriptionAtom, filesAtom, previewsAtom, userAtom } from "@/atoms/atoms";
+import { descriptionAtom, filesAtom, previewsAtom, showReplyFormAtom, userAtom } from "@/atoms/atoms";
 import Cookies from "js-cookie";
 import { Post } from "@/components/Post/Post";
 import { Button, TextField } from "@mui/material";
@@ -28,6 +28,7 @@ const ShowPostDetail = () => {
   const [hasPostedReply, setHasPostedReply] = useState<boolean>(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [previews, setPreviews] = useAtom(previewsAtom);
+  const [showReplyForm, setShowReplyForm] = useAtom(showReplyFormAtom);
 
   useEffect(()=>{
     const getPostDetail = async() => {
@@ -83,11 +84,13 @@ const ShowPostDetail = () => {
       setHasPostedReply(true);
       setIsUploading(false);
       setPreviews([]);
+      setReplyText('');
+      setShowReplyForm(false);
     })
   };
 
   return (
-    <div className='max-w-[600px] mx-auto'>
+    <div className='max-w-[600px] mx-auto relative'>
       {
         router.isReady &&
         <div className="">
@@ -95,35 +98,46 @@ const ShowPostDetail = () => {
         </div>
       }
       {/* リプライ作成フォーム */}
-      <form onSubmit={handleSubmit} className='w-full flex flex-col text-white'>
-        <div className="mb-5">
-          <TextField
-            required
-            multiline
-            placeholder="返信を入力"
-            name='text'
-            variant="filled"
-            value={replyText}
-            onChange={e => setReplyText(e.target.value)}
-            inputProps={{
-              style: {
-                color: 'white'
-              }
-            }}
-            className="bg-background-secondary text-white w-full rounded-lg "
-            InputLabelProps={{
-              style: {
-                color: 'white'
-              }
-            }}
-          />
+      {showReplyForm && 
+      <div className="fixed bg-background border-t border-x  rounded-t-lg w-[100%] pt-8 bottom-[50px] h-[40vh]">
+        <form onSubmit={handleSubmit} className='w-[90%] flex flex-col mx-auto text-white '>
+          <div className="mb-5">
+            <TextField
+              required
+              multiline
+              placeholder="返信を入力"
+              name='text'
+              variant="filled"
+              value={replyText}
+              onChange={e => setReplyText(e.target.value)}
+              inputProps={{
+                style: {
+                  color: 'white'
+                }
+              }}
+              className="bg-background-secondary text-white w-full rounded-lg "
+              InputLabelProps={{
+                style: {
+                  color: 'white'
+                }
+              }}
+            />
+          </div>
+          <div className="mx-auto w-full">
+            <FileInput onFileInputChange={(e)=> setReplyFiles(e as SetStateAction<File[]>)}/>
+          </div>
+          <button type="submit" className="bg-primary h-10 w-full mx-auto rounded-lg mb-10">返信</button>
+        </form>
+        <div className="text-white text-center mx-auto flex justify-center h-10 bg-background-secondary w-[100px] rounded-full" onClick={()=> setShowReplyForm(false)}>
+          <img src="/arrow_bottom.png" alt="" className='w-7'/>
         </div>
-        <FileInput onFileInputChange={(e)=> setReplyFiles(e as SetStateAction<File[]>)}/>
-        <Button type="submit" variant="contained">返信</Button>
-      </form>
+      </div>
+      }
       {isUploading && <p className="text-white font-bold">アップロード中です。しばらくお待ちください。。。</p>}
       {/* リプライ一覧 */}
-      <div className="mb-20 text-white mt-5">
+
+      <div className={`mb-20 text-white mt-5 ${showReplyForm ? 'mb-[47vh]' : ''}`}>
+        {/* {replies.length > 0 && showReplies && */}
         {replies.length > 0 &&
           replies.map(eachReply => {
             if(eachReply.attributes?.user?.data?.attributes?.username &&

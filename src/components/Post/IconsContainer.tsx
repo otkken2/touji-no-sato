@@ -1,4 +1,5 @@
-import { useAtomValue } from "jotai";
+import { showReplyFormAtom } from "@/atoms/atoms";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useFavorite } from "lib/useFavorite";
 import Image from "next/image";
 interface IconsContainerProps{
@@ -10,11 +11,16 @@ interface IconsContainerProps{
 }
 export const IconsContainer = (props: IconsContainerProps) => {
   const {postId, token, userId, replyCount = 0, favoriteCount} = props;
+  const [showReplyForm, setShowReplyForm] = useAtom(showReplyFormAtom);
   const { handleClickFavorite, myFavoritesIds} = useFavorite();
+
+  const handleClickReplyIcon = () => {
+    setShowReplyForm(!showReplyForm);
+  };
   return (
     <div className="icons-container flex justify-around">
       {/* リプライ */}
-      <div className="reply-container flex items-center ">
+      <div className="reply-container flex items-center" onClick={() => handleClickReplyIcon()}>
         <Image src='/reply.svg' alt='コメント' width={20} height={20} className='m-3'/>
         <p>{replyCount}</p>
       </div>

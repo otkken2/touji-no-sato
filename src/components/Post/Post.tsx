@@ -70,7 +70,7 @@ export const Post = (props: PostsProps) => {
             </Moment>
             {/* 投稿本文 */}
             <Link href={`/post/${post?.id}`}>
-              <p className='mb-1'>
+              <p className='mb-1 break-words'>
                 {post.attributes.description}
               </p>
             </Link>

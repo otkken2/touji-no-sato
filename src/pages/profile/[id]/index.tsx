@@ -99,7 +99,7 @@ export const Profile = () => {
   useEffect(()=>{
     const fetchMyPosts = async () => {
       if(!router.isReady)return;
-      return await axios.get(`${API_URL}/api/posts?populate[user][populate]=*&populate=Image&filters[user][id][$eq]=${id}&sort=createdAt%3Adesc`)
+      return await axios.get(`${API_URL}/api/posts?populate[user][populate]=*&populate=Image&filters[user][id][$eq]=${id}&sort=createdAt%3Adesc&pagination[page]=1&pagination[pageSize]=1000`)
         .then(res =>{
           console.log('myPosts↓');
           console.log(res.data.data);

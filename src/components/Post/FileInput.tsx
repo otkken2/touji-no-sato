@@ -34,7 +34,7 @@ export const FileInput = (props:FileInputProps)=>{
     },[]);
     return (
         <>
-            <label className="bg-white text-primary font-bold flex justify-center items-center cursor-pointer h-[50px] mx-3 rounded-md outline-cyan-400 outline mb-8">
+            <label className="bg-white text-primary font-bold flex justify-center items-center cursor-pointer h-[50px] w-[full] rounded-md outline-cyan-400 outline mb-8">
                 <input
                     className='hidden'
                     multiple
