@@ -34,6 +34,7 @@ export default function Home() {
     setIsLoading(true);
     const response = await axios.get(
       `${API_URL}/api/posts?populate[user][populate]=*&sort=createdAt%3Adesc&pagination[page]=${currentPage}&pagination[pageSize]=25`
+      // `${API_URL}/api/posts?populate[user][populate]=*&sort[0]=bathingDay%3Adesc&sort[1]=createdAt%3Adesc&pagination[page]=${currentPage}&pagination[pageSize]=25`
     );
     const tmpData: PostData[] = response.data.data || [];
     
@@ -57,27 +58,6 @@ export default function Home() {
   useEffect(()=>{
     getMyFavorites();
   },[]);
-
-
-// 一時的テスト！
-  // const testApi = async()=> {
-  //   await axios.post(`${API_URL}/api/product`,
-  //   {
-  //     name: 'ヘッドホン',
-  //     price: 2000
-  //   },      
-  //   {
-  //     headers: {
-  //       Authorization: `Bearer ${token}`,
-  //     }
-  //   }
-  // ).then(res => console.log('productコンテンツへの投稿に成功しました'))
-  // .catch(err => console.log(err));
-  // };
-
-  // useEffect(()=>{
-  //   testApi();
-  // },[])
 
   // const {isLoading, data} = useQuery('posts',getPosts);
   // if(isLoading) return <h1>loading now...</h1>

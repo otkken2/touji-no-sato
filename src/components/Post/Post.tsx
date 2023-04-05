@@ -67,9 +67,24 @@ export const Post = (props: PostsProps) => {
 
           <div className='mx-[16px]'>
             {/* 日付 */}
-            <Moment format='YYYY/MM/DD hh:mm' tz='Asia/Tokyo' className='text-opacity-80 text-sm text-white'>
-              {post.attributes.createdAt}
-            </Moment>
+            <div className='flex flex-col mb-5 text-xs'>
+              <div className='flex'> 
+                <p className="text-opacity-80 text-white">投稿日時：</p>
+                <Moment format='YYYY/MM/DD hh:mm' tz='Asia/Tokyo' className='text-opacity-80  text-white'>
+                  {post.attributes.createdAt}
+                </Moment>
+              </div>
+              { post.attributes.bathingDay &&
+              <div className='flex'>
+                <p className='text-opacity-80  text-white'>入湯日：</p>
+                <Moment format='YYYY/MM/DD' tz='Asia/Tokyo' className='text-opacity-80  text-white'>
+                  {post.attributes.bathingDay}
+                </Moment>
+              </div>
+              }
+            </div>
+
+            {/* <p>{String(post.attributes.bathingDay)}</p> */}
             {/* 投稿本文 */}
             <Link href={`/post/${post?.id}`}>
               <p className='mb-1 break-words'>
