@@ -90,7 +90,7 @@ export const Media = (props: MediaProps)=>{
               onClick={() => {
                 instanceRef.current?.moveToIdx(idx)
               }}
-              className={`dot w-[8px] mx-[5px] h-[8px] cursor-pointer bg-white rounded-full ${idx === currentSlide && 'bg-primary'}`}
+              className={`dot w-[8px] mx-[5px] h-[8px] cursor-pointer rounded-full ${idx === currentSlide ? 'bg-primary' : 'bg-white'}`}
             ></button>
           )
         })}

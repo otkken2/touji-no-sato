@@ -47,7 +47,7 @@ export const Post = (props: PostsProps) => {
   )return <></>;
   return(
     <div key={index} className={`post-${index} text-white mb-10 border-b border-white/40`}>
-      <div className=''>
+      <div className='mb-5'>
         <>
           <PostHeader 
             userIconUrl={post?.attributes?.user?.data?.attributes?.profileIcon} 
