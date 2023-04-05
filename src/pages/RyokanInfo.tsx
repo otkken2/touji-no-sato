@@ -124,7 +124,7 @@ export const PlacesAutoComplete = () => {
         onChange={(e)=> setValue(e.target.value)}
         // onChange={(e)=> setRyokan(e.target.value)}
         // disabled={!ready}
-        className='w-full p-3 text-center text-white bg-background-secondary rounded-md'
+        className='w-full h-[55px] text-center text-white bg-background-secondary rounded-md'
         // placeholder='旅館・公共浴場etc...'
       />
         <ComboboxPopover>

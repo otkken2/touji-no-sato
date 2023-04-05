@@ -5,7 +5,7 @@ import { Image, ImageAttributes, Post } from "@/Interface/interfaces";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useAtom, useAtomValue } from "jotai";
-import { descriptionAtom, filesAtom, latAtom, lngAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
+import { bathingDayAtom, descriptionAtom, filesAtom, latAtom, lngAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
 import { UploadForm } from "@/components/Upload/UploadForm";
 import { useRouter } from "next/router";
 import { usePosts } from "lib/usePosts";
@@ -26,6 +26,11 @@ const Upload = () => {
   const user = useAtomValue(userAtom);
   const token = Cookies.get('token');
   const router = useRouter();
+  const bathingDay = useAtomValue(bathingDayAtom);
+
+  console.log("bathingDay")
+  console.log(bathingDay)
+
   const uploadMediaFile = async (profileIcon: File) => {
     const formData = new FormData();
     formData.append('files',profileIcon, profileIcon.name);
@@ -43,6 +48,12 @@ const Upload = () => {
     // setUploadedFiles(prev => [...prev,uploadedFile[0]]);
     return uploadedFile;
   };
+
+  // console.log("new Date().toISOString()↓")
+  // console.log(new Date().toISOString())
+
+  // console.log("new Date()↓");
+  // console.log(new Date());
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -63,8 +74,7 @@ const Upload = () => {
       user: user?.id,
       lat: lat,
       lng: lng,
-       // 仮
-       bathingDay: Date(),
+      bathingDay: bathingDay,
     };
     formData.append("data", JSON.stringify(textData));
     await fetch(`${API_URL}/api/posts`, {
@@ -96,6 +106,7 @@ const Upload = () => {
             },
             {
               headers: {
+                'Content-Type': 'multipart/form-data',
                 Authorization: `Bearer ${token}`,
               },
             }

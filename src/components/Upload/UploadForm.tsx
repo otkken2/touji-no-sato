@@ -14,6 +14,8 @@ import {PreviewFilesInterface} from '../../Interface/interfaces'
 import axios from "axios";
 import Cookies from "js-cookie";
 import Header from "../Header/Header";
+import { DatePicker } from "@mui/x-date-pickers";
+import DatePickerMui from "../Post/DatePickerMui";
 
 
 interface UploadFormProps{
@@ -143,11 +145,14 @@ export const UploadForm = (props: UploadFormProps) => {
         <Header/>
         <h1 className='mt-8 text-2xl'>{title}</h1>
         <form onSubmit={handleSubmit}>
-          <div className="flex flex-col mt-12">
-            <div className="mb-10 w-full px-3">
+          <div className="flex flex-col mt-12 mx-3">
+            <div className="mb-10 w-full">
               <PlacesAutoComplete />
             </div>
-            <div className="mb-10 mx-3">
+            <div className="mb-5 w-full">
+              <DatePickerMui/>
+            </div>
+            <div className="mb-10 ">
               <label htmlFor="">本文</label>
               <TextField
                 required
@@ -213,7 +218,7 @@ export const UploadForm = (props: UploadFormProps) => {
                   }}>クリア</Button>
                 </div>
               }
-              <label className="bg-white text-primary font-bold flex justify-center items-center cursor-pointer h-[50px] mx-3 rounded-md outline-cyan-400 outline mb-8">
+              <label className="bg-white text-primary font-bold flex justify-center items-center cursor-pointer h-[50px] rounded-md outline-cyan-400 outline mb-8">
                 <input
                   className='hidden'
                   multiple
