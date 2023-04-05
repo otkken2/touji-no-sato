@@ -20,6 +20,9 @@ module.exports = {
       textColor: {
         'primay': '#F2F0FF',
         'link':  '#14B6DA'
+      },
+      boxShadow: {
+        'customize': '0px 0px 15px 0px rgba(20,182,218, 0.3)',
       }
     },
   },

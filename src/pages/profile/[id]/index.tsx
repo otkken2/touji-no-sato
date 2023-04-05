@@ -116,6 +116,33 @@ export const Profile = () => {
     setSelfIntroduction(user?.selfIntroduction);
   },[user,user?.username, user?.selfIntroduction,id, router.isReady]);
 
+  const renderEditIconProfile = () => {
+    if(iconPreviewUrl){
+      return (
+        <div className='relative w-fit'>
+          <div className='w-[50px] h-[50px] rounded-full overflow-hidden '>
+            <img src={iconPreviewUrl} alt="" className="h-full w-full"/>
+          </div>
+          <img src='/upload.png' alt="blankIcon" className='absolute z-10 w-5 bottom-0 -right-2'/>
+        </div>
+      );
+    }else if(userIconUrl){
+      return (
+        <div className="relative w-fit">
+          <div className='w-[50px] h-[50px] rounded-full overflow-hidden '>
+            <img src={`${API_URL}${userIconUrl}`} alt="" className="h-full w-full"/>
+          </div>
+          <img src='/upload.png' alt="blankIcon" className='absolute z-10 w-5 bottom-0 -right-2'/>
+        </div>
+      );
+    }else{
+      <div className='relative'>
+        <img src='/mypage.svg' alt="blankIcon"/>
+        <img src='/upload.png' alt="blankIcon" className='absolute'/>
+      </div>
+    }
+  };
+
   return (
     <main className='text-white'>
       <h1 className="text-center">マイページ</h1>
@@ -133,74 +160,71 @@ export const Profile = () => {
           投稿一覧
         </div>
       </div>
-      <div>
+      <div className=''>
         {
           showMode === 'ALL_MY_POSTS' ?
-          <div className='pt-2'>
+          <div className='pt-2 max-w-[600px] mx-auto'>
             {isEditProfile ?
               <>
               {/* 編集モードON */}
                 <form onSubmit={handleSubmit}>
                   <div className='flex flex-col mx-[16px] mb-8'>
-                    <div className='flex justify-between h-[27px] mb-5'>
-                      <p className='mb-3 cursor-pointer' onClick={()=> setIsEditProfile(false)}>キャンセル</p>
-                      <button type="submit" className='border border-white rounded-full px-3 h-full cursor-pointer'>保存</button>
+                    <div className='flex justify-between h-[27px] mb-3'>
+                      <p className='leading-[27px] rounded-full bg-background-secondary text-white text-sm px-3 h-full cursor-pointer' onClick={()=> setIsEditProfile(false)}>キャンセル</p>
+                      <button type="submit" className='rounded-full bg-background-secondary text-primary text-sm px-3 h-full cursor-pointer'>保存</button>
                     </div>
-                      <label className=' mb-5'>
+                      <label className='cursor-pointer mb-5  w-[50px]'>
                         <input type="file" id="file" className='hidden' onChange={onFileInputChange}/>
-                          {iconPreviewUrl
-                            ?
-                            <div className='w-[50px] h-[50px] rounded-full bg-red-300 overflow-hidden'>
-                              <img src={iconPreviewUrl} alt="" className="h-full w-full"/>
-                            </div>
-                            :
-                            <img src='/mypage.svg' alt="" />
-                          }
+                        {renderEditIconProfile()}
                       </label>
-                    <TextField
-                      label='ユーザー名'
-                      id="username"
-                      placeholder='例)温泉太郎'
-                      inputProps={{
-                        style: {
-                          color: 'white',
-                        }
-                      }}
-                      InputLabelProps={{
-                        style: {
-                          color: 'white'
-                        }
-                      }}
-                      className="bg-background-secondary text-white w-full rounded-lg "
-                      onChange={e => setUsername(e.target.value)}
-                      value={username}
-                    />
-                    <TextField
-                      multiline
-                      id="selfIntroduction"
-                      label='自己紹介'
-                      rows={4}
-                      inputProps={{
-                        style: {
-                          color: 'white'
-                        }
-                      }}
-                      InputLabelProps={{
-                        style: {
-                          color: 'white'
-                        }
-                      }}
-                      placeholder='例)鄙びた公共浴場が好きな40代です！好きな温泉地は○○○○○です!'
-                      className="bg-background-secondary text-white w-full rounded-lg mb-8"
-                      onChange={(e)=> setSelfIntroduction(e.target.value)}
-                      value={selfIntroduction}
-                    />
+                    <div className='mb-5'>
+                      <TextField
+                        label='ユーザー名'
+                        id="username"
+                        placeholder='例)温泉太郎'
+                        inputProps={{
+                          style: {
+                            color: 'white',
+                          }
+                        }}
+                        InputLabelProps={{
+                          style: {
+                            color: 'white'
+                          }
+                        }}
+                        className="bg-background-secondary text-white w-full rounded-lg "
+                        onChange={e => setUsername(e.target.value)}
+                        value={username}
+                      />
+                    </div>
+                    <div className=''>
+                      <TextField
+                        multiline
+                        id="selfIntroduction"
+                        label='自己紹介'
+                        rows={4}
+                        inputProps={{
+                          style: {
+                            color: 'white'
+                          }
+                        }}
+                        InputLabelProps={{
+                          style: {
+                            color: 'white'
+                          }
+                        }}
+                        placeholder='例)鄙びた公共浴場が好きな40代です！好きな温泉地は○○○○○です!'
+                        className="bg-background-secondary text-white w-full rounded-lg mb-8"
+                        onChange={(e)=> setSelfIntroduction(e.target.value)}
+                        value={selfIntroduction}
+                      />
+                    </div>
                   </div>
                 </form>
               </>
               :
               // 編集モードOFF
-              <div className='profile-container mx-[16px] mb-5'>
+              <div className='profile-container px-[16px] mb-5 rounded-lg shadow-customize p-5 mt-5'>
                 <div className='profile-header flex items-center mb-5 justify-between'>
                   <div className='header-icon-username flex items-center'>
                     <img src={userIconUrl ? `${API_URL}${userIconUrl}` : '/mypage.svg'} alt="" className="rounded-full w-10 h-10 mr-2"/>
@@ -211,7 +235,7 @@ export const Profile = () => {
                       <span className='font-bold'>{data.length}</span>投稿
                     </div> */}
                     {Number(id) === user?.id &&
-                      <p className='border border-white rounded-full px-3' onClick={() => setIsEditProfile(true)}>編集</p>
+                      <p className='rounded-full bg-background-secondary text-primary text-sm px-3 h-[27px] leading-[27px] cursor-pointer' onClick={() => setIsEditProfile(true)}>編集</p>
                     }
                   </div>
                 </div>
@@ -224,7 +248,6 @@ export const Profile = () => {
                 </div>
               </div>
             }
-            <hr className="mb-5 opacity-50"/>
             {/* 投稿一覧 */}
             {data?.map((eachdata: PostData,index)=>{
               return (
