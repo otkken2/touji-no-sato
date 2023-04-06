@@ -21,13 +21,11 @@ export const IconsContainer = (props: IconsContainerProps) => {
   };
   return (
     <div className="icons-container flex justify-around">
-      {/* リプライ */}
-      {isReply || 
-        <div className="reply-container flex items-center" onClick={() => handleClickReplyIcon()}>
+      {/* リプライ ※TODO:ゆくゆくは、個別Postにぶらさがる各リプライそれぞれについたリプライ数も表示できるようにしたい */}
+        <div className={`reply-container flex items-center ${isReply && 'opacity-50'}`} onClick={() => handleClickReplyIcon()}>
           <Image src='/reply.svg' alt='コメント' width={20} height={20} className='m-3'/>
-          <p>{replyCount}</p>
+          { isReply || <p>{replyCount}</p>}
         </div>
-      }
       {/* お気に入り登録・解除 */}
       <div className='favorite-container flex items-center' onClick={()=> handleClickFavorite(postId, favoriteCount, token, userId)}>
         { myFavoritesIds.includes(postId)

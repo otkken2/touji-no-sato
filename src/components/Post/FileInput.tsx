@@ -46,7 +46,7 @@ export const FileInput = (props:FileInputProps)=>{
                 <p className="my-auto align-middlle">写真・動画を選択</p>
             </label>
             {previews &&
-                <div className="grid grid-cols-2 w-screen">
+                <div className="grid grid-cols-2 w-full">
                 {
                     previews.map((preview,index) => (
                     preview.isMovie ?

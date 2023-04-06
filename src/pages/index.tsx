@@ -17,6 +17,10 @@ import { userAtom } from '@/atoms/atoms'
 import { useFavorite } from 'lib/useFavorite'
 import { Post } from '@/components/Post/Post'
 
+interface ReplyCount{
+  postId: number;
+  replyCount: number;
+}
 
 export default function Home() {
   const [posts, setPosts] = useState<PostData[]>([]);
@@ -25,9 +29,20 @@ export default function Home() {
   const user = useAtomValue(userAtom);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [replyCounts, setReplyCounts] = useState<ReplyCount[]>([]);
 
   const handleClickShowMore = () => {
     setCurrentPage(prev => prev + 1);
+  };
+
+  const getReplyCountsOfPosts = async(posts: PostData[])=>{
+    posts.map(async eachPost => {
+      if(!eachPost.id)return;
+      const res = await axios.get(`${API_URL}/api/posts?populate=*&filters[parentPostId][$eq]=${eachPost.id}`);
+      setReplyCounts(prev => {
+        return [...prev,{postId: eachPost.id as number, replyCount: res.data.data.length}]
+      });
+    });
   };
 
   const getPosts = async (pageSize = 100) => {
@@ -37,16 +52,17 @@ export default function Home() {
       // `${API_URL}/api/posts?populate[user][populate]=*&sort[0]=bathingDay%3Adesc&sort[1]=createdAt%3Adesc&pagination[page]=${currentPage}&pagination[pageSize]=25`
     );
     const tmpData: PostData[] = response.data.data || [];
-    
     // 初回読み込み時の重複データを排除
     const postsIds = posts.map(eachPost => eachPost.id);
     if(!postsIds.length){ // 初回呼び出し時
       setPosts(prev => [...prev, ...tmpData]);
+      getReplyCountsOfPosts(tmpData);
     }else{ //初回以降
       const data = tmpData.filter(eachData => {
         return !postsIds.includes(eachData.id);
       })
       setPosts(prev => [...prev,...data]);
+      await getReplyCountsOfPosts(data);
     }
     setIsLoading(false);
   }
@@ -73,17 +89,18 @@ export default function Home() {
       <main className='pb-14'>
         {
           posts.map((post,index)=>{
-          return(
-              !post.attributes?.parentPostId &&
-              <Post key={index} post={post} index={index}/>
-          );
+            const eachReplyCount = replyCounts.find(eachEl => eachEl.postId === post.id);
+            return(
+                !post.attributes?.parentPostId &&
+                <Post key={index} post={post} index={index} replyCount={eachReplyCount?.replyCount}/>
+            );
           })
         }
         {isLoading && <p className='text-white text-center mb-10'>...Loading now</p>}
         {
           posts.length &&
           <div 
-            className='bg-background-secondary mb-10 text-primary h-[50px] w-[180px] leading-[50px] mx-auto text-center  rounded-full'
+            className='bg-background-secondary cursor-pointer mb-10 text-primary h-[50px] w-[180px] leading-[50px] mx-auto text-center  rounded-full'
             onClick={()=> handleClickShowMore()}
           >more</div>
         }

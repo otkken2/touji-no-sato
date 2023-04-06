@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import axios, { AxiosResponse } from "axios";
 import { API_URL } from "const";
-import { PostData } from "@/Interface/interfaces";
+import { ImageAttributes, PostData, Post as PostInterface} from "@/Interface/interfaces";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
@@ -13,6 +13,8 @@ import { Button, TextField } from "@mui/material";
 import { MuiFileInput } from "mui-file-input";
 import { FileInput } from "@/components/Post/FileInput";
 import { SetStateAction } from "jotai/vanilla";
+import Header from "@/components/Header/Header";
+import { usePosts } from "lib/usePosts";
 
 const ShowPostDetail = () => {
   const router = useRouter();
@@ -29,6 +31,7 @@ const ShowPostDetail = () => {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [previews, setPreviews] = useAtom(previewsAtom);
   const [showReplyForm, setShowReplyForm] = useAtom(showReplyFormAtom);
+  const {uploadMediaFile} = usePosts();
 
   useEffect(()=>{
     const getPostDetail = async() => {
@@ -56,41 +59,83 @@ const ShowPostDetail = () => {
     getReplies()
   },[id, router, hasPostedReply, previews]);
 
-
-  const handleSubmit = async(e:any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    setIsUploading(true);
-    console.log('handleSubmit run')
     const formData = new FormData();
-
-    replyFiles.map((file: File)=>{
-      formData.append('files.Image', file);
-    });
-
-    const data = {
+  
+    let flattenedUploadedFiles: ImageAttributes[] = [];
+  
+    if (replyFiles) {
+      console.log("画像ファイルあるよ");
+      const uploadedFilesPromises = replyFiles.map((file) => uploadMediaFile(file));
+      const allUploadedFiles: ImageAttributes[][] = await Promise.all(uploadedFilesPromises);
+      flattenedUploadedFiles = allUploadedFiles.flat();
+    }
+  
+    const textData = {
+      // ryokan: selectedPlace,
       description: replyText,
       user: user?.id,
       parentPostId: id,
-    }
-    formData.append('data', JSON.stringify(data));
-    await fetch(`${API_URL}/api/posts`,{
-      method: 'post',
+      // lat: lat,
+      // lng: lng,
+      // bathingDay: bathingDay,
+    };
+    formData.append("data", JSON.stringify(textData));
+    await fetch(`${API_URL}/api/posts`, {
+      method: "post",
       body: formData,
-      headers:{
-        Authorization: `Bearer ${token}`
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then(async (res) => {
+      const post: PostInterface = await res.json();
+      if (!post) return;
+      const postId = post.data?.id;
+      if (!flattenedUploadedFiles) return;
+      console.log("flattenedUploadedFilesあるよ");
+      console.log("flattenedUploadedFiles↓");
+      console.log(flattenedUploadedFiles);
+      for (const eachFile of flattenedUploadedFiles) {
+        const data = {
+          postId: postId,
+          mediaAssetId: eachFile.id,
+          url: eachFile.url,
+        };
+        console.log("media-urls-of-postsエンドポイントに渡すdata↓");
+        console.log(data);
+        await axios
+          .post(
+            `${API_URL}/api/media-urls-of-posts`,
+            {
+              data: data,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          )
+          .then((res) => {
+            console.log("mediaUrlsOfPostsの投稿に成功しました")
+            setHasPostedReply(true);
+            setIsUploading(false);
+            setPreviews([]);
+            setReplyText('');
+            setShowReplyForm(false);
+          })
+          .catch((err) => console.log(err));
       }
-    }).then(res => {
-      console.log('リプの投稿に成功しました。')
-      setHasPostedReply(true);
-      setIsUploading(false);
-      setPreviews([]);
-      setReplyText('');
-      setShowReplyForm(false);
-    })
+      // alert("Postの投稿に成功しました");
+      // setUploadedFiles([]);
+      setFiles([]);
+      // router.push("/");
+    });
   };
 
   return (
     <div className='max-w-[600px] mx-auto relative' >
+      <Header/>
       {
         router.isReady &&
         <div className="">
@@ -99,7 +144,7 @@ const ShowPostDetail = () => {
       }
       {/* リプライ作成フォーム */}
       {showReplyForm && 
-      <div className="fixed bg-background border-t border-x max-w-[600px] rounded-t-lg w-[100%] pt-8 bottom-[50px] md:bottom-[60px] h-[40vh]">
+      <div className="fixed bg-background border-t border-x max-w-[600px] rounded-t-lg w-[100%] pt-8 bottom-[50px] md:bottom-[60px] h-[40vh] overflow-scroll z-10">
         <form onSubmit={handleSubmit} className='w-[90%] flex flex-col mx-auto text-white '>
           <div className="mb-5">
             <TextField

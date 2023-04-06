@@ -67,7 +67,7 @@ export const Post = (props: PostsProps) => {
 
           <div className='mx-[16px]'>
             {/* 日付 */}
-            <div className='flex flex-col mb-5 text-xs'>
+            <div className={`flex flex-col mb-5  ${ isDetailPage && !isReply  ? 'text-md' : 'text-xs'}`}>
               <div className='flex'> 
                 <p className="text-opacity-80 text-white">投稿日時：</p>
                 <Moment format='YYYY/MM/DD hh:mm' tz='Asia/Tokyo' className='text-opacity-80  text-white'>
@@ -87,7 +87,7 @@ export const Post = (props: PostsProps) => {
             {/* <p>{String(post.attributes.bathingDay)}</p> */}
             {/* 投稿本文 */}
             <Link href={`/post/${post?.id}`}>
-              <p className='mb-1 break-words'>
+              <p className={`mb-1 break-words ${!isReply && isDetailPage && 'text-2xl'}`}>
                 {post.attributes.description}
               </p>
             </Link>
