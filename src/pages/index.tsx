@@ -98,7 +98,7 @@ export default function Home() {
         }
         {isLoading && <p className='text-white text-center mb-10'>...Loading now</p>}
         {
-          posts.length &&
+          posts.length > 0 &&
           <div 
             className='bg-background-secondary cursor-pointer mb-10 text-primary h-[50px] w-[180px] leading-[50px] mx-auto text-center  rounded-full'
             onClick={()=> handleClickShowMore()}
