@@ -22,7 +22,7 @@ const Footer = () => {
             <Image src='/upload.svg' height={FOOTER_ICON_HEIGHT} width={FOOTER_ICON_WIDTH} alt="投稿する"/>
           </Link>
         </>
-      }
+      } 
       <Link href='/'>
         <Image src='/home.svg' height={FOOTER_ICON_HEIGHT} width={FOOTER_ICON_WIDTH} alt="ホーム"/>
       </Link>
