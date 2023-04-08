@@ -75,6 +75,9 @@ export default function Home() {
     getMyFavorites();
   },[]);
 
+  console.log("process.env.NEXT_PUBLIC_NODE_ENV↓")
+  console.log(process.env.NEXT_PUBLIC_NODE_ENV)
+
   // const {isLoading, data} = useQuery('posts',getPosts);
   // if(isLoading) return <h1>loading now...</h1>
   return (
