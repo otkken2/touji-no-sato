@@ -39,6 +39,7 @@ const postsGroupsByLatLng = [
 ];
 
 const MyOnsenCollection = () => {
+  console.log(process.env.NEXT_PUBLIC_GOOGLE_API_KEY)
   const {id} = router.query;
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process?.env?.NEXT_PUBLIC_GOOGLE_API_KEY ?? '',
