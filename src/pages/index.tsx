@@ -78,6 +78,8 @@ export default function Home() {
   console.log("process.env.NEXT_PUBLIC_NODE_ENV↓")
   console.log(process.env.NEXT_PUBLIC_NODE_ENV)
 
+  console.log(posts);
+
   // const {isLoading, data} = useQuery('posts',getPosts);
   // if(isLoading) return <h1>loading now...</h1>
   return (
