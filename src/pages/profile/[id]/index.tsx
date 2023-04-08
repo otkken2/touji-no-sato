@@ -142,6 +142,8 @@ export const Profile = () => {
       </div>
     }
   };
+  console.log("process.env.NEXT_PUBLIC_NODE_ENV↓")
+  console.log(process.env.NEXT_PUBLIC_NODE_ENV)
 
   return (
     <main className='text-white'>
