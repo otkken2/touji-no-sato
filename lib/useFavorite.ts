@@ -85,11 +85,17 @@ export const useFavorite = () => {
     if(token === undefined)return;
     if(userId === undefined)return;
 
+    let newFavoriteCount = favoriteCount;
+
     if(myFavoritesIds.includes(postId)){
-      clearFavorite(postId,favoriteCount, token);
+      await clearFavorite(postId,favoriteCount, token);
+      newFavoriteCount--;
     }else{
-      addFavorite(userId, postId, token, favoriteCount);
+      await addFavorite(userId, postId, token, favoriteCount);
+      newFavoriteCount++;
     }
+
+    return newFavoriteCount;
   };
 
   const getMyFavorites = async() => {

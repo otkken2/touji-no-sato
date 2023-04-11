@@ -70,8 +70,8 @@ export default function Home() {
 
   useEffect(()=>{
     getPosts();
-  },[myFavorites,currentPage]);
-  // },[currentPage]);
+  // },[myFavorites,currentPage]);
+  },[currentPage]);
 
   useEffect(()=>{
     getMyFavorites();

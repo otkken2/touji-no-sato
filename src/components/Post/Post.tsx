@@ -13,6 +13,7 @@ import { showReplyFormAtom, userAtom } from "@/atoms/atoms";
 import { IconsContainer } from "./IconsContainer";
 
 import { Media } from "./Media";
+import { useState } from "react";
 
 interface PostsProps{
   post: PostData | undefined;
@@ -44,6 +45,7 @@ export const Post = (props: PostsProps) => {
     if(isReply)return;
     setShowReplyForm(!showReplyForm);
   };
+  const [localFavoriteCount, setLocalFavoriteCount] = useState<number>(post?.attributes?.favoriteCount || 0);
 
 
   if(post === undefined)return <></>;
@@ -118,20 +120,23 @@ export const Post = (props: PostsProps) => {
           { isReply || <p>{replyCount}</p>}
         </div>
       {/* お気に入り登録・解除 */}
-      <div className='favorite-container flex items-center' onClick={()=> handleClickFavorite(post?.id, post?.attributes?.favoriteCount, token, user?.id)}>
+      <div className='favorite-container flex items-center' onClick={async()=> {
+        const newFavoriteCount = await handleClickFavorite(post?.id, post?.attributes?.favoriteCount, token, user?.id)
+        setLocalFavoriteCount(newFavoriteCount || 0);
+      }}>
         { myFavoritesIds.includes(post?.id)
         ?
           <>
             <Image src='/favorite-red.png' alt='お気に入り追加済み' width={20} height={20} className='m-3'/>
-            <p>{post?.attributes?.favoriteCount}</p>
+            {/* <p>{post?.attributes?.favoriteCount}</p> */}
           </>
         : 
           <>
             <Image src='/favorite.svg' alt='お気に入りに追加' width={20} height={20} className='m-3'/>
-            <p>{post?.attributes?.favoriteCount}</p>
+            {/* <p>{post?.attributes?.favoriteCount}</p> */}
           </>
         }
-        {/* <p>{favoriteCount}</p> */}
+        <p>{localFavoriteCount}</p>
       </div>
     </div>
     </div>
