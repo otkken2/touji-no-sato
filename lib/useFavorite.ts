@@ -90,6 +90,7 @@ export const useFavorite = () => {
     if(myFavoritesIds.includes(postId)){
       await clearFavorite(postId,favoriteCount, token);
       newFavoriteCount--;
+      if(newFavoriteCount < 0)newFavoriteCount = 0;
     }else{
       await addFavorite(userId, postId, token, favoriteCount);
       newFavoriteCount++;

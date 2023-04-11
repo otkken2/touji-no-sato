@@ -47,6 +47,29 @@ export const Post = (props: PostsProps) => {
   };
   const [localFavoriteCount, setLocalFavoriteCount] = useState<number>(post?.attributes?.favoriteCount || 0);
 
+  const renderIcons = () => {
+    return (
+      <div className="icons-container flex justify-around">
+          <div className={`reply-container flex items-center ${isReply && 'opacity-50'}`} onClick={() => handleClickReplyIcon()}>
+            <Image src='/reply.svg' alt='コメント' width={20} height={20} className='m-3'/>
+            { isReply || <p>{replyCount}</p>}
+          </div>
+          {/* お気に入り登録・解除 */}
+          <div className='favorite-container flex items-center' onClick={async()=> {
+            const newFavoriteCount = await handleClickFavorite(post?.id, post?.attributes?.favoriteCount, token, user?.id)
+            setLocalFavoriteCount(newFavoriteCount || 0);
+          }}>
+            { myFavoritesIds.includes(post?.id)
+            ?
+              <Image src='/favorite-red.png' alt='お気に入り追加済み' width={20} height={20} className='m-3'/>
+            : 
+              <Image src='/favorite.svg' alt='お気に入りに追加' width={20} height={20} className='m-3'/>
+            }
+            <p>{localFavoriteCount}</p>
+          </div>
+      </div>
+    );
+  };
 
   if(post === undefined)return <></>;
   if(
@@ -103,42 +126,14 @@ export const Post = (props: PostsProps) => {
           </div>
         </>
       </div>
-        {/* 旅館情報 */}
-        <div className='mx-[16px]'>
-          {
-            post.attributes?.ryokan &&
-            <PlaceLink ryokan={post.attributes?.ryokan}/>
-          }
-        </div>
-        {/* <IconsContainer postId={post?.id} isReply={isReply} token={token} userId={user?.id} replyCount={replyCount} favoriteCount={post?.attributes?.favoriteCount}/> */}
-
-        
-        <div className="icons-container flex justify-around">
-      {/* リプライ ※TODO:ゆくゆくは、個別Postにぶらさがる各リプライそれぞれについたリプライ数も表示できるようにしたい */}
-        <div className={`reply-container flex items-center ${isReply && 'opacity-50'}`} onClick={() => handleClickReplyIcon()}>
-          <Image src='/reply.svg' alt='コメント' width={20} height={20} className='m-3'/>
-          { isReply || <p>{replyCount}</p>}
-        </div>
-      {/* お気に入り登録・解除 */}
-      <div className='favorite-container flex items-center' onClick={async()=> {
-        const newFavoriteCount = await handleClickFavorite(post?.id, post?.attributes?.favoriteCount, token, user?.id)
-        setLocalFavoriteCount(newFavoriteCount || 0);
-      }}>
-        { myFavoritesIds.includes(post?.id)
-        ?
-          <>
-            <Image src='/favorite-red.png' alt='お気に入り追加済み' width={20} height={20} className='m-3'/>
-            {/* <p>{post?.attributes?.favoriteCount}</p> */}
-          </>
-        : 
-          <>
-            <Image src='/favorite.svg' alt='お気に入りに追加' width={20} height={20} className='m-3'/>
-            {/* <p>{post?.attributes?.favoriteCount}</p> */}
-          </>
+      {/* 旅館情報 */}
+      <div className='mx-[16px]'>
+        {
+          post.attributes?.ryokan &&
+          <PlaceLink ryokan={post.attributes?.ryokan}/>
         }
-        <p>{localFavoriteCount}</p>
       </div>
-    </div>
+      {renderIcons()}
     </div>
   );
 };
