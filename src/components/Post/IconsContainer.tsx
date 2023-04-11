@@ -2,6 +2,7 @@ import { showReplyFormAtom } from "@/atoms/atoms";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useFavorite } from "lib/useFavorite";
 import Image from "next/image";
+import { useMemo } from "react";
 interface IconsContainerProps{
   postId: number | undefined;
   token: string | undefined;
@@ -30,12 +31,43 @@ export const IconsContainer = (props: IconsContainerProps) => {
       <div className='favorite-container flex items-center' onClick={()=> handleClickFavorite(postId, favoriteCount, token, userId)}>
         { myFavoritesIds.includes(postId)
         ?
-          <Image src='/favorite-red.png' alt='お気に入り追加済み' width={20} height={20} className='m-3'/>
+          <>
+            <Image src='/favorite-red.png' alt='お気に入り追加済み' width={20} height={20} className='m-3'/>
+            <p>{favoriteCount}</p>
+          </>
         : 
-          <Image src='/favorite.svg' alt='お気に入りに追加' width={20} height={20} className='m-3'/>
+          <>
+            <Image src='/favorite.svg' alt='お気に入りに追加' width={20} height={20} className='m-3'/>
+            <p>{favoriteCount}</p>
+          </>
         }
-        <p>{favoriteCount}</p>
+        {/* <p>{favoriteCount}</p> */}
       </div>
     </div>
   );
+  // return useMemo(()=>(
+  //     <div className="icons-container flex justify-around">
+  //       {/* リプライ ※TODO:ゆくゆくは、個別Postにぶらさがる各リプライそれぞれについたリプライ数も表示できるようにしたい */}
+  //         <div className={`reply-container flex items-center ${isReply && 'opacity-50'}`} onClick={() => handleClickReplyIcon()}>
+  //           <Image src='/reply.svg' alt='コメント' width={20} height={20} className='m-3'/>
+  //           { isReply || <p>{replyCount}</p>}
+  //         </div>
+  //       {/* お気に入り登録・解除 */}
+  //       <div className='favorite-container flex items-center' onClick={()=> handleClickFavorite(postId, favoriteCount, token, userId)}>
+  //         { myFavoritesIds.includes(postId)
+  //         ?
+  //           <>
+  //             <Image src='/favorite-red.png' alt='お気に入り追加済み' width={20} height={20} className='m-3'/>
+  //             <p>{favoriteCount}</p>
+  //           </>
+  //         : 
+  //           <>
+  //             <Image src='/favorite.svg' alt='お気に入りに追加' width={20} height={20} className='m-3'/>
+  //             <p>{favoriteCount}</p>
+  //           </>
+  //         }
+  //         {/* <p>{favoriteCount}</p> */}
+  //       </div>
+  //     </div>
+  //   ),[myFavoritesIds])
 }

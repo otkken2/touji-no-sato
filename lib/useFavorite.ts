@@ -18,6 +18,9 @@ export const useFavorite = () => {
       newFavoriteCount = favoriteCount + 1;
     }else{
       newFavoriteCount = favoriteCount - 1;
+      if(newFavoriteCount < 0){
+        newFavoriteCount = 0;
+      }
     }
     await axios.put(
       `${API_URL}/api/posts/${postId}`,
@@ -93,6 +96,7 @@ export const useFavorite = () => {
     if(!user)return;
     const myFavorites = await axios.get(`${API_URL}/api/favorites?populate[post][populate]=*&filters[user][id][$eq]=${user?.id}`).then(res=> res.data.data);
     setMyFavorites((prevState) => myFavorites);
+    console.log('myFavoritesが更新されたよ！')
   };
 
   return {myFavorites, setMyFavorites, handleClickFavorite, getMyFavorites, myFavoritesIds}

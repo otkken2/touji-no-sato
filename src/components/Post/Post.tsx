@@ -8,8 +8,8 @@ import { PostHeader } from "./PostHeader";
 import Image from "next/image";
 import { useFavorite } from "lib/useFavorite";
 import Cookies from "js-cookie";
-import { useAtomValue } from "jotai";
-import { userAtom } from "@/atoms/atoms";
+import { useAtom, useAtomValue } from "jotai";
+import { showReplyFormAtom, userAtom } from "@/atoms/atoms";
 import { IconsContainer } from "./IconsContainer";
 
 import { Media } from "./Media";
@@ -38,7 +38,14 @@ export const Post = (props: PostsProps) => {
   } = props;
   const token = Cookies.get('token');
   const user = useAtomValue(userAtom);
-  
+  const { handleClickFavorite, myFavoritesIds} = useFavorite();
+  const [showReplyForm, setShowReplyForm] = useAtom(showReplyFormAtom);
+  const handleClickReplyIcon = () => {
+    if(isReply)return;
+    setShowReplyForm(!showReplyForm);
+  };
+
+
   if(post === undefined)return <></>;
   if(
     !post?.attributes?.user?.data?.attributes?.username ||
@@ -101,7 +108,32 @@ export const Post = (props: PostsProps) => {
             <PlaceLink ryokan={post.attributes?.ryokan}/>
           }
         </div>
-        <IconsContainer postId={post?.id} isReply={isReply} token={token} userId={user?.id} replyCount={replyCount} favoriteCount={post?.attributes?.favoriteCount}/>
+        {/* <IconsContainer postId={post?.id} isReply={isReply} token={token} userId={user?.id} replyCount={replyCount} favoriteCount={post?.attributes?.favoriteCount}/> */}
+
+        
+        <div className="icons-container flex justify-around">
+      {/* リプライ ※TODO:ゆくゆくは、個別Postにぶらさがる各リプライそれぞれについたリプライ数も表示できるようにしたい */}
+        <div className={`reply-container flex items-center ${isReply && 'opacity-50'}`} onClick={() => handleClickReplyIcon()}>
+          <Image src='/reply.svg' alt='コメント' width={20} height={20} className='m-3'/>
+          { isReply || <p>{replyCount}</p>}
+        </div>
+      {/* お気に入り登録・解除 */}
+      <div className='favorite-container flex items-center' onClick={()=> handleClickFavorite(post?.id, post?.attributes?.favoriteCount, token, user?.id)}>
+        { myFavoritesIds.includes(post?.id)
+        ?
+          <>
+            <Image src='/favorite-red.png' alt='お気に入り追加済み' width={20} height={20} className='m-3'/>
+            <p>{post?.attributes?.favoriteCount}</p>
+          </>
+        : 
+          <>
+            <Image src='/favorite.svg' alt='お気に入りに追加' width={20} height={20} className='m-3'/>
+            <p>{post?.attributes?.favoriteCount}</p>
+          </>
+        }
+        {/* <p>{favoriteCount}</p> */}
+      </div>
+    </div>
     </div>
   );
 };

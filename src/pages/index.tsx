@@ -46,6 +46,7 @@ export default function Home() {
   };
 
   const getPosts = async (pageSize = 100) => {
+    console.log('!!!!!getPosts!!!!!')
     setIsLoading(true);
     const response = await axios.get(
       `${API_URL}/api/posts?populate[user][populate]=*&sort=createdAt%3Adesc&pagination[page]=${currentPage}&pagination[pageSize]=25`
@@ -70,6 +71,7 @@ export default function Home() {
   useEffect(()=>{
     getPosts();
   },[myFavorites,currentPage]);
+  // },[currentPage]);
 
   useEffect(()=>{
     getMyFavorites();
