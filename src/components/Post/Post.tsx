@@ -95,7 +95,7 @@ export const Post = (props: PostsProps) => {
           {/* 画像もしくは動画 */}
 
           <Media post={post} isDetailPage={isDetailPage}/>
-
+          {/* <img src="https://toujinosato-dev.s3.us-west-1.amazonaws.com/%E7%99%BB%E5%88%A5%E6%B8%A9%E6%B3%89.jpeg" className='w-20' alt="" /> */}
 
           <div className='mx-[16px]'>
             {/* 日付 */}
