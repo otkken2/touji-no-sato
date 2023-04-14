@@ -34,10 +34,16 @@ const Upload = () => {
   const uploadMediaFile = async (profileIcon: File) => {
     const formData = new FormData();
     formData.append('files',profileIcon, profileIcon.name);
+
+    for (let [key, value] of formData.entries()) { 
+      console.log('↓formDataの確認↓');
+      console.log(key, value);
+      
+    }
     const response = await fetch(`${API_URL}/api/upload`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'multipart/form-data',
+        // 'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`
       },
       body: formData,
