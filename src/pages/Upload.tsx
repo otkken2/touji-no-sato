@@ -50,6 +50,13 @@ const Upload = () => {
       },
       body: formData,
     });
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error('Error uploading file:', error);
+      throw new Error('Error uploading file');
+    }
+
     const uploadedFile = await response.json();
     if(uploadedFile)console.log('ファイルアップロードされたよ');
     console.log("uploadedFile in uploadMediaFile()");
