@@ -37,6 +37,7 @@ const Upload = () => {
     const response = await fetch(`${API_URL}/api/upload`, {
       method: 'POST',
       headers: {
+        'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`
       },
       body: formData,
