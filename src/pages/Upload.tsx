@@ -72,6 +72,8 @@ const Upload = () => {
   
     if (files) {
       console.log("画像ファイルあるよ");
+      console.log('filesの中身だよ↓')
+      console.log(files);
       const uploadedFilesPromises = files.map((file) => uploadMediaFile(file));
       const allUploadedFiles: ImageAttributes[][] = await Promise.all(uploadedFilesPromises);
       flattenedUploadedFiles = allUploadedFiles.flat();
