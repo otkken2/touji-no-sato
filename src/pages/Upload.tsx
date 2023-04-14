@@ -35,6 +35,8 @@ const Upload = () => {
     const formData = new FormData();
     formData.append('files',profileIcon, profileIcon.name);
 
+    console.log('uploadMediaFile関数の引数ファイル確認↓');
+    console.log(profileIcon);
     for (let [key, value] of formData.entries()) { 
       console.log('↓formDataの確認↓');
       console.log(key, value);
