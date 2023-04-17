@@ -1,10 +1,14 @@
+export const IS_STAGING_ENV     = process.env.NEXT_PUBLIC_NODE_ENV === "staging";
+export const IS_PRODUCTION_ENV  = process.env.NEXT_PUBLIC_NODE_ENV === "production";
+export const IS_DEVELOPMENT_ENV = process.env.NEXT_PUBLIC_NODE_ENV === "development";
+
 export const API_URL = (() => {
-    if (process.env.NEXT_PUBLIC_NODE_ENV === "staging") {
+    if (IS_STAGING_ENV) {
       return "https://toujinosato.herokuapp.com";
         // return 'https://toujinosato-dev.s3.us-west-1.amazonaws.com'
-    } else if (process.env.NEXT_PUBLIC_NODE_ENV === "production") {
+    } else if (IS_PRODUCTION_ENV) {
       return "https://toujinosato.com";
-    } else if (process.env.NEXT_PUBLIC_NODE_ENV === "development") {
+    } else if (IS_DEVELOPMENT_ENV) {
       return "http://localhost:1337";
     } else {
       throw new Error("Unknown NODE_ENV");
@@ -12,11 +16,11 @@ export const API_URL = (() => {
   })();
 
   export const MEDIA_BASE_URL = (() => {
-    if (process.env.NEXT_PUBLIC_NODE_ENV === "staging") {
+    if (IS_STAGING_ENV) {
       return "https://toujinosato-dev.s3.us-west-1.amazonaws.com";
-    } else if (process.env.NEXT_PUBLIC_NODE_ENV === "production") {
+    } else if (IS_PRODUCTION_ENV) {
       // 本番環境用のS3エンドポイントを設定
-    } else if (process.env.NEXT_PUBLIC_NODE_ENV === "development") {
+    } else if (IS_DEVELOPMENT_ENV) {
       // 開発環境用のS3エンドポイントを設定
       return "http://localhost:1337";
     } else {
