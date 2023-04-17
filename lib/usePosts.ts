@@ -75,6 +75,8 @@ export const usePosts = () => {
     if(!postId)return;
     const res = await axios.get(`${API_URL}/api/media-urls-of-posts?filters[postId][$eq]=${postId}`);
     const urls = res.data.data.map((each: any) => each?.attributes?.url);
+    console.log("画像のurlだよ！↓")
+    console.log(urls)
     setMediaUrls(urls);
   };
 
