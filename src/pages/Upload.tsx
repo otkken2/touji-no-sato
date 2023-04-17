@@ -9,7 +9,7 @@ import { bathingDayAtom, descriptionAtom, filesAtom, latAtom, lngAtom, selectedP
 import { UploadForm } from "@/components/Upload/UploadForm";
 import { useRouter } from "next/router";
 import { usePosts } from "lib/usePosts";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface PostInterface{
   description: string;
@@ -20,8 +20,8 @@ const Upload = () => {
   const [files, setFiles] = useAtom(filesAtom);
   const selectedPlace = useAtomValue(selectedPlaceAtom);
   const description = useAtomValue(descriptionAtom);
-  const lat = useAtomValue(latAtom);
-  const lng = useAtomValue(lngAtom);
+  const [lat,setLat] = useAtom(latAtom);
+  const [lng,setLng] = useAtom(lngAtom);
 
   const user = useAtomValue(userAtom);
   const token = Cookies.get('token');
@@ -30,6 +30,11 @@ const Upload = () => {
 
   console.log("bathingDay")
   console.log(bathingDay)
+
+  useEffect(()=>{
+    setLat(0);
+    setLng(0);
+  },[]);
 
   const uploadMediaFile = async (profileIcon: File) => {
     const formData = new FormData();

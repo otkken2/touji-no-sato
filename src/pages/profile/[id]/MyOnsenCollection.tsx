@@ -114,6 +114,7 @@ const MyOnsenCollection = () => {
       >
         {
           postsGroupsByLatLng && postsGroupsByLatLng.map((postGroupByLatLng,index)=>{
+            if(postGroupByLatLng.latLng.lat === 0 && postGroupByLatLng.latLng.lng === 0)return;
             return (
               <div key={index} className='text-white'>
                 {
