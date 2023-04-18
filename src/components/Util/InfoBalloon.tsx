@@ -16,13 +16,15 @@ const InfoBalloon = () => {
     };
   },[]);
   return (
-    balloonText &&         
+    balloonText ?         
     <div className="fixed w-screen h-fit flex items-center justify-center z-20">
       <div className="absolute bg-primary max-w-[600px] w-[95%] h-[50px] rounded-lg top-6 text-white text-center leading-[50px]">
         {/* ここに中央に表示させたいコンテンツを追加してください */}
         {balloonText}
       </div>
     </div>
+    :
+    <></>
   );
 };
 
