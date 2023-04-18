@@ -2,7 +2,7 @@
 import { userAtom } from "@/atoms/atoms";
 import { TextField } from "@mui/material";
 import axios from "axios";
-import { API_URL } from "const";
+import { API_URL, IS_DEVELOPMENT_ENV } from "const";
 import { useAtomValue } from "jotai";
 import { ChangeEvent, useEffect, useState } from "react";
 import router from "next/router";
@@ -74,8 +74,6 @@ export const Profile = () => {
   }
 
   const onFileInputChange = (e :ChangeEvent<HTMLInputElement>) => {
-    console.log("e.target.files");
-    console.log(e.target.files);
     if(!e.target.files)return;
     setProfileIcon(Array.from(e.target.files));
     const iconUrl = URL.createObjectURL(e.target.files[0]);
@@ -86,9 +84,11 @@ export const Profile = () => {
     const fetchUserInfo = async () => {
       return await axios.get(`${API_URL}/api/users?populate=*&filters[id][$eq]=${id}`)
         .then(res => {
-          console.log('fetchUserInfo↓');
-          console.log(res.data);
-          setUserIconUrl(res.data[0]?.profileIcon);
+          if(IS_DEVELOPMENT_ENV){
+            setUserIconUrl(`${API_URL}${res.data[0]?.profileIcon}`);
+          }else{
+            setUserIconUrl(res.data[0]?.profileIcon)
+          }
           setUsername(res.data[0]?.username);
           setSelfIntroduction(res.data[0]?.selfIntroduction);
         });
@@ -101,8 +101,6 @@ export const Profile = () => {
       if(!router.isReady)return;
       return await axios.get(`${API_URL}/api/posts?populate[user][populate]=*&populate=Image&filters[user][id][$eq]=${id}&sort=createdAt%3Adesc&pagination[page]=1&pagination[pageSize]=1000`)
         .then(res =>{
-          console.log('myPosts↓');
-          console.log(res.data.data);
           setData(res.data.data);
         });
     }
@@ -229,7 +227,7 @@ export const Profile = () => {
               <div className='profile-container px-[16px] mb-5 rounded-lg shadow-customize p-5 mt-5'>
                 <div className='profile-header flex items-center mb-5 justify-between'>
                   <div className='header-icon-username flex items-center'>
-                    <img src={userIconUrl ? `${API_URL}${userIconUrl}` : '/mypage.svg'} alt="" className="rounded-full w-10 h-10 mr-2"/>
+                    <img src={userIconUrl ? `${userIconUrl}` : '/mypage.svg'} alt="" className="rounded-full w-10 h-10 mr-2"/>
                     <p className='font-bold text-md whitespace-nowrap overflow-hidden'>{username}</p>
                   </div>
                   <div className='flex justify-between'>
