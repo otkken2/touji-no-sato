@@ -12,8 +12,8 @@ import { PostData } from '@/Interface/interfaces'
 import { PlaceLink } from '@/components/Post/PlaceLink'
 import { useQuery } from 'react-query'
 import Cookies from 'js-cookie'
-import { useAtomValue } from 'jotai'
-import { userAtom } from '@/atoms/atoms'
+import { useAtomValue, useSetAtom } from 'jotai'
+import { infoBalloonAtom, userAtom } from '@/atoms/atoms'
 import { useFavorite } from 'lib/useFavorite'
 import { Post } from '@/components/Post/Post'
 
@@ -30,10 +30,15 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [replyCounts, setReplyCounts] = useState<ReplyCount[]>([]);
+  const setBalloonText = useSetAtom(infoBalloonAtom);
 
   const handleClickShowMore = () => {
     setCurrentPage(prev => prev + 1);
   };
+
+  // useEffect(()=>{
+  //   setBalloonText('これはトップページです')
+  // },[]);
 
   const getReplyCountsOfPosts = async(posts: PostData[])=>{
     posts.map(async eachPost => {

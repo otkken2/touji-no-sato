@@ -4,8 +4,8 @@ import { API_URL } from "const";
 import { Image, ImageAttributes, Post } from "@/Interface/interfaces";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useAtom, useAtomValue } from "jotai";
-import { bathingDayAtom, descriptionAtom, filesAtom, latAtom, lngAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { bathingDayAtom, descriptionAtom, filesAtom, infoBalloonAtom, latAtom, lngAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
 import { UploadForm } from "@/components/Upload/UploadForm";
 import { useRouter } from "next/router";
 import { usePosts } from "lib/usePosts";
@@ -27,6 +27,7 @@ const Upload = () => {
   const token = Cookies.get('token');
   const router = useRouter();
   const bathingDay = useAtomValue(bathingDayAtom);
+  const setBalloonText = useSetAtom(infoBalloonAtom);
 
   console.log("bathingDay")
   console.log(bathingDay)
@@ -141,6 +142,10 @@ const Upload = () => {
       // setUploadedFiles([]);
       setFiles([]);
       router.push("/");
+    }).then(()=>{
+      setBalloonText('投稿に成功しました')
+    }).catch(()=>{
+      setBalloonText('投稿に失敗しました')
     });
   };
   
