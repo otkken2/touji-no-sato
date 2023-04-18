@@ -139,7 +139,7 @@ export const Profile = () => {
       return (
         <div className='relative'>
           <img src='/mypage.svg' alt="blankIcon"/>
-          <img src='/upload.png' alt="blankIcon" className='absolute'/>
+          <img src='/upload.png' alt="blankIcon" className='absolute z-10 w-5 bottom-0 -right-2'/>
         </div>
       )
     }
