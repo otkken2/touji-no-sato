@@ -130,7 +130,7 @@ export const Profile = () => {
       return (
         <div className="relative w-fit">
           <div className='w-[50px] h-[50px] rounded-full overflow-hidden '>
-            <img src={`${API_URL}${userIconUrl}`} alt="" className="h-full w-full"/>
+            <img src={userIconUrl} alt="" className="h-full w-full"/>
           </div>
           <img src='/upload.png' alt="blankIcon" className='absolute z-10 w-5 bottom-0 -right-2'/>
         </div>
