@@ -2,7 +2,7 @@
 import { descriptionAtom, filesAtom, previewsAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
 import { PlacesAutoComplete } from "@/pages/RyokanInfo";
 import { Button, TextField } from "@mui/material";
-import { API_URL } from "const";
+import { API_URL, IS_DEVELOPMENT_ENV } from "const";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { usePosts } from "lib/usePosts";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -61,7 +61,7 @@ export const UploadForm = (props: UploadFormProps) => {
     if(!MediaUrls)return;
     const existingPreviews: PreviewFilesInterface[] = MediaUrls.map(eachURl => (
       {
-        URL: `${API_URL}${eachURl}`,
+        URL: eachURl,
         isMovie: isMovie(eachURl),
       }
     ))
@@ -87,8 +87,14 @@ export const UploadForm = (props: UploadFormProps) => {
   const handleClickDeleteMedia = async () => {
     if(!postId)return; //Editページではない（＝Uploadページである）場合、postIdが渡されていないので早期リターン。
     selectedMediasForDelete.map(async eachMedia => {
-      const deleteUrl = eachMedia.URL.replace(`${API_URL}`,'');
-      const deleteId: number = await axios.get(`${API_URL}/api/media-urls-of-posts?filters[url][$eq]=${deleteUrl}`).then(res => {
+      const deleteUrl = () => {
+        if(IS_DEVELOPMENT_ENV){
+          return eachMedia.URL.replace(`${API_URL}`,'');
+        }else{
+          return eachMedia.URL;
+        }
+      };
+      const deleteId: number = await axios.get(`${API_URL}/api/media-urls-of-posts?filters[url][$eq]=${deleteUrl()}`).then(res => {
         return res.data.data[0].id;
       })
       if(!deleteId)return;
@@ -114,7 +120,6 @@ export const UploadForm = (props: UploadFormProps) => {
           prev.filter(eachSelectedMedias => eachSelectedMedias.URL !== preview.URL)
           )
     }else{
-      console.log('HOGe!!!!!!!!!!!');
       setCheckedMediasIndex(prev => [...prev,index]);
       setSelectedMediasForDelete(prev => [...prev,preview]);
     }
