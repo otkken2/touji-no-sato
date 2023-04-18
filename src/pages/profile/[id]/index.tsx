@@ -82,6 +82,7 @@ export const Profile = () => {
 
   useEffect(()=>{
     const fetchUserInfo = async () => {
+      if(!router.isReady)return;
       return await axios.get(`${API_URL}/api/users?populate=*&filters[id][$eq]=${id}`)
         .then(res => {
           if(IS_DEVELOPMENT_ENV){
@@ -93,8 +94,9 @@ export const Profile = () => {
           setSelfIntroduction(res.data[0]?.selfIntroduction);
         });
     };
+
     fetchUserInfo();
-  },[id,user]);
+  },[id,user,router.isReady]);
 
   useEffect(()=>{
     const fetchMyPosts = async () => {
@@ -105,7 +107,7 @@ export const Profile = () => {
         });
     }
     fetchMyPosts();
-  },[id,user]);
+  },[id,user,router.isReady]);
 
   useEffect(()=>{
     if(!user?.username)return;
