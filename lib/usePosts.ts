@@ -82,8 +82,6 @@ export const usePosts = () => {
         return `${API_URL}${each.attributes.url}`
       }
     });
-    console.log("画像のurlだよ！↓")
-    console.log(urls)
     setMediaUrls(urls);
   };
 
