@@ -136,10 +136,12 @@ export const Profile = () => {
         </div>
       );
     }else{
-      <div className='relative'>
-        <img src='/mypage.svg' alt="blankIcon"/>
-        <img src='/upload.png' alt="blankIcon" className='absolute'/>
-      </div>
+      return (
+        <div className='relative'>
+          <img src='/mypage.svg' alt="blankIcon"/>
+          <img src='/upload.png' alt="blankIcon" className='absolute'/>
+        </div>
+      )
     }
   };
 
