@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { descriptionAtom, filesAtom, previewsAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
+import { descriptionAtom, filesAtom, infoBalloonAtom, previewsAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
 import { PlacesAutoComplete } from "@/pages/RyokanInfo";
 import { Button, TextField } from "@mui/material";
 import { API_URL, IS_DEVELOPMENT_ENV } from "const";
@@ -42,6 +42,7 @@ export const UploadForm = (props: UploadFormProps) => {
   const [selectedMediasForDelete, setSelectedMediasForDelete] = useState<PreviewFilesInterface[]>([]);
   const token = Cookies.get('token');
   const [checkedMediasIndex, setCheckedMediasIndex] = useState<number[]>([]);
+  const [balloonText, setBalloonText] = useAtom(infoBalloonAtom);
   
   useEffect(()=>{ //Uploadページの場合
     if(isEditPage)return;
@@ -104,6 +105,7 @@ export const UploadForm = (props: UploadFormProps) => {
         }
       }).then(res => {
         fetchMediaUrlsOfPost(Number(postId));
+        setBalloonText('画像の削除に成功しました。');
         router.push(`/post/${postId}/Edit`);
       })
     });

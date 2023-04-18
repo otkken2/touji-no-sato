@@ -14,7 +14,7 @@ const InfoBalloon = () => {
     return () => {
       clearTimeout(timer);
     };
-  },[]);
+  },[balloonText]);
   return (
     balloonText ?         
     <div className="fixed w-screen h-fit flex items-center justify-center z-20">
