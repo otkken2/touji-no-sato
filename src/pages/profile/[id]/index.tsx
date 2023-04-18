@@ -1,9 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
-import { userAtom } from "@/atoms/atoms";
+import { infoBalloonAtom, userAtom } from "@/atoms/atoms";
 import { TextField } from "@mui/material";
 import axios from "axios";
 import { API_URL, IS_DEVELOPMENT_ENV } from "const";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { ChangeEvent, useEffect, useState } from "react";
 import router from "next/router";
 import { Post } from "@/components/Post/Post";
@@ -27,6 +27,7 @@ export const Profile = () => {
   const [iconPreviewUrl, setIconPreviewUrl] = useState<string>('');
   const [profileIcon, setProfileIcon] = useState<File[] | null>(null);
   const [userIconUrl, setUserIconUrl] = useState<string>('');
+  const setBalloonText = useSetAtom(infoBalloonAtom);
 
   const uploadProfileIcon = async (profileIcon: File[]) => {
     const formData = new FormData();
@@ -70,6 +71,9 @@ export const Profile = () => {
       if(!id)return;
       fetchUser(Number(id));
       setIsEditProfile(false);
+      setBalloonText('プロフィールの編集が成功しました')
+    }).catch(()=> {
+      setBalloonText('プロフィールの編集が失敗しました')
     });
   }
 
