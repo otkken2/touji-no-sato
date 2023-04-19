@@ -20,3 +20,4 @@ export const showReplyFormAtom = atom<boolean>(false);
 export const bathingDayAtom = atom<string | undefined>(undefined);
 
 export const infoBalloonAtom = atom<string>('');
+export const isErrorAtom = atom<boolean>(false);
