@@ -2,13 +2,13 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { API_URL } from "const";
-import { useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { infoBalloonAtom, isErrorAtom, userAtom } from "@/atoms/atoms";
 
 export const useAuth = () => {
   const setBalloonText = useSetAtom(infoBalloonAtom);
   const setIsError = useSetAtom(isErrorAtom);
-  const setUser = useSetAtom(userAtom);
+  const [user,setUser] = useAtom(userAtom);
   const  router  = useRouter();
 
   const fetchUser = async(userId :number) => {
@@ -16,6 +16,47 @@ export const useAuth = () => {
     console.log(res.data)
     setUser(res.data)
   }
+
+  const sendEmail = () => {
+    fetch('https://api.sendgrid.com/v3/mail/send', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SENDGRID_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        personalizations: [
+          {
+            to: [{email: 'lovelovezamakko2@gmail.com'}],
+            subject: 'test mail',
+            
+          }
+        ],
+        from: {email: 'kaitekinakurashi@gmail.com'},
+        content: [
+          {
+            type: 'text/plain',
+            value: `
+            ${user?.username}様
+
+            パスワードのリセットを下記のURLから行なってください。
+            https://touji-no-sato-git-develop-otkken2.vercel.app/
+          `
+          }
+        ]
+      })
+    })
+      .then(response => {
+        if (response.ok) {
+          console.log('Email sent successfully');
+        } else {
+          console.error('Failed to send email');
+        }
+      })
+      .catch(error => {
+        console.error('Error sending email:', error);
+      });
+  };
 
   const login = async (identifier: string, password: string) => {
     if(!identifier){
@@ -34,9 +75,10 @@ export const useAuth = () => {
         password,
       }).then(res => {
         Cookies.set('token', res.data.jwt, {expires: 60});
-        fetchUser(res.data.user.id)
-        router.push('/')
-        setBalloonText('ログインに成功しました')
+        fetchUser(res.data.user.id);
+        router.push('/');
+        setBalloonText('ログインに成功しました');
+        sendEmail();
       }).catch(err => {
         setBalloonText('Eメールかパスワードが間違っています');
         setIsError(true);
