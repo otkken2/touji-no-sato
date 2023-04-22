@@ -3,7 +3,8 @@ import axios from 'axios';
 import { TextField } from '@mui/material';
 import { useSetAtom } from 'jotai';
 import { infoBalloonAtom, isErrorAtom } from '@/atoms/atoms';
-import { API_URL } from 'const';
+import { API_URL, FRONT_END_URL } from 'const';
+import { UserInterface } from '@/Interface/interfaces';
 
 const SendEmailForResetPassword = () => {
   const [email, setEmail] = useState('');
@@ -17,24 +18,26 @@ const SendEmailForResetPassword = () => {
 
   const handleSendSendEmailForResetPasswordLink = async (event: any) => {
     event.preventDefault();
+    const userByEmail: UserInterface = await axios.get(`${API_URL}/api/users?filters[email][$eq]=${email}`).then(res => res.data[0]);
 
+    if(!userByEmail){
+      setBalloonText('そのメールアドレスは存在しません');
+      setIsError(true);
+      return;
+    }
     const response = await axios.post(`${API_URL}/api/email`, {
-    // const response = await axios.post(`${API_URL}/email/send`, {
         to: email,
         from: 'kaitekinakurashi.goudou@gmail.com',
-        subject: 'Password reset',
-        text: `Click the following link to reset your password: http://localhost:3000/ResetPassword`,
+        subject: '「湯治の郷」パスワード再設定用URL',
+        text: `
+          ${userByEmail.username} 様
+          「湯治の郷」パスワード再設定用URLをお知らせいたします。
+          
+          下記のURLから、パスワードの再設定手続きをお願いいたします。
+          : ${FRONT_END_URL}/ResetPassword`,
       //   text: `Click the following link to reset your password: ${resetPasswordLink}`,
       //   html: `Click the following link to reset your password: <a href="${resetPasswordLink}">${resetPasswordLink}</a>`
-      
     })
-    // .then(res => {
-    //   console.log(res)
-    //   return res.data;
-    // });
-
-    console.log("response");
-    console.log(response.status);
     if (response.status === 200) {
       setIsEmailSent(true);
       setBalloonText('パスワード再設定用リンクを送信しました。')
