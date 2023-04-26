@@ -28,7 +28,7 @@ const SendEmailForResetPassword = () => {
       setIsEmailSent(true);
     })
     .catch(error => {
-      setBalloonText('エラーが発生しました');
+      setBalloonText('入力したメールアドレスをもう一度確認してください。');
       setIsError(true);
     });
   };

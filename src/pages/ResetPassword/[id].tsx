@@ -1,6 +1,7 @@
 import { infoBalloonAtom, isErrorAtom, userAtom } from "@/atoms/atoms";
 import { TextField } from "@mui/material";
 import axios from "axios";
+import { API_URL } from "const";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useAuth } from "lib/useAuth";
 import { useRouter } from "next/router";
@@ -34,7 +35,7 @@ const ResetPassword = () => {
   },[id, router.isReady]);
 
   const handleResetPassword = () => {
-    axios.post('http://localhost:1337/api/auth/reset-password', { 
+    axios.post(`${API_URL}/api/auth/reset-password`, { 
       newPassword: password, 
       token: token,
     })

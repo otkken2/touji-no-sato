@@ -17,47 +17,6 @@ export const useAuth = () => {
     setUser(res.data)
   }
 
-  const sendEmail = () => {
-    fetch('https://api.sendgrid.com/v3/mail/send', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SENDGRID_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        personalizations: [
-          {
-            to: [{email: 'lovelovezamakko2@gmail.com'}],
-            subject: 'test mail',
-            
-          }
-        ],
-        from: {email: 'kaitekinakurashi@gmail.com'},
-        content: [
-          {
-            type: 'text/plain',
-            value: `
-            ${user?.username}様
-
-            パスワードのリセットを下記のURLから行なってください。
-            https://touji-no-sato-git-develop-otkken2.vercel.app/
-          `
-          }
-        ]
-      })
-    })
-      .then(response => {
-        if (response.ok) {
-          console.log('Email sent successfully');
-        } else {
-          console.error('Failed to send email');
-        }
-      })
-      .catch(error => {
-        console.error('Error sending email:', error);
-      });
-  };
-
   const login = async (identifier: string, password: string) => {
     if(!identifier){
       setBalloonText('Eメールを入力してください');
