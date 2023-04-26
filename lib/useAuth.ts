@@ -78,7 +78,6 @@ export const useAuth = () => {
         fetchUser(res.data.user.id);
         router.push('/');
         setBalloonText('ログインに成功しました');
-        sendEmail();
       }).catch(err => {
         setBalloonText('Eメールかパスワードが間違っています');
         setIsError(true);

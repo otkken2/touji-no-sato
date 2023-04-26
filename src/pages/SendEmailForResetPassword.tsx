@@ -16,35 +16,21 @@ const SendEmailForResetPassword = () => {
     setEmail(event.target.value);
   };
 
-  const handleSendSendEmailForResetPasswordLink = async (event: any) => {
-    event.preventDefault();
-    const userByEmail: UserInterface = await axios.get(`${API_URL}/api/users?filters[email][$eq]=${email}`).then(res => res.data[0]);
+  const handleSubmit = async (e:any) => {
+    e.preventDefault();
 
-    if(!userByEmail){
-      setBalloonText('そのメールアドレスは存在しません');
-      setIsError(true);
-      return;
-    }
-    const response = await axios.post(`${API_URL}/api/email`, {
-        to: email,
-        from: 'kaitekinakurashi.goudou@gmail.com',
-        subject: '「湯治の郷」パスワード再設定用URL',
-        text: `
-          ${userByEmail.username} 様
-          「湯治の郷」パスワード再設定用URLをお知らせいたします。
-          
-          下記のURLから、パスワードの再設定手続きをお願いいたします。
-          : ${FRONT_END_URL}/ResetPassword`,
-      //   text: `Click the following link to reset your password: ${resetPasswordLink}`,
-      //   html: `Click the following link to reset your password: <a href="${resetPasswordLink}">${resetPasswordLink}</a>`
+    axios
+    .post(`${API_URL}/api/auth/forgot-password`, {
+      email: email, // user's email
     })
-    if (response.status === 200) {
+    .then(response => {
+      setBalloonText('Eメールを送信しました。ご確認ください。');
       setIsEmailSent(true);
-      setBalloonText('パスワード再設定用リンクを送信しました。')
-    } else {
-      setBalloonText('Failed to send reset password link');
+    })
+    .catch(error => {
+      setBalloonText('エラーが発生しました');
       setIsError(true);
-    }
+    });
   };
 
   return (
@@ -57,7 +43,8 @@ const SendEmailForResetPassword = () => {
         {isEmailSent ? (
           <p className='w-11/12 mx-auto leading-8 text-center'>パスワード再設定用のメールを送信しました。<br /> メールに記載のURLを開いて再設定の手続きを行なってください。</p>
         ) : (
-          <form onSubmit={handleSendSendEmailForResetPasswordLink} className='flex flex-col w-11/12 max-w-[500px] m-auto'>
+          // <form onSubmit={handleSendSendEmailForResetPasswordLink} className='flex flex-col w-11/12 max-w-[500px] m-auto'>
+          <form onSubmit={handleSubmit} className='flex flex-col w-11/12 max-w-[500px] m-auto'>
             <label className='text-center flex flex-col'>
               <div className='mb-5'>
                 <TextField
