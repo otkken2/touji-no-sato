@@ -29,9 +29,6 @@ const Upload = () => {
   const bathingDay = useAtomValue(bathingDayAtom);
   const setBalloonText = useSetAtom(infoBalloonAtom);
 
-  console.log("bathingDay")
-  console.log(bathingDay)
-
   useEffect(()=>{
     setLat(0);
     setLng(0);
@@ -79,6 +76,7 @@ const Upload = () => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    setBalloonText('アップロード中です。このままお待ちください。')
     const formData = new FormData();
   
     let flattenedUploadedFiles: ImageAttributes[] = [];
@@ -148,9 +146,6 @@ const Upload = () => {
       setBalloonText('投稿に失敗しました')
     });
   };
-  
-  
-  
   
   return (
     <UploadForm handleSubmit={handleSubmit} title='新規投稿'/>
