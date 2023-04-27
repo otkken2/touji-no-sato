@@ -1,11 +1,11 @@
 import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
 
-import { API_URL } from "const";
+import { API_URL, TIME_LIMIT_FOR_MOVIE, TIME_LIMIT_OF_INFO_BALLOON } from "const";
 import { Image, ImageAttributes, Post } from "@/Interface/interfaces";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { bathingDayAtom, descriptionAtom, filesAtom, infoBalloonAtom, latAtom, lngAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
+import { bathingDayAtom, descriptionAtom, filesAtom, infoBalloonAtom, latAtom, lngAtom, selectedPlaceAtom, timelimitAtom, userAtom } from "@/atoms/atoms";
 import { UploadForm } from "@/components/Upload/UploadForm";
 import { useRouter } from "next/router";
 import { usePosts } from "lib/usePosts";
@@ -28,10 +28,12 @@ const Upload = () => {
   const router = useRouter();
   const bathingDay = useAtomValue(bathingDayAtom);
   const setBalloonText = useSetAtom(infoBalloonAtom);
+  const [timelimit, setTimelimit] = useAtom(timelimitAtom)
 
   useEffect(()=>{
     setLat(0);
     setLng(0);
+    setTimelimit(TIME_LIMIT_FOR_MOVIE);
   },[]);
 
   const uploadMediaFile = async (profileIcon: File) => {
@@ -141,6 +143,7 @@ const Upload = () => {
       setFiles([]);
       router.push("/");
     }).then(()=>{
+      setTimelimit(TIME_LIMIT_OF_INFO_BALLOON);
       setBalloonText('投稿に成功しました')
     }).catch(()=>{
       setBalloonText('投稿に失敗しました')

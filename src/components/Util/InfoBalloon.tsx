@@ -1,4 +1,4 @@
-import { infoBalloonAtom, isErrorAtom } from '@/atoms/atoms';
+import { infoBalloonAtom, isErrorAtom, timelimitAtom } from '@/atoms/atoms';
 import { useAtom } from 'jotai';
 import React, { useEffect } from 'react';
 import 'tailwindcss/tailwind.css';
@@ -6,10 +6,11 @@ import 'tailwindcss/tailwind.css';
 const InfoBalloon = () => {
   const [balloonText,setBalloonText] = useAtom(infoBalloonAtom);
   const [isError, setIsError] = useAtom(isErrorAtom);
+  const [timelimit, setTimelimit] = useAtom(timelimitAtom)
   const timer = setTimeout(()=>{
       setBalloonText('');
       setIsError(false);
-  },3000);
+  },timelimit);
 
   useEffect(()=>{
     timer;

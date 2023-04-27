@@ -38,3 +38,6 @@ export const FRONT_END_URL = (()=>{
   }
 })();
 
+export const TIME_LIMIT_FOR_MOVIE = 600000;
+export const TIME_LIMIT_OF_INFO_BALLOON = 3000;
+
