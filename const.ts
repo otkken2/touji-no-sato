@@ -4,10 +4,12 @@ export const IS_DEVELOPMENT_ENV = process.env.NEXT_PUBLIC_NODE_ENV === "developm
 
 export const API_URL = (() => {
     if (IS_STAGING_ENV) {
-      return "https://toujinosato.herokuapp.com";
+      return 'https://3.86.213.189'
+      // return "https://toujinosato.herokuapp.com";
         // return 'https://toujinosato-dev.s3.us-west-1.amazonaws.com'
     } else if (IS_PRODUCTION_ENV) {
-      return "https://toujinosato.com";
+      // return "https://toujinosato.com";
+      return 'https://3.86.213.189'
     } else if (IS_DEVELOPMENT_ENV) {
       return "http://localhost:1337";
     } else {
