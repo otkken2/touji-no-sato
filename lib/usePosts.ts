@@ -76,6 +76,9 @@ export const usePosts = () => {
     const res = await axios.get(`${API_URL}/api/media-urls-of-posts?filters[postId][$eq]=${postId}`);
     // dev環境→API_URL+url, staging&production環境->urlのみ
     const urls = res.data.data.map((each: any) => {
+      console.log('each.attributes.url', each.attributes
+      
+      )
       if(IS_STAGING_ENV || IS_PRODUCTION_ENV){
         return each.attributes.url;
       }else{
