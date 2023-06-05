@@ -77,6 +77,8 @@ export default function Home() {
   // },[myFavorites,currentPage]);
   },[currentPage]);
 
+  console.log('posts!!',posts);
+
   useEffect(()=>{
     getMyFavorites();
   },[]);
