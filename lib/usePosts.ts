@@ -80,7 +80,8 @@ export const usePosts = () => {
       
       )
       if(IS_STAGING_ENV || IS_PRODUCTION_ENV){
-        return each.attributes.url;
+        return `${API_URL}${each.attributes.url}`
+        // return each.attributes.url;
       }else{
         console.log('API_URL/uploads/filesのほうだよ！！！！')
         return `${API_URL}${each.attributes.url}`
