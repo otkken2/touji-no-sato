@@ -103,7 +103,6 @@ export const useFavorite = () => {
     if(!user)return;
     const myFavorites = await axios.get(`${API_URL}/api/favorites?populate[post][populate]=*&filters[user][id][$eq]=${user?.id}`).then(res=> res.data.data);
     setMyFavorites((prevState) => myFavorites);
-    console.log('myFavoritesが更新されたよ！')
   };
 
   return {myFavorites, setMyFavorites, handleClickFavorite, getMyFavorites, myFavoritesIds}

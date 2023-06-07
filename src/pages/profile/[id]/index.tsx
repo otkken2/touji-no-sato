@@ -87,11 +87,16 @@ export const Profile = () => {
   useEffect(()=>{
     const fetchUserInfo = async () => {
       if(!router.isReady)return;
+      // console.log('HOGEEEEE!!!')
       return await axios.get(`${API_URL}/api/users?populate=*&filters[id][$eq]=${id}`)
         .then(res => {
+          console.log('res.data[0]?.profileIcon',res.data[0]?.profileIcon);
           if(IS_DEVELOPMENT_ENV){
+            console.log('IS_DEVELOPMENT_ENV')
+            console.log('API_URL',API_URL);
             setUserIconUrl(`${API_URL}${res.data[0]?.profileIcon}`);
           }else{
+            console.log('NOT_DEVELOPMENT_ENV')
             setUserIconUrl(res.data[0]?.profileIcon)
           }
           setUsername(res.data[0]?.username);
