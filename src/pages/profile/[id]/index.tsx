@@ -97,7 +97,8 @@ export const Profile = () => {
             setUserIconUrl(`${API_URL}${res.data[0]?.profileIcon}`);
           }else{
             console.log('NOT_DEVELOPMENT_ENV')
-            setUserIconUrl(res.data[0]?.profileIcon)
+            setUserIconUrl(`${API_URL}${res.data[0]?.profileIcon}`);
+            // setUserIconUrl(res.data[0]?.profileIcon)
           }
           setUsername(res.data[0]?.username);
           setSelfIntroduction(res.data[0]?.selfIntroduction);
