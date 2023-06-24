@@ -91,13 +91,18 @@ export const Profile = () => {
       return await axios.get(`${API_URL}/api/users?populate=*&filters[id][$eq]=${id}`)
         .then(res => {
           console.log('res.data[0]?.profileIcon',res.data[0]?.profileIcon);
-          if(IS_DEVELOPMENT_ENV){
+          if(!res.data[0]?.profileIcon){
+            console.log('プロフ写真URL取得のレスポンスが空です');
+            setUserIconUrl('');
+          }else
+           if(IS_DEVELOPMENT_ENV){
             console.log('IS_DEVELOPMENT_ENV')
             console.log('API_URL',API_URL);
             setUserIconUrl(`${API_URL}${res.data[0]?.profileIcon}`);
           }else{
-            console.log('NOT_DEVELOPMENT_ENV')
-            setUserIconUrl(`${API_URL}${res.data[0]?.profileIcon}`);
+            // console.log('NOT_DEVELOPMENT_ENV')
+            // ※本番環境ではS3に格納されたファイルの絶対パス(https://~~)が返ってくるためAPI_URLは不要
+            setUserIconUrl(`${res.data[0]?.profileIcon}`);
             // setUserIconUrl(res.data[0]?.profileIcon)
           }
           setUsername(res.data[0]?.username);
