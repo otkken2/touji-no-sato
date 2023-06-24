@@ -61,7 +61,7 @@ export const Post = (props: PostsProps) => {
           }}>
             { myFavoritesIds.includes(post?.id)
             ?
-              <Image src='/favorite-red.png' alt='お気に入り追加済み' width={20} height={20} className='m-3'/>
+              <Image src='/favorite-red.svg' alt='お気に入り追加済み' width={20} height={20} className='m-3'/>
             : 
               <Image src='/favorite.svg' alt='お気に入りに追加' width={20} height={20} className='m-3'/>
             }

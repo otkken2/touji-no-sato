@@ -12,14 +12,14 @@ const Footer = () => {
   const user = useAtomValue(userAtom);
 
   return (
-    <footer className="text-center flex flex-row justify-around py-2 bg-slate-700 rounded-full">
+    <footer className="text-center flex flex-row justify-around py-2 bg-slate-700 rounded-full items-center">
       {user &&
         <>
           <Link href='/Favorite'>
             <Image src='/favorite.svg' height={FOOTER_ICON_HEIGHT} width={FOOTER_ICON_WIDTH} alt="お気に入り"/>
           </Link>
           <Link href='/Upload'>
-            <Image src='/upload.svg' height={FOOTER_ICON_HEIGHT} width={FOOTER_ICON_WIDTH} alt="投稿する"/>
+            <Image src='/upload.svg' height={40} width={40} alt="投稿する"/>
           </Link>
         </>
       } 
@@ -42,7 +42,7 @@ const Footer = () => {
         </>
         :
         <>
-          <Link href={`/profile/${user.id}`}>
+          <Link href={`/profile/${user?.id}`}>
               <Image src='/mypage.svg' height={FOOTER_ICON_HEIGHT} width={FOOTER_ICON_WIDTH} alt="プロフィール"/>
           </Link>
           {/* // <Link href='/Mypage'> */}
