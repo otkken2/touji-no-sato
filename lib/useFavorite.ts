@@ -22,6 +22,7 @@ export const useFavorite = () => {
         newFavoriteCount = 0;
       }
     }
+    console.log('token!!:', token);
     await axios.put(
       `${API_URL}/api/posts/${postId}`,
       {
