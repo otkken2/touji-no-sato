@@ -1,4 +1,4 @@
-import { descriptionAtom, filesAtom, latAtom, lngAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
+import { descriptionAtom, filesAtom, infoBalloonAtom, latAtom, lngAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
 import { UploadForm } from "@/components/Upload/UploadForm";
 import { ImageAttributes } from "@/Interface/interfaces";
 import axios from "axios";
@@ -19,6 +19,7 @@ const Edit = () => {
   const lat = useAtomValue(latAtom);
   const lng = useAtomValue(lngAtom);
   const {uploadMediaFile} = usePosts();
+  const [balloonText,setBalloonText] = useAtom(infoBalloonAtom);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -78,6 +79,7 @@ const Edit = () => {
 
       // console.log('成功！');
       setFiles([]);
+      setBalloonText('投稿の更新に成功しました');
       router.push(`/post/${id}`);
     });
   }

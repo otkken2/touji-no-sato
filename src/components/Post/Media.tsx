@@ -4,7 +4,7 @@ import 'keen-slider/keen-slider.min.css'
 import { useCallback, useEffect, useState } from 'react';
 import { Image as ImageInterface, PostData } from "@/Interface/interfaces";
 import ReactPlayer from 'react-player';
-import { API_URL } from 'const';
+import { MEDIA_BASE_URL } from 'const';
 import Link from 'next/link';
 import { usePosts } from 'lib/usePosts';
 import axios from 'axios';
@@ -53,12 +53,13 @@ export const Media = (props: MediaProps)=>{
             return (
               isMovie(url) ?
               <div key={ImageIndex} className="w-[100vw] keen-slider__slide" >
-                <ReactPlayer width='100%' url={`${API_URL}${url}`} controls={true}/>
+                <ReactPlayer width='100%' url={url} controls={true}/>
               </div>
               :
               // <div className="w-[100vw] keen-slider__slide" >
               <div className="w-full keen-slider__slide" >
-                <img key={ImageIndex}  src={`${API_URL}${url}`} alt="" className='w-full h-full' />
+                {/* <img key={ImageIndex}  src={`${API_URL}${url}`} alt="" className='w-full h-full' /> */}
+                <img key={ImageIndex}  src={url} alt="" className='w-full h-full' />
               </div>
             )
           }
@@ -66,12 +67,12 @@ export const Media = (props: MediaProps)=>{
           return(
             isMovie(url) ?
             <div className="w-full keen-slider__slide" >
-              <ReactPlayer width='100%' url={`${API_URL}${url}`} controls={true}/>
+              <ReactPlayer width='100%' url={url} controls={true}/>
             </div>
             :
               <Link key={ImageIndex} href={`/post/${post.id}`}>
                 <div className="w-full h-auto keen-slider__slide" >
-                  <img  src={`${API_URL}${url}`} alt="" className='w-full h-auto' />
+                  <img  src={url} alt="" className='w-full h-auto' />
                 </div>
               </Link>
             );

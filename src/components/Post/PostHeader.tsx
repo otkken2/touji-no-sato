@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
-import { API_URL } from "const";
+import { API_URL, IS_DEVELOPMENT_ENV } from "const";
 import { usePosts } from "lib/usePosts";
 import Image from "next/image";
 import { useState } from "react";
@@ -33,6 +33,14 @@ export const PostHeader = (props: PostHeaderProps) => {
     router.push(`/post/${postId}/Edit`);
   };
 
+  const switchIconUrlByEnv = () => {
+    if(IS_DEVELOPMENT_ENV){
+      return API_URL + userIconUrl;
+    }else{
+      return userIconUrl;
+    }
+  }
+
   const isMyPost = user?.username === username;
   if(!username)return <p>投稿者情報がありません</p>
   return(
@@ -40,8 +48,7 @@ export const PostHeader = (props: PostHeaderProps) => {
       <div className='flex'>
         <div className={`w-10 h-10 bg_primary rounded-full`}>
           <Link href={`/profile/${userId}`}>
-            {/* TODO: イメージをユーザーが設定できるようにする。 */}
-            <img src={userIconUrl ? `${API_URL}${userIconUrl}` : '/mypage.svg'} alt="プロフィール" className='w-full h-full rounded-full'/>
+            <img src={userIconUrl ? switchIconUrlByEnv() : '/mypage.svg'} alt="プロフィール" className='w-full h-full rounded-full'/>
           </Link>
         </div>
         <p className='ml-3 my-auto'>{username}</p>

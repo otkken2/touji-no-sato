@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_URL } from "const";
+import { API_URL, IS_DEVELOPMENT_ENV, IS_PRODUCTION_ENV, IS_STAGING_ENV } from "const";
 import { UserData } from "@/Interface/interfaces";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
@@ -74,7 +74,19 @@ export const usePosts = () => {
   const fetchMediaUrlsOfPost = async (postId: number| undefined) => {
     if(!postId)return;
     const res = await axios.get(`${API_URL}/api/media-urls-of-posts?filters[postId][$eq]=${postId}`);
-    const urls = res.data.data.map((each: any) => each?.attributes?.url);
+    // dev環境→API_URL+url, staging&production環境->urlのみ
+    const urls = res.data.data.map((each: any) => {
+      console.log('each.attributes.url', each.attributes
+      
+      )
+      if(IS_STAGING_ENV || IS_PRODUCTION_ENV){
+        // return `${API_URL}${each.attributes.url}`
+        return each.attributes.url;
+      }else{
+        console.log('API_URL/uploads/filesのほうだよ！！！！')
+        return `${API_URL}${each.attributes.url}`
+      }
+    });
     setMediaUrls(urls);
   };
 

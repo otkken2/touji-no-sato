@@ -8,11 +8,12 @@ import { PostHeader } from "./PostHeader";
 import Image from "next/image";
 import { useFavorite } from "lib/useFavorite";
 import Cookies from "js-cookie";
-import { useAtomValue } from "jotai";
-import { userAtom } from "@/atoms/atoms";
+import { useAtom, useAtomValue } from "jotai";
+import { showReplyFormAtom, userAtom } from "@/atoms/atoms";
 import { IconsContainer } from "./IconsContainer";
 
 import { Media } from "./Media";
+import { useState } from "react";
 
 interface PostsProps{
   post: PostData | undefined;
@@ -38,7 +39,38 @@ export const Post = (props: PostsProps) => {
   } = props;
   const token = Cookies.get('token');
   const user = useAtomValue(userAtom);
-  
+  const { handleClickFavorite, myFavoritesIds} = useFavorite();
+  const [showReplyForm, setShowReplyForm] = useAtom(showReplyFormAtom);
+  const handleClickReplyIcon = () => {
+    if(isReply)return;
+    setShowReplyForm(!showReplyForm);
+  };
+  const [localFavoriteCount, setLocalFavoriteCount] = useState<number>(post?.attributes?.favoriteCount || 0);
+
+  const renderIcons = () => {
+    return (
+      <div className="icons-container flex justify-around">
+          <div className={`reply-container flex items-center ${isReply && 'opacity-50'}`} onClick={() => handleClickReplyIcon()}>
+            <Image src='/reply.svg' alt='コメント' width={20} height={20} className='m-3'/>
+            { isReply || <p>{replyCount}</p>}
+          </div>
+          {/* お気に入り登録・解除 */}
+          <div className='favorite-container flex items-center' onClick={async()=> {
+            const newFavoriteCount = await handleClickFavorite(post?.id, post?.attributes?.favoriteCount, token, user?.id)
+            setLocalFavoriteCount(newFavoriteCount || 0);
+          }}>
+            { myFavoritesIds.includes(post?.id)
+            ?
+              <Image src='/favorite-red.svg' alt='お気に入り追加済み' width={20} height={20} className='m-3'/>
+            : 
+              <Image src='/favorite.svg' alt='お気に入りに追加' width={20} height={20} className='m-3'/>
+            }
+            <p>{localFavoriteCount}</p>
+          </div>
+      </div>
+    );
+  };
+
   if(post === undefined)return <></>;
   if(
     !post?.attributes?.user?.data?.attributes?.username ||
@@ -63,7 +95,7 @@ export const Post = (props: PostsProps) => {
           {/* 画像もしくは動画 */}
 
           <Media post={post} isDetailPage={isDetailPage}/>
-
+          {/* <img src="https://toujinosato-dev.s3.us-west-1.amazonaws.com/%E7%99%BB%E5%88%A5%E6%B8%A9%E6%B3%89.jpeg" className='w-20' alt="" /> */}
 
           <div className='mx-[16px]'>
             {/* 日付 */}
@@ -94,14 +126,14 @@ export const Post = (props: PostsProps) => {
           </div>
         </>
       </div>
-        {/* 旅館情報 */}
-        <div className='mx-[16px]'>
-          {
-            post.attributes?.ryokan &&
-            <PlaceLink ryokan={post.attributes?.ryokan}/>
-          }
-        </div>
-        <IconsContainer postId={post?.id} isReply={isReply} token={token} userId={user?.id} replyCount={replyCount} favoriteCount={post?.attributes?.favoriteCount}/>
+      {/* 旅館情報 */}
+      <div className='mx-[16px]'>
+        {
+          post.attributes?.ryokan &&
+          <PlaceLink ryokan={post.attributes?.ryokan}/>
+        }
+      </div>
+      {renderIcons()}
     </div>
   );
 };

@@ -1,54 +1,60 @@
-import { userAtom } from "@/atoms/atoms";
-import { Button, Input, TextField } from "@mui/material";
-import { useAtomValue } from "jotai";
+import { infoBalloonAtom, isErrorAtom, userAtom } from "@/atoms/atoms";
+import { TextField } from "@mui/material";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
-import { isIdentifier } from "typescript";
-import { useAuth } from '../../lib/useAuth';
-import Link from "next/link";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
-interface LoginInfoInterface{
-  identifier: string;
-  password: string;
+interface ResetPasswordInterface{
+  password: string,
+  confirm: string,
 }
 
-const Login = () => {
-  const { login } = useAuth()
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+const ResetPassword = () => {
+  const [password, setPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
+  const setBalloonText = useSetAtom(infoBalloonAtom);
+  const setIsError = useSetAtom(isErrorAtom);
   const user = useAtomValue(userAtom);
-  const router = useRouter();
-  const { register, handleSubmit, watch, formState: { errors }, control} = useForm<LoginInfoInterface>({
+  const { register, handleSubmit, watch, formState: { errors }, control} = useForm<ResetPasswordInterface>({
     defaultValues: {
-      identifier: '',
-      password: ''
+      password: '',
+      confirm: '',
     }
   });
+  const handleResetPassword = () => {
+    setBalloonText('パスワードがリセットされました!');
+  };
+  const router = useRouter();
   const onSubmit = async (e:any) => {
     e.preventDefault();
-    await login(email,password);
+    if(password !== confirm){
+      setBalloonText('新しいパスワードと確認用の値が一致しません');
+      setIsError(true);
+      return;
+    }
+    handleResetPassword();
+    router.push('/Login')
   };
 
   if(user)router.push('/')
   return (
-    !user &&
     <div className=" h-[100vh] flex items-center">
       <div className="h-[50vh] w-[100vw]">
         <h1 className='mb-5 flex justify-center text-white'>
           <img src="logo.svg" alt="" />
         </h1>
-        <h2 className="text-white text-center mb-3">ログイン</h2>
+        <h2 className="text-white text-center mb-3">パスワード再設定</h2>
         <form onSubmit={onSubmit}>
           <div className="flex flex-col w-11/12 max-w-[500px] m-auto">
             <div className="mb-5">
               <TextField
-                // type="email"
+                type="password"
                 variant="filled"
-                label="Eメール"
-                value={email}
+                label="新しいパスワード"
+                value={password}
                 onChange={(e)=> {
-                  setEmail(e.target.value)
+                  setPassword(e.target.value)
                 }}
                 InputLabelProps={{
                   style: {
@@ -67,10 +73,10 @@ const Login = () => {
               <TextField
                 type="password"
                 variant="filled"
-                label="パスワード"
-                value={password}
+                label="新しいパスワード(確認用)"
+                value={confirm}
                 onChange={(e)=> {
-                  setPassword(e.target.value)
+                  setConfirm(e.target.value)
                 }}
                 InputLabelProps={{
                   style: {
@@ -85,20 +91,12 @@ const Login = () => {
                 className='mb-10 bg-background-secondary w-full rounded-lg'
               />
             </div>
-            <button className='bg-primary rounded-md h-[56px] text-white' type="submit">ログインする</button>
+            <button className='bg-primary rounded-md h-[56px] text-white' type="submit">パスワード再設定</button>
           </div>
         </form>
-        <p className='text-white text-center mt-5'>
-          パスワードを忘れた方は
-          <span className='text-primary'>
-            <Link href='/SendEmailForResetPassword'>
-              こちら
-            </Link>
-          </span>
-        </p>
       </div>
     </div>
   );
-}
+};
 
-export default Login;
+export default ResetPassword

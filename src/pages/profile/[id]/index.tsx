@@ -1,9 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
-import { userAtom } from "@/atoms/atoms";
+import { infoBalloonAtom, userAtom } from "@/atoms/atoms";
 import { TextField } from "@mui/material";
 import axios from "axios";
-import { API_URL } from "const";
-import { useAtomValue } from "jotai";
+import { API_URL, IS_DEVELOPMENT_ENV } from "const";
+import { useAtomValue, useSetAtom } from "jotai";
 import { ChangeEvent, useEffect, useState } from "react";
 import router from "next/router";
 import { Post } from "@/components/Post/Post";
@@ -27,6 +27,7 @@ export const Profile = () => {
   const [iconPreviewUrl, setIconPreviewUrl] = useState<string>('');
   const [profileIcon, setProfileIcon] = useState<File[] | null>(null);
   const [userIconUrl, setUserIconUrl] = useState<string>('');
+  const setBalloonText = useSetAtom(infoBalloonAtom);
 
   const uploadProfileIcon = async (profileIcon: File[]) => {
     const formData = new FormData();
@@ -70,12 +71,13 @@ export const Profile = () => {
       if(!id)return;
       fetchUser(Number(id));
       setIsEditProfile(false);
+      setBalloonText('プロフィールの編集が成功しました')
+    }).catch(()=> {
+      setBalloonText('プロフィールの編集が失敗しました')
     });
   }
 
   const onFileInputChange = (e :ChangeEvent<HTMLInputElement>) => {
-    console.log("e.target.files");
-    console.log(e.target.files);
     if(!e.target.files)return;
     setProfileIcon(Array.from(e.target.files));
     const iconUrl = URL.createObjectURL(e.target.files[0]);
@@ -84,30 +86,43 @@ export const Profile = () => {
 
   useEffect(()=>{
     const fetchUserInfo = async () => {
+      if(!router.isReady)return;
+      // console.log('HOGEEEEE!!!')
       return await axios.get(`${API_URL}/api/users?populate=*&filters[id][$eq]=${id}`)
         .then(res => {
-          console.log('fetchUserInfo↓');
-          console.log(res.data);
-          setUserIconUrl(res.data[0]?.profileIcon);
+          console.log('res.data[0]?.profileIcon',res.data[0]?.profileIcon);
+          if(!res.data[0]?.profileIcon){
+            console.log('プロフ写真URL取得のレスポンスが空です');
+            setUserIconUrl('');
+          }else
+           if(IS_DEVELOPMENT_ENV){
+            console.log('IS_DEVELOPMENT_ENV')
+            console.log('API_URL',API_URL);
+            setUserIconUrl(`${API_URL}${res.data[0]?.profileIcon}`);
+          }else{
+            // console.log('NOT_DEVELOPMENT_ENV')
+            // ※本番環境ではS3に格納されたファイルの絶対パス(https://~~)が返ってくるためAPI_URLは不要
+            setUserIconUrl(`${res.data[0]?.profileIcon}`);
+            // setUserIconUrl(res.data[0]?.profileIcon)
+          }
           setUsername(res.data[0]?.username);
           setSelfIntroduction(res.data[0]?.selfIntroduction);
         });
     };
+
     fetchUserInfo();
-  },[id,user]);
+  },[id,user,router.isReady]);
 
   useEffect(()=>{
     const fetchMyPosts = async () => {
       if(!router.isReady)return;
       return await axios.get(`${API_URL}/api/posts?populate[user][populate]=*&populate=Image&filters[user][id][$eq]=${id}&sort=createdAt%3Adesc&pagination[page]=1&pagination[pageSize]=1000`)
         .then(res =>{
-          console.log('myPosts↓');
-          console.log(res.data.data);
           setData(res.data.data);
         });
     }
     fetchMyPosts();
-  },[id,user]);
+  },[id,user,router.isReady]);
 
   useEffect(()=>{
     if(!user?.username)return;
@@ -130,16 +145,18 @@ export const Profile = () => {
       return (
         <div className="relative w-fit">
           <div className='w-[50px] h-[50px] rounded-full overflow-hidden '>
-            <img src={`${API_URL}${userIconUrl}`} alt="" className="h-full w-full"/>
+            <img src={userIconUrl} alt="" className="h-full w-full"/>
           </div>
           <img src='/upload.png' alt="blankIcon" className='absolute z-10 w-5 bottom-0 -right-2'/>
         </div>
       );
     }else{
-      <div className='relative'>
-        <img src='/mypage.svg' alt="blankIcon"/>
-        <img src='/upload.png' alt="blankIcon" className='absolute'/>
-      </div>
+      return (
+        <div className='relative'>
+          <img src='/mypage.svg' alt="blankIcon"/>
+          <img src='/upload.png' alt="blankIcon" className='absolute z-10 w-5 bottom-0 -right-2'/>
+        </div>
+      )
     }
   };
 
@@ -227,7 +244,7 @@ export const Profile = () => {
               <div className='profile-container px-[16px] mb-5 rounded-lg shadow-customize p-5 mt-5'>
                 <div className='profile-header flex items-center mb-5 justify-between'>
                   <div className='header-icon-username flex items-center'>
-                    <img src={userIconUrl ? `${API_URL}${userIconUrl}` : '/mypage.svg'} alt="" className="rounded-full w-10 h-10 mr-2"/>
+                    <img src={userIconUrl ? `${userIconUrl}` : '/mypage.svg'} alt="" className="rounded-full w-10 h-10 mr-2"/>
                     <p className='font-bold text-md whitespace-nowrap overflow-hidden'>{username}</p>
                   </div>
                   <div className='flex justify-between'>

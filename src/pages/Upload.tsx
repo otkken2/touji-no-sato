@@ -1,15 +1,15 @@
 import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
 
-import { API_URL } from "const";
+import { API_URL, TIME_LIMIT_FOR_MOVIE, TIME_LIMIT_OF_INFO_BALLOON } from "const";
 import { Image, ImageAttributes, Post } from "@/Interface/interfaces";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useAtom, useAtomValue } from "jotai";
-import { bathingDayAtom, descriptionAtom, filesAtom, latAtom, lngAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { bathingDayAtom, descriptionAtom, filesAtom, infoBalloonAtom, latAtom, lngAtom, selectedPlaceAtom, timelimitAtom, userAtom } from "@/atoms/atoms";
 import { UploadForm } from "@/components/Upload/UploadForm";
 import { useRouter } from "next/router";
 import { usePosts } from "lib/usePosts";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface PostInterface{
   description: string;
@@ -20,27 +20,48 @@ const Upload = () => {
   const [files, setFiles] = useAtom(filesAtom);
   const selectedPlace = useAtomValue(selectedPlaceAtom);
   const description = useAtomValue(descriptionAtom);
-  const lat = useAtomValue(latAtom);
-  const lng = useAtomValue(lngAtom);
+  const [lat,setLat] = useAtom(latAtom);
+  const [lng,setLng] = useAtom(lngAtom);
 
   const user = useAtomValue(userAtom);
   const token = Cookies.get('token');
   const router = useRouter();
   const bathingDay = useAtomValue(bathingDayAtom);
+  const setBalloonText = useSetAtom(infoBalloonAtom);
+  const [timelimit, setTimelimit] = useAtom(timelimitAtom)
 
-  console.log("bathingDay")
-  console.log(bathingDay)
+  useEffect(()=>{
+    setLat(0);
+    setLng(0);
+    setTimelimit(TIME_LIMIT_FOR_MOVIE);
+  },[]);
 
   const uploadMediaFile = async (profileIcon: File) => {
     const formData = new FormData();
     formData.append('files',profileIcon, profileIcon.name);
+
+    console.log('uploadMediaFile関数の引数ファイル確認↓');
+    console.log(profileIcon);
+    for (let [key, value] of formData.entries()) { 
+      console.log('↓formDataの確認↓');
+      console.log(key, value);
+    }
+
     const response = await fetch(`${API_URL}/api/upload`, {
       method: 'POST',
       headers: {
+        // 'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`
       },
       body: formData,
     });
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error('Error uploading file:', error);
+      throw new Error('Error uploading file');
+    }
+
     const uploadedFile = await response.json();
     if(uploadedFile)console.log('ファイルアップロードされたよ');
     console.log("uploadedFile in uploadMediaFile()");
@@ -57,12 +78,15 @@ const Upload = () => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    setBalloonText('アップロード中です。このままお待ちください。')
     const formData = new FormData();
   
     let flattenedUploadedFiles: ImageAttributes[] = [];
   
     if (files) {
       console.log("画像ファイルあるよ");
+      console.log('filesの中身だよ↓')
+      console.log(files);
       const uploadedFilesPromises = files.map((file) => uploadMediaFile(file));
       const allUploadedFiles: ImageAttributes[][] = await Promise.all(uploadedFilesPromises);
       flattenedUploadedFiles = allUploadedFiles.flat();
@@ -106,7 +130,7 @@ const Upload = () => {
             },
             {
               headers: {
-                'Content-Type': 'multipart/form-data',
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
               },
             }
@@ -118,11 +142,13 @@ const Upload = () => {
       // setUploadedFiles([]);
       setFiles([]);
       router.push("/");
+    }).then(()=>{
+      setTimelimit(TIME_LIMIT_OF_INFO_BALLOON);
+      setBalloonText('投稿に成功しました')
+    }).catch(()=>{
+      setBalloonText('投稿に失敗しました')
     });
   };
-  
-  
-  
   
   return (
     <UploadForm handleSubmit={handleSubmit} title='新規投稿'/>

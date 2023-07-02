@@ -10,6 +10,7 @@ import { userAtom } from "@/atoms/atoms";
 import { HydrationProvider, Client } from "react-hydration-provider";
 import { LoadScriptNext, LoadScript } from "@react-google-maps/api";
 import Script from "next/script";
+import InfoBalloon from "@/components/Util/InfoBalloon";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337";
 
 
@@ -42,18 +43,20 @@ function App({ Component, pageProps }: AppProps) {
 
   const queryClient = new QueryClient();
   return (
-    <>
+    <div className=''>
       <HydrationProvider>
         {/* <LoadScript googleMapsApiKey={API_KEY}> */}
           <Client>
             <QueryClientProvider client={queryClient}>
-                <Component {...pageProps}/>
-                <Footer />
+                  {/* <h1 className='absolute text-white top-6 bg-red-300 w-[50vw] rounded-full text-center'>HOGE</h1> */}
+                  <InfoBalloon/>
+                  <Component {...pageProps}/>
+                  <Footer />
             </QueryClientProvider>
           </Client>
         {/* </LoadScript> */}
       </HydrationProvider>
-    </>
+    </div>
   );
 }
 
