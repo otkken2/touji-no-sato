@@ -13,7 +13,7 @@ export const API_URL = (() => {
     } else if (IS_DEVELOPMENT_ENV) {
       return "http://localhost:1337";
     } else {
-      throw new Error("Unknown NODE_ENV");
+      throw new Error("Unknown NODE_ENV HOGE!");
     }
 })();
 
