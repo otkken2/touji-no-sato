@@ -135,7 +135,7 @@ const MyOnsenCollection = () => {
                   index + 1 === idOfVisibleInfoWindow &&
                   <div className='absolute bottom-0 bg-background h-[40vh] w-[100vw] overflow-scroll rounded-t-lg pt-3'>
                     <Link href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${postGroupByLatLng.posts[0].attributes?.ryokan}`)}&basemap=satellite`} target='_blank' rel='noopener noreferrer'>
-                      <h1 className='text-xl mb-5'>{postGroupByLatLng.posts[0].attributes?.ryokan}</h1>
+                      <h1 className='text-xl mb-5 text-primary'>{postGroupByLatLng.posts[0].attributes?.ryokan}</h1>
                     </Link>
                     {postGroupByLatLng.posts.map((eachPost,postIndex)=>{
                       return (
