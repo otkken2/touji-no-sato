@@ -72,6 +72,7 @@ export const Media = (props: MediaProps)=>{
             :
               <Link key={ImageIndex} href={`/post/${post.id}`}>
                 <div className="w-full h-auto keen-slider__slide" >
+                  {/* <img  src={url} alt="" className='w-full h-auto object-contain' /> */}
                   <img  src={url} alt="" className='w-full h-auto' />
                 </div>
               </Link>

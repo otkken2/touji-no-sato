@@ -129,14 +129,14 @@ export const UploadForm = (props: UploadFormProps) => {
 
   const renderPreview = (preview: PreviewFilesInterface, index: number, isExistingMedia: boolean = false) => (
     <>
-      <div className='relative'>
+      <div className='relative bg-black mb-5 mr-2 h-[200px]'>
         {
           preview.isMovie ?
-            <div key={index} className='flex justify-center'>
+            <div key={index} className='flex justify-center object-contain'>
               <ReactPlayer key={index} width='95%' height={200} url={preview.URL} controls={true}/>
             </div>
             :
-            <img className="w-[95%] m-auto" key={index} src={preview.URL} alt="プレビュー" />
+            <img className="w-full m-auto h-full object-contain" key={index} src={preview.URL} alt="プレビュー" />
         }
         {
           isExistingMedia && <input type="checkbox" name="" id="" className="absolute top-1 right-1 h-5 w-10 " onClick={() => handleClickPreviews(preview,index)}/> 
