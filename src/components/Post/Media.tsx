@@ -4,10 +4,8 @@ import 'keen-slider/keen-slider.min.css'
 import { useCallback, useEffect, useState } from 'react';
 import { Image as ImageInterface, PostData } from "@/Interface/interfaces";
 import ReactPlayer from 'react-player';
-import { MEDIA_BASE_URL } from 'const';
 import Link from 'next/link';
 import { usePosts } from 'lib/usePosts';
-import axios from 'axios';
 
 interface MediaProps{
   post: PostData,
@@ -57,8 +55,7 @@ export const Media = (props: MediaProps)=>{
               </div>
               :
               // <div className="w-[100vw] keen-slider__slide" >
-              <div className="w-full keen-slider__slide" >
-                {/* <img key={ImageIndex}  src={`${API_URL}${url}`} alt="" className='w-full h-full' /> */}
+              <div className="w-full keen-slider__slide object-contain" >
                 <img key={ImageIndex}  src={url} alt="" className='w-full h-full' />
               </div>
             )
@@ -71,8 +68,7 @@ export const Media = (props: MediaProps)=>{
             </div>
             :
               <Link key={ImageIndex} href={`/post/${post.id}`}>
-                <div className="w-full h-auto keen-slider__slide" >
-                  {/* <img  src={url} alt="" className='w-full h-auto object-contain' /> */}
+                <div className="w-full h-auto keen-slider__slide object-contain" >
                   <img  src={url} alt="" className='w-full h-auto' />
                 </div>
               </Link>

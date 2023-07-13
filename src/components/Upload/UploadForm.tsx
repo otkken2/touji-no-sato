@@ -16,7 +16,6 @@ import Cookies from "js-cookie";
 import Header from "../Header/Header";
 import { DatePicker } from "@mui/x-date-pickers";
 import DatePickerMui from "../Post/DatePickerMui";
-import ImageWithOrientation from "../Util/ImageWithOrientation";
 
 
 interface UploadFormProps{
@@ -96,7 +95,7 @@ export const UploadForm = (props: UploadFormProps) => {
           return eachMedia.URL;
         }
       };
-      const deleteId: number = await axios.get(`${API_URL}/api/media-urls-of-posts?filters[url][$eq]=${deleteUrl()}`).then(res => {
+      const deleteId: number = await axios.get(`${API_URL}/api/media-urls-of-posts?filters[url][$eq]=${deleteUrl()}`).then( (res: any) => {
         return res.data.data[0].id;
       })
       if(!deleteId)return;
@@ -104,7 +103,7 @@ export const UploadForm = (props: UploadFormProps) => {
         headers: {
           Authorization: `Bearer ${token}`
         }
-      }).then(res => {
+      }).then(() => {
         fetchMediaUrlsOfPost(Number(postId));
         setBalloonText('画像の削除に成功しました。');
         router.push(`/post/${postId}/Edit`);
@@ -137,8 +136,7 @@ export const UploadForm = (props: UploadFormProps) => {
               <ReactPlayer key={index} width='95%' height={200} url={preview.URL} controls={true}/>
             </div>
             :
-            // <img className="w-full m-auto h-full object-contain" key={index} src={preview.URL} alt="プレビュー" />
-            <ImageWithOrientation key={index} imageUrl={preview.URL}/>
+            <img className="w-full m-auto h-full object-contain" key={index} src={preview.URL} alt="プレビュー" />
         }
         {
           isExistingMedia && <input type="checkbox" name="" id="" className="absolute top-1 right-1 h-5 w-10 " onClick={() => handleClickPreviews(preview,index)}/> 
