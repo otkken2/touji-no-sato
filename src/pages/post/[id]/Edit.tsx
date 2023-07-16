@@ -23,6 +23,7 @@ const Edit = () => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    setBalloonText('投稿の更新をしています。少々お待ちください。')
 
     const formData = new FormData();
 
