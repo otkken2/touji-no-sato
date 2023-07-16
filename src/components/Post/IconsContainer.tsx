@@ -2,6 +2,7 @@ import { showReplyFormAtom } from "@/atoms/atoms";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useFavorite } from "lib/useFavorite";
 import Image from "next/image";
+import Link from "next/link";
 import { useMemo } from "react";
 interface IconsContainerProps{
   postId: number | undefined;
