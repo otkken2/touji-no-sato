@@ -40,12 +40,12 @@ const Upload = () => {
     const formData = new FormData();
     formData.append('files',profileIcon, profileIcon.name);
 
-    console.log('uploadMediaFile関数の引数ファイル確認↓');
-    console.log(profileIcon);
-    for (let [key, value] of formData.entries()) { 
-      console.log('↓formDataの確認↓');
-      console.log(key, value);
-    }
+    // console.log('uploadMediaFile関数の引数ファイル確認↓');
+    // console.log(profileIcon);
+    // for (let [key, value] of formData.entries()) { 
+    //   console.log('↓formDataの確認↓');
+    //   console.log(key, value);
+    // }
 
     const response = await fetch(`${API_URL}/api/upload`, {
       method: 'POST',
@@ -63,9 +63,9 @@ const Upload = () => {
     }
 
     const uploadedFile = await response.json();
-    if(uploadedFile)console.log('ファイルアップロードされたよ');
-    console.log("uploadedFile in uploadMediaFile()");
-    console.log(uploadedFile);
+    // if(uploadedFile)console.log('ファイルアップロードされたよ');
+    // console.log("uploadedFile in uploadMediaFile()");
+    // console.log(uploadedFile);
     // setUploadedFiles(prev => [...prev,uploadedFile[0]]);
     return uploadedFile;
   };
@@ -84,9 +84,9 @@ const Upload = () => {
     let flattenedUploadedFiles: ImageAttributes[] = [];
   
     if (files) {
-      console.log("画像ファイルあるよ");
-      console.log('filesの中身だよ↓')
-      console.log(files);
+      // console.log("画像ファイルあるよ");
+      // console.log('filesの中身だよ↓')
+      // console.log(files);
       const uploadedFilesPromises = files.map((file) => uploadMediaFile(file));
       const allUploadedFiles: ImageAttributes[][] = await Promise.all(uploadedFilesPromises);
       flattenedUploadedFiles = allUploadedFiles.flat();
