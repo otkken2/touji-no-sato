@@ -55,7 +55,7 @@ export const Media = (props: MediaProps)=>{
               </div>
               :
               // <div className="w-[100vw] keen-slider__slide" >
-              <div className="w-full keen-slider__slide object-contain" >
+              <div className="w-full keen-slider__slide object-contain bg-black" >
                 <img key={ImageIndex}  src={url} alt="" className='w-full max-h-[460px] object-contain' />
               </div>
             )
