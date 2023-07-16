@@ -36,6 +36,14 @@ export const Media = (props: MediaProps)=>{
     fetchMediaUrlsOfPost(post.id);
   },[post, post.id]);
 
+  const imgContainer = (url: string) => {
+    return (
+      <div className="w-full h-fit keen-slider__slide object-contain bg-black flex" >
+        <img  src={url} alt="" className='w-full object-contain max-h-[460px] items-center' />
+      </div>
+    )
+  }
+
   // console.log(urls);
 
   // if(post?.attributes?.Image?.data === undefined)return <></>;
@@ -54,10 +62,9 @@ export const Media = (props: MediaProps)=>{
                 <ReactPlayer width='100%' url={url} controls={true}/>
               </div>
               :
-              // <div className="w-[100vw] keen-slider__slide" >
-              <div className="w-full keen-slider__slide object-contain bg-black" >
-                <img key={ImageIndex}  src={url} alt="" className='w-full max-h-[460px] object-contain' />
-              </div>
+              <>
+                {imgContainer(url)}
+              </>
             )
           }
           // リンクあり
@@ -68,9 +75,7 @@ export const Media = (props: MediaProps)=>{
             </div>
             :
               <Link key={ImageIndex} href={`/post/${post.id}`}>
-                <div className="w-full h-fit keen-slider__slide object-contain bg-black flex" >
-                  <img  src={url} alt="" className='w-full object-contain max-h-[460px] items-center' />
-                </div>
+                {imgContainer(url)}
               </Link>
             );
         })}
