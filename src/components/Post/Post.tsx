@@ -10,7 +10,6 @@ import { useFavorite } from "lib/useFavorite";
 import Cookies from "js-cookie";
 import { useAtom, useAtomValue } from "jotai";
 import { showReplyFormAtom, userAtom } from "@/atoms/atoms";
-import { IconsContainer } from "./IconsContainer";
 
 import { Media } from "./Media";
 import { useState } from "react";
@@ -50,10 +49,12 @@ export const Post = (props: PostsProps) => {
   const renderIcons = () => {
     return (
       <div className="icons-container flex justify-around">
-          <div className={`reply-container flex items-center ${isReply && 'opacity-50'}`} onClick={() => handleClickReplyIcon()}>
-            <Image src='/reply.svg' alt='コメント' width={20} height={20} className='m-3'/>
-            { isReply || <p>{replyCount}</p>}
-          </div>
+          <Link href={`/post/${post?.id}`}>
+            <div className={`reply-container flex items-center cursor-pointer ${isReply && 'opacity-50'}`} onClick={() => handleClickReplyIcon()}>
+              <Image src='/reply.svg' alt='コメント' width={20} height={20} className='m-3'/>
+              { isReply || <p>{replyCount}</p>}
+            </div>
+          </Link>
           {/* お気に入り登録・解除 */}
           <div className='favorite-container flex items-center' onClick={async()=> {
             const newFavoriteCount = await handleClickFavorite(post?.id, post?.attributes?.favoriteCount, token, user?.id)

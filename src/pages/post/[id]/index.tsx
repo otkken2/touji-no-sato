@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { descriptionAtom, filesAtom, previewsAtom, showReplyFormAtom, userAtom } from "@/atoms/atoms";
+import { descriptionAtom, filesAtom, infoBalloonAtom, isErrorAtom, previewsAtom, showReplyFormAtom, userAtom } from "@/atoms/atoms";
 import Cookies from "js-cookie";
 import { Post } from "@/components/Post/Post";
 import { Button, TextField } from "@mui/material";
@@ -32,6 +32,8 @@ const ShowPostDetail = () => {
   const [previews, setPreviews] = useAtom(previewsAtom);
   const [showReplyForm, setShowReplyForm] = useAtom(showReplyFormAtom);
   const {uploadMediaFile} = usePosts();
+  const setBalloonText = useSetAtom(infoBalloonAtom);
+  const setIsError = useSetAtom(isErrorAtom);
 
   useEffect(()=>{
     const getPostDetail = async() => {
@@ -126,10 +128,13 @@ const ShowPostDetail = () => {
           })
           .catch((err) => console.log(err));
       }
-      // alert("Postの投稿に成功しました");
+      setBalloonText("リプライの投稿に成功しました。");
       // setUploadedFiles([]);
       setFiles([]);
       // router.push("/");
+    }).catch(err => {
+      setIsError(true);
+      setBalloonText('リプライの投稿に失敗しました。')
     });
   };
 
