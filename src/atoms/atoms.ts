@@ -6,8 +6,11 @@ import { atomWithStorage } from 'jotai/utils'
 export const userAtom = atomWithStorage<UserInterface | undefined>('authUser',undefined)
 export const myPostsAtom = atom<Post[] | undefined>(undefined);
 export const descriptionAtom = atom<string | undefined>(undefined);
+
 export const filesAtom = atom<File[]>([]);
 export const previewsAtom = atom<PreviewFilesInterface[]>([]);
+export const totalFileSizeMBAtom = atom<number>(0);
+
 export const latAtom = atom<number>(0);
 export const lngAtom = atom<number>(0);
 

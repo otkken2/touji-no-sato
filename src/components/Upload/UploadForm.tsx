@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { descriptionAtom, filesAtom, infoBalloonAtom, previewsAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
+import { descriptionAtom, filesAtom, infoBalloonAtom, isErrorAtom, previewsAtom, selectedPlaceAtom, timelimitAtom, totalFileSizeMBAtom, userAtom } from "@/atoms/atoms";
 import { PlacesAutoComplete } from "@/pages/RyokanInfo";
 import { Button, TextField } from "@mui/material";
 import { API_URL, IS_DEVELOPMENT_ENV } from "const";
@@ -43,6 +43,9 @@ export const UploadForm = (props: UploadFormProps) => {
   const token = Cookies.get('token');
   const [checkedMediasIndex, setCheckedMediasIndex] = useState<number[]>([]);
   const [balloonText, setBalloonText] = useAtom(infoBalloonAtom);
+  const setIsError = useSetAtom(isErrorAtom);
+  const setTimelimit = useSetAtom(timelimitAtom);
+  const [totalFileSizeMB, setTotalFileSizeMB] = useAtom(totalFileSizeMBAtom);
   
   useEffect(()=>{ //Uploadページの場合
     if(isEditPage)return;
@@ -71,17 +74,31 @@ export const UploadForm = (props: UploadFormProps) => {
   },[MediaUrls]);
 
   const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if(e.target.files){
-      // @ts-ignore
-      const fileURLs: PreviewFilesInterface[] = [...e.target.files].map((eachFile: File) => {
-        return {
-          URL: URL.createObjectURL(eachFile),
-          isMovie: isMovie(eachFile.name)
-        }
-      })
-      setPreviews([...previews,...fileURLs]);
-      setFiles([...files,...Array.from(e.target.files)]);
-    };
+    if(!e.target.files)return;
+    // MEMO: 選択されたファイルたちのサイズを取得して合計する。↓
+    let fileSize: number = 0;
+    for(let i = 0; i < e.target.files.length; i++){
+      fileSize += e.target.files[i].size;
+    }
+    const fileSizeMB = fileSize/ 1024 / 1024;
+    const isOverFileSize = fileSizeMB >= 512 || Array.from(e.target.files).length + previews.length > 10;
+    if(isOverFileSize){
+      setTimelimit(3000);
+      setIsError(true);
+      setBalloonText('ファイルは512MB以下、10ファイル以下にしてください');
+      return;
+    }
+    // @ts-ignore
+    const fileURLs: PreviewFilesInterface[] = [...e.target.files].map((eachFile: File) => {
+      return {
+        URL: URL.createObjectURL(eachFile),
+        isMovie: isMovie(eachFile.name)
+      }
+    })
+    setPreviews([...previews,...fileURLs]);
+    setFiles([...files,...Array.from(e.target.files)]);
+    
+    setTotalFileSizeMB(fileSizeMB + totalFileSizeMB);//MEMO: fileサイズ（KB単位）をMBに変換してから既存ファイルのサイズと足し合わせ
   };
 
   // replaceメソッドで、API_URLを''(空文字)に置換する->残った文字列をキーとして、media-urls-of-postエンドポイントのdeleteメソッドを呼び出して該当レコードを削除。
@@ -208,6 +225,9 @@ export const UploadForm = (props: UploadFormProps) => {
               {previews.length > 0 &&
                 <>
                   {isEditPage && <p>新しく選択した写真</p>}
+                  {totalFileSizeMB && 
+                    <p>選択中ファイルサイズ:{totalFileSizeMB.toFixed(2)}MB/ 512MB</p>
+                  }
                   <div className="grid grid-cols-2 mb-10">
                     {
                       previews.map((preview,index) => (
@@ -222,6 +242,7 @@ export const UploadForm = (props: UploadFormProps) => {
                   <Button onClick={() => {
                     setFiles([])
                     setPreviews([]);
+                    setTotalFileSizeMB(0);
                   }}>クリア</Button>
                 </div>
               }

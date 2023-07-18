@@ -10,7 +10,6 @@ import { usePosts } from 'lib/usePosts';
 interface MediaProps{
   post: PostData,
   isDetailPage?: boolean;
-
 }
 export const Media = (props: MediaProps)=>{
   const {post, isDetailPage = false} = props;
@@ -82,21 +81,21 @@ export const Media = (props: MediaProps)=>{
       </div>
       {/* ドット */}
       {loaded && instanceRef.current && instanceRef.current.track?.details?.slides?.length > 0 &&
-        <div className="dots flex justify-center">
-        {[
-          // @ts-ignore
-          ...Array(instanceRef.current.track?.details?.slides?.length).keys(),
-        ].map((idx) => {
-          return (
-            <button
-              key={idx}
-              onClick={() => {
-                instanceRef.current?.moveToIdx(idx)
-              }}
-              className={`dot w-[8px] mx-[5px] h-[8px] cursor-pointer rounded-full ${idx === currentSlide ? 'bg-primary' : 'bg-white'}`}
-            ></button>
-          )
-        })}
+        <div className="dots flex justify-center mb-5">
+          {[
+            // @ts-ignore
+            ...Array(instanceRef.current.track?.details?.slides?.length).keys(),
+          ].map((idx) => {
+            return (
+              <button
+                key={idx}
+                onClick={() => {
+                  instanceRef.current?.moveToIdx(idx)
+                }}
+                className={`dot w-[8px] mx-[5px] h-[8px] cursor-pointer rounded-full ${idx === currentSlide ? 'bg-primary' : 'bg-white'}`}
+              ></button>
+            )
+          })}
         </div>
       }
     </>
