@@ -16,6 +16,10 @@ import Cookies from "js-cookie";
 import Header from "../Header/Header";
 import { DatePicker } from "@mui/x-date-pickers";
 import DatePickerMui from "../Post/DatePickerMui";
+const AWS = require('aws-sdk');
+const s3 = new AWS.S3();
+
+
 
 
 interface UploadFormProps{
@@ -70,8 +74,24 @@ export const UploadForm = (props: UploadFormProps) => {
       }
     ))
     if(!existingPreviews.length)return;
+    console.log('URLs:',existingPreviews);
     setExistingPreviews(existingPreviews);
+
+    //既存画像データのファイルサイズ取得
+      MediaUrls.map(async (eachURL) => {
+        if(IS_DEVELOPMENT_ENV){
+          const res = await fetch(eachURL);
+          const fileSizeInBytes = res.headers.get('content-length');
+          if(!fileSizeInBytes) return;
+          const fileSizeInMegabytes = parseInt(fileSizeInBytes)/ 1024 / 1024;
+          setTotalFileSizeMB(prev => prev + fileSizeInMegabytes); 
+        }else{
+
+        }
+      })
   },[MediaUrls]);
+
+  console.log(totalFileSizeMB);
 
   const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if(!e.target.files)return;
@@ -204,6 +224,9 @@ export const UploadForm = (props: UploadFormProps) => {
                 isEditPage && existingPreviews.length > 0 &&
                 <div className="w-full">
                   <p>元の写真</p>
+                  {totalFileSizeMB && 
+                    <p>ファイルサイズ:{totalFileSizeMB.toFixed(2)}MB/ 512MB</p>
+                  }
                   <div className="grid grid-cols-2 mb-10">
                     {existingPreviews.map((preview,index)=>(
                       renderPreview(preview,index,true)
