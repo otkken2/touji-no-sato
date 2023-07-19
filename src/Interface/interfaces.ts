@@ -101,7 +101,7 @@ export interface ImageAttributes {
   hash?:              string;
   ext?:               string;
   mime?:              string;
-  size?:              number;
+  size:              number;
   url?:               string;
   previewUrl?:        null;
   provider?:          string;
@@ -142,6 +142,12 @@ export interface Meta {
 
 export interface PreviewFilesInterface{
   URL: string,
+  fileSizeMB: number,
   isMovie: boolean
+}
+
+export interface MediaUrlsOfPostInterface {
+  url: string;
+  fileSizeMB: number;
 }
 

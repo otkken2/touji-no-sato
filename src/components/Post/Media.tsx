@@ -6,6 +6,7 @@ import { Image as ImageInterface, PostData } from "@/Interface/interfaces";
 import ReactPlayer from 'react-player';
 import Link from 'next/link';
 import { usePosts } from 'lib/usePosts';
+import { MediaUrlsOfPostInterface } from '@/Interface/interfaces';
 
 interface MediaProps{
   post: PostData,
@@ -51,30 +52,30 @@ export const Media = (props: MediaProps)=>{
     MediaUrls?.length ? 
     <>
       <div className='keen-slider mb-3' ref={sliderRef}>
-         {MediaUrls.map((url: string,ImageIndex:number)=>{
-          if(!url)return <></>;
+         {MediaUrls.map((MediaUrl: MediaUrlsOfPostInterface,ImageIndex:number)=>{
+          if(!MediaUrl.url)return <></>;
           // 詳細画面ならリンクなし
           if(isDetailPage){
             return (
-              isMovie(url) ?
+              isMovie(MediaUrl.url) ?
               <div key={ImageIndex} className="w-[100vw] keen-slider__slide" >
-                <ReactPlayer width='100%' url={url} controls={true}/>
+                <ReactPlayer width='100%' url={MediaUrl.url} controls={true}/>
               </div>
               :
               <>
-                {imgContainer(url)}
+                {imgContainer(MediaUrl.url)}
               </>
             )
           }
           // リンクあり
           return(
-            isMovie(url) ?
+            isMovie(MediaUrl.url) ?
             <div className="w-full keen-slider__slide" >
-              <ReactPlayer width='100%' url={url} controls={true}/>
+              <ReactPlayer width='100%' url={MediaUrl.url} controls={true}/>
             </div>
             :
               <Link key={ImageIndex} href={`/post/${post.id}`}>
-                {imgContainer(url)}
+                {imgContainer(MediaUrl.url)}
               </Link>
             );
         })}

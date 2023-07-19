@@ -112,14 +112,20 @@ const Upload = () => {
       if (!post) return;
       const postId = post.data?.id;
       if (!flattenedUploadedFiles) return;
-      console.log("flattenedUploadedFilesあるよ");
-      console.log("flattenedUploadedFiles↓");
-      console.log(flattenedUploadedFiles);
+      // console.log("flattenedUploadedFilesあるよ");
+      // console.log("flattenedUploadedFiles↓");
+      // console.log(flattenedUploadedFiles);
       for (const eachFile of flattenedUploadedFiles) {
+        let fileSizeMB: number;
+        fileSizeMB = eachFile.size / 1024;
+        // if(eachFile.size){
+        //   console.log('fileSize??:', fileSizeMB);
+        // }
         const data = {
           postId: postId,
           mediaAssetId: eachFile.id,
           url: eachFile.url,
+          fileSizeMB: fileSizeMB
         };
   
         await axios

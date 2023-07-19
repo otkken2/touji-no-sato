@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { descriptionAtom, filesAtom, infoBalloonAtom, isErrorAtom, previewsAtom, selectedPlaceAtom, timelimitAtom, totalFileSizeMBAtom, userAtom } from "@/atoms/atoms";
+import { descriptionAtom, existingFilesSizeMBAtom, filesAtom, infoBalloonAtom, isErrorAtom, newSelectedFileSizeMBAtom, previewsAtom, selectedPlaceAtom, timelimitAtom, userAtom } from "@/atoms/atoms";
 import { PlacesAutoComplete } from "@/pages/RyokanInfo";
 import { Button, TextField } from "@mui/material";
 import { API_URL, IS_DEVELOPMENT_ENV } from "const";
@@ -49,8 +49,9 @@ export const UploadForm = (props: UploadFormProps) => {
   const [balloonText, setBalloonText] = useAtom(infoBalloonAtom);
   const setIsError = useSetAtom(isErrorAtom);
   const setTimelimit = useSetAtom(timelimitAtom);
-  const [totalFileSizeMB, setTotalFileSizeMB] = useAtom(totalFileSizeMBAtom);
-  
+  const [newSelectedFilesSizeMB, setNewSelectedFilesSizeMB] = useAtom(newSelectedFileSizeMBAtom);
+  const [existingFilesSizeMB, setExistingFilesSizeMB] = useAtom(existingFilesSizeMBAtom);
+
   useEffect(()=>{ //Uploadページの場合
     if(isEditPage)return;
     setDescription('');
@@ -67,31 +68,37 @@ export const UploadForm = (props: UploadFormProps) => {
   useEffect(()=>{ //Editページの場合2 (既存画像データをプレビューとして表示する準備)
     if(!isEditPage)return;
     if(!MediaUrls)return;
-    const existingPreviews: PreviewFilesInterface[] = MediaUrls.map(eachURl => (
+    const existingPreviews: PreviewFilesInterface[] = MediaUrls.map(eachMedia => (
       {
-        URL: eachURl,
-        isMovie: isMovie(eachURl),
+        URL: eachMedia.url,
+        isMovie: isMovie(eachMedia.url),
+        fileSizeMB: eachMedia.fileSizeMB,
       }
     ))
     if(!existingPreviews.length)return;
-    console.log('URLs:',existingPreviews);
     setExistingPreviews(existingPreviews);
 
     //既存画像データのファイルサイズ取得
-      MediaUrls.map(async (eachURL) => {
-        if(IS_DEVELOPMENT_ENV){
-          const res = await fetch(eachURL);
-          const fileSizeInBytes = res.headers.get('content-length');
-          if(!fileSizeInBytes) return;
-          const fileSizeInMegabytes = parseInt(fileSizeInBytes)/ 1024 / 1024;
-          setTotalFileSizeMB(prev => prev + fileSizeInMegabytes); 
-        }else{
+      // MediaUrls.map(async (eachURL) => {
+      //   if(IS_DEVELOPMENT_ENV){
+      //     const res = await fetch(eachURL);
+      //     const fileSizeInBytes = res.headers.get('content-length');
+      //     if(!fileSizeInBytes) return;
+      //     const fileSizeInMegabytes = parseInt(fileSizeInBytes)/ 1024 / 1024;
+      //     setTotalFileSizeMB(prev => prev + fileSizeInMegabytes); 
+      //   }else{
 
-        }
-      })
+      //   }
+      // })
   },[MediaUrls]);
 
-  console.log(totalFileSizeMB);
+  useEffect(()=>{
+    return()=>{
+      setNewSelectedFilesSizeMB(0);
+    }
+  },[]);
+
+  console.log(newSelectedFilesSizeMB);
 
   const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if(!e.target.files)return;
@@ -118,7 +125,7 @@ export const UploadForm = (props: UploadFormProps) => {
     setPreviews([...previews,...fileURLs]);
     setFiles([...files,...Array.from(e.target.files)]);
     
-    setTotalFileSizeMB(fileSizeMB + totalFileSizeMB);//MEMO: fileサイズ（KB単位）をMBに変換してから既存ファイルのサイズと足し合わせ
+    setNewSelectedFilesSizeMB(fileSizeMB + newSelectedFilesSizeMB);//MEMO: fileサイズ（KB単位）をMBに変換してから既存ファイルのサイズと足し合わせ
   };
 
   // replaceメソッドで、API_URLを''(空文字)に置換する->残った文字列をキーとして、media-urls-of-postエンドポイントのdeleteメソッドを呼び出して該当レコードを削除。
@@ -224,9 +231,7 @@ export const UploadForm = (props: UploadFormProps) => {
                 isEditPage && existingPreviews.length > 0 &&
                 <div className="w-full">
                   <p>元の写真</p>
-                  {totalFileSizeMB && 
-                    <p>ファイルサイズ:{totalFileSizeMB.toFixed(2)}MB/ 512MB</p>
-                  }
+                  
                   <div className="grid grid-cols-2 mb-10">
                     {existingPreviews.map((preview,index)=>(
                       renderPreview(preview,index,true)
@@ -248,8 +253,8 @@ export const UploadForm = (props: UploadFormProps) => {
               {previews.length > 0 &&
                 <>
                   {isEditPage && <p>新しく選択した写真</p>}
-                  {totalFileSizeMB && 
-                    <p>選択中ファイルサイズ:{totalFileSizeMB.toFixed(2)}MB/ 512MB</p>
+                  {newSelectedFilesSizeMB && 
+                    <p>選択中ファイルサイズ:{newSelectedFilesSizeMB.toFixed(2)}MB/ 512MB</p>
                   }
                   <div className="grid grid-cols-2 mb-10">
                     {
@@ -265,7 +270,7 @@ export const UploadForm = (props: UploadFormProps) => {
                   <Button onClick={() => {
                     setFiles([])
                     setPreviews([]);
-                    setTotalFileSizeMB(0);
+                    setNewSelectedFilesSizeMB(0);
                   }}>クリア</Button>
                 </div>
               }
