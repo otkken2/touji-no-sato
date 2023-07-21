@@ -66,16 +66,35 @@ export const UploadForm = (props: UploadFormProps) => {
     // setPreviews([]);
   },[]);
 
-  useEffect(()=>{ //テスト
-    if(isEditPage){
-      return ()=>{
-        setDescription('');
-        setSelectedPlace('');
-        setPreviews([]);
-        setBathingDay('');
-        setExistingFilesSizeMB(0);
-      }
-    }
+  // useEffect(()=>{ //テスト
+  //   if(isEditPage){
+  //     return ()=>{
+  //       setDescription('');
+  //       setSelectedPlace('');
+  //       setPreviews([]);
+  //       setBathingDay('');
+  //       setExistingFilesSizeMB(0);
+  //     }
+  //   }
+  // },[]);
+
+  useEffect(()=>{
+    const handleRouteChange= (nextUrl: string)=>{
+      console.log('nextUrl;',nextUrl);
+      console.log('router.asPath(currentUrl);', router.asPath);
+      if(nextUrl === router.asPath)return;
+      console.log('!!!handleRouteChange fired!!!');
+      setDescription('');
+      setSelectedPlace('');
+      setPreviews([]);
+      setBathingDay('');
+      setExistingFilesSizeMB(0);
+    };
+    router.events.on('routeChangeStart',handleRouteChange);
+
+    return () => {
+      router.events.off('routeChangeStart',handleRouteChange);
+    };
   },[]);
 
   useEffect(()=>{ //Editページの場合１
@@ -157,6 +176,7 @@ export const UploadForm = (props: UploadFormProps) => {
   // replaceメソッドで、API_URLを''(空文字)に置換する->残った文字列をキーとして、media-urls-of-postエンドポイントのdeleteメソッドを呼び出して該当レコードを削除。
   const handleClickDeleteMedia = async () => {
     if(!postId)return; //Editページではない（＝Uploadページである）場合、postIdが渡されていないので早期リターン。
+    if(confirm(`${selectedMediasForDelete.length}枚の写真を削除します。¥n よろしいですか？`))
     selectedMediasForDelete.map(async eachMedia => {
       const deleteUrl = () => {
         if(IS_DEVELOPMENT_ENV){
@@ -176,7 +196,7 @@ export const UploadForm = (props: UploadFormProps) => {
       }).then(() => {
         fetchMediaUrlsOfPost(Number(postId));
         setBalloonText('画像の削除に成功しました。');
-        router.push(`/post/${postId}/Edit`);
+        // router.push(`/post/${postId}/Edit`);
       })
     });
   };
@@ -270,13 +290,13 @@ export const UploadForm = (props: UploadFormProps) => {
               
               
               {selectedMediasForDelete.length > 0 && isEditPage &&
-                <button 
-                  type="submit" 
-                  className='w-[50%] h-[50px] mx-auto bg-background-secondary rounded-full px-3 cursor-pointer text-red-700 mb-10'
+                <div 
+                  // type="submit" 
+                  className='w-[50%] h-[50px] mx-auto bg-background-secondary rounded-full px-3 flex items-center justify-center cursor-pointer text-red-700 mb-10'
                   onClick={()=> handleClickDeleteMedia()}
                 >
-                  {selectedMediasForDelete.length}枚の写真を削除
-                </button>
+                  <span>{selectedMediasForDelete.length}枚の写真を削除</span>
+                </div>
               }
               {previews.length > 0 &&
                 <>

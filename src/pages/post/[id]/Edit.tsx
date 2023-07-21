@@ -85,6 +85,7 @@ const Edit = () => {
       // console.log('成功！');
       setFiles([]);
       setBalloonText('投稿の更新に成功しました');
+      console.log('!!!!!!!!EditページのhundleSubmitだよ!!!!')
       router.push(`/post/${id}`);
     });
   }
