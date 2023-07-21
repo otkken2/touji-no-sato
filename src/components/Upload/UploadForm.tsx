@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { descriptionAtom, existingFilesSizeMBAtom, filesAtom, infoBalloonAtom, isErrorAtom, newSelectedFileSizeMBAtom, previewsAtom, selectedPlaceAtom, timelimitAtom, userAtom } from "@/atoms/atoms";
+import { bathingDayAtom, descriptionAtom, existingFilesSizeMBAtom, filesAtom, infoBalloonAtom, isErrorAtom, newSelectedFileSizeMBAtom, previewsAtom, selectedPlaceAtom, timelimitAtom, userAtom } from "@/atoms/atoms";
 import { PlacesAutoComplete } from "@/pages/RyokanInfo";
 import { Button, TextField } from "@mui/material";
 import { API_URL, IS_DEVELOPMENT_ENV } from "const";
@@ -39,6 +39,7 @@ export const UploadForm = (props: UploadFormProps) => {
   const setSelectedPlace = useSetAtom(selectedPlaceAtom);
   const [description, setDescription] = useAtom(descriptionAtom);
   const [files, setFiles] = useAtom(filesAtom);
+  const setBathingDay = useSetAtom(bathingDayAtom);
   const [previews, setPreviews] = useAtom(previewsAtom);
   const [existingPreviews, setExistingPreviews] = useState<PreviewFilesInterface[]>([]);
   const { isMovie, fetchMediaUrlsOfPost,MediaUrls } = usePosts();
@@ -49,14 +50,32 @@ export const UploadForm = (props: UploadFormProps) => {
   const [balloonText, setBalloonText] = useAtom(infoBalloonAtom);
   const setIsError = useSetAtom(isErrorAtom);
   const setTimelimit = useSetAtom(timelimitAtom);
+  //↓１：新規投稿画面の時の写真のファイルサイズ合計。
+  // ２：編集画面の時、もとの写真に加えるために新しく選択される写真のファイルサイズ合計(MB)
   const [newSelectedFilesSizeMB, setNewSelectedFilesSizeMB] = useAtom(newSelectedFileSizeMBAtom);
+  //↓ 編集画面の時、既存の写真のファイルサイズ合計
   const [existingFilesSizeMB, setExistingFilesSizeMB] = useAtom(existingFilesSizeMBAtom);
+
+  //upload,editともに、編集途中のデータが、再ローディングによって消えてしまうことは避けたい
+  //かつ、たとえばある既存投稿の編集画面をのぞいていたあとに新規投稿ページをひらいた場合に、直前の編集ページにあったデータが、新規投稿ページに残ってしまうことは避けたい
 
   useEffect(()=>{ //Uploadページの場合
     if(isEditPage)return;
-    setDescription('');
-    setSelectedPlace('');
-    setPreviews([]);
+    // setDescription('');
+    // setSelectedPlace('');
+    // setPreviews([]);
+  },[]);
+
+  useEffect(()=>{ //テスト
+    if(isEditPage){
+      return ()=>{
+        setDescription('');
+        setSelectedPlace('');
+        setPreviews([]);
+        setBathingDay('');
+        setExistingFilesSizeMB(0);
+      }
+    }
   },[]);
 
   useEffect(()=>{ //Editページの場合１
@@ -93,12 +112,19 @@ export const UploadForm = (props: UploadFormProps) => {
   },[MediaUrls]);
 
   useEffect(()=>{
+    existingPreviews.map((eachPreview)=>{
+      setExistingFilesSizeMB(prev => prev + eachPreview.fileSizeMB);
+    })
+  },[existingPreviews]);
+
+  useEffect(()=>{
     return()=>{
       setNewSelectedFilesSizeMB(0);
     }
   },[]);
 
-  console.log(newSelectedFilesSizeMB);
+  // console.log(newSelectedFilesSizeMB);
+  console.log('existingPreviews:',existingPreviews);
 
   const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if(!e.target.files)return;
@@ -231,7 +257,9 @@ export const UploadForm = (props: UploadFormProps) => {
                 isEditPage && existingPreviews.length > 0 &&
                 <div className="w-full">
                   <p>元の写真</p>
-                  
+                  {existingFilesSizeMB && 
+                    <p>ファイルサイズ:{existingFilesSizeMB.toFixed(2)}MB/ 512MB</p>
+                  }
                   <div className="grid grid-cols-2 mb-10">
                     {existingPreviews.map((preview,index)=>(
                       renderPreview(preview,index,true)
