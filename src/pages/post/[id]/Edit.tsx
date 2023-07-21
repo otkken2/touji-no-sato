@@ -56,10 +56,14 @@ const Edit = () => {
       console.log("flattenedUploadedFiles↓");
       console.log(flattenedUploadedFiles);
       for (const eachFile of flattenedUploadedFiles) {
+        let fileSizeMB: number;
+        fileSizeMB = eachFile.size / 1024;
+
         const data = {
           postId: id,
           mediaAssetId: eachFile.id,
           url: eachFile.url,
+          fileSizeMB: fileSizeMB,
         };
   
         await axios
