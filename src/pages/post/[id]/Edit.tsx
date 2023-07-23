@@ -1,4 +1,4 @@
-import { descriptionAtom, filesAtom, infoBalloonAtom, latAtom, lngAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
+import { bathingDayAtom, descriptionAtom, filesAtom, infoBalloonAtom, latAtom, lngAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
 import { UploadForm } from "@/components/Upload/UploadForm";
 import { ImageAttributes } from "@/Interface/interfaces";
 import axios from "axios";
@@ -20,6 +20,7 @@ const Edit = () => {
   const lng = useAtomValue(lngAtom);
   const {uploadMediaFile} = usePosts();
   const [balloonText,setBalloonText] = useAtom(infoBalloonAtom);
+  const bathingDay = useAtomValue(bathingDayAtom);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -42,6 +43,7 @@ const Edit = () => {
       user: user?.id,
       lat: lat,
       lng: lng,
+      bathingDay: bathingDay,
     }
     formData.append('data', JSON.stringify(textData));
     await fetch(`${API_URL}/api/posts/${id}`, {
