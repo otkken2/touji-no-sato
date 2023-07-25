@@ -55,6 +55,7 @@ export const UploadForm = (props: UploadFormProps) => {
   const [newSelectedFilesSizeMB, setNewSelectedFilesSizeMB] = useAtom(newSelectedFileSizeMBAtom);
   //↓ 編集画面の時、既存の写真のファイルサイズ合計
   const [existingFilesSizeMB, setExistingFilesSizeMB] = useAtom(existingFilesSizeMBAtom);
+  const MAX_FILE_SIZE = 500;
 
   //upload,editともに、編集途中のデータが、再ローディングによって消えてしまうことは避けたい
   //かつ、たとえばある既存投稿の編集画面をのぞいていたあとに新規投稿ページをひらいた場合に、直前の編集ページにあったデータが、新規投稿ページに残ってしまうことは避けたい
@@ -66,36 +67,36 @@ export const UploadForm = (props: UploadFormProps) => {
     // setPreviews([]);
   },[]);
 
-  // useEffect(()=>{ //テスト
-  //   if(isEditPage){
-  //     return ()=>{
-  //       setDescription('');
-  //       setSelectedPlace('');
-  //       setPreviews([]);
-  //       setBathingDay('');
-  //       setExistingFilesSizeMB(0);
-  //     }
-  //   }
-  // },[]);
-
-  useEffect(()=>{
-    const handleRouteChange= (nextUrl: string)=>{
-      console.log('nextUrl;',nextUrl);
-      console.log('router.asPath(currentUrl);', router.asPath);
-      if(nextUrl === router.asPath)return;
-      console.log('!!!handleRouteChange fired!!!');
-      setDescription('');
-      setSelectedPlace('');
-      setPreviews([]);
-      setBathingDay('');
-      setExistingFilesSizeMB(0);
-    };
-    router.events.on('routeChangeStart',handleRouteChange);
-
-    return () => {
-      router.events.off('routeChangeStart',handleRouteChange);
-    };
+  useEffect(()=>{ //テスト
+    if(isEditPage){
+      return ()=>{
+        setDescription('');
+        setSelectedPlace('');
+        setPreviews([]);
+        setBathingDay('');
+        setExistingFilesSizeMB(0);
+      }
+    }
   },[]);
+
+  // useEffect(()=>{
+  //   const handleRouteChange= (nextUrl: string)=>{
+  //     console.log('nextUrl;',nextUrl);
+  //     console.log('router.asPath(currentUrl);', router.asPath);
+  //     if(nextUrl === router.asPath)return;
+  //     console.log('!!!handleRouteChange fired!!!');
+  //     setDescription('');
+  //     setSelectedPlace('');
+  //     setPreviews([]);
+  //     setBathingDay('');
+  //     setExistingFilesSizeMB(0);
+  //   };
+  //   router.events.on('routeChangeStart',handleRouteChange);
+
+  //   return () => {
+  //     router.events.off('routeChangeStart',handleRouteChange);
+  //   };
+  // },[]);
 
   useEffect(()=>{ //Editページの場合１
     if(!isEditPage)return;
@@ -153,11 +154,11 @@ export const UploadForm = (props: UploadFormProps) => {
       fileSize += e.target.files[i].size;
     }
     const fileSizeMB = fileSize/ 1024 / 1024;
-    const isOverFileSize = fileSizeMB >= 512 || Array.from(e.target.files).length + previews.length > 10;
+    const isOverFileSize = fileSizeMB >= MAX_FILE_SIZE || Array.from(e.target.files).length + previews.length > 10;
     if(isOverFileSize){
       setTimelimit(3000);
       setIsError(true);
-      setBalloonText('ファイルは512MB以下、10ファイル以下にしてください');
+      setBalloonText(`ファイルは${MAX_FILE_SIZE}MB以下、10ファイル以下にしてください`);
       return;
     }
     // @ts-ignore
@@ -176,7 +177,7 @@ export const UploadForm = (props: UploadFormProps) => {
   // replaceメソッドで、API_URLを''(空文字)に置換する->残った文字列をキーとして、media-urls-of-postエンドポイントのdeleteメソッドを呼び出して該当レコードを削除。
   const handleClickDeleteMedia = async () => {
     if(!postId)return; //Editページではない（＝Uploadページである）場合、postIdが渡されていないので早期リターン。
-    if(confirm(`${selectedMediasForDelete.length}枚の写真を削除します。¥n よろしいですか？`))
+    if(confirm(`${selectedMediasForDelete.length}枚の写真を削除します。よろしいですか？`))
     selectedMediasForDelete.map(async eachMedia => {
       const deleteUrl = () => {
         if(IS_DEVELOPMENT_ENV){
@@ -197,6 +198,8 @@ export const UploadForm = (props: UploadFormProps) => {
         fetchMediaUrlsOfPost(Number(postId));
         setBalloonText('画像の削除に成功しました。');
         // router.push(`/post/${postId}/Edit`);
+        setExistingFilesSizeMB(0);
+        setSelectedMediasForDelete([]);
       })
     });
   };
@@ -278,7 +281,7 @@ export const UploadForm = (props: UploadFormProps) => {
                 <div className="w-full">
                   <p>元の写真</p>
                   {existingFilesSizeMB && 
-                    <p>ファイルサイズ:{existingFilesSizeMB.toFixed(2)}MB/ 512MB</p>
+                    <p>ファイルサイズ:{existingFilesSizeMB.toFixed(2)}MB</p>
                   }
                   <div className="grid grid-cols-2 mb-10">
                     {existingPreviews.map((preview,index)=>(
@@ -302,7 +305,7 @@ export const UploadForm = (props: UploadFormProps) => {
                 <>
                   {isEditPage && <p>新しく選択した写真</p>}
                   {newSelectedFilesSizeMB && 
-                    <p>選択中ファイルサイズ:{newSelectedFilesSizeMB.toFixed(2)}MB/ 512MB</p>
+                    <p>選択中ファイルサイズ:{newSelectedFilesSizeMB.toFixed(2)}MB</p>
                   }
                   <div className="grid grid-cols-2 mb-10">
                     {
@@ -313,6 +316,13 @@ export const UploadForm = (props: UploadFormProps) => {
                   </div>
                 </>
               }
+              {existingFilesSizeMB > 0 && newSelectedFilesSizeMB > 0 && (
+                <>
+                  <div className="font-bold">
+                    合計ファイルサイズ…約{(existingFilesSizeMB + newSelectedFilesSizeMB).toFixed(2)}MB/ {MAX_FILE_SIZE}MB
+                  </div>
+                </>
+              )}
               {previews.length > 0 && 
                 <div className="mb-[50px]">
                   <Button onClick={() => {

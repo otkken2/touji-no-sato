@@ -8,6 +8,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import moment from 'moment';
 import { useAtom } from 'jotai';
 import { bathingDayAtom } from '@/atoms/atoms';
+import dayjs from 'dayjs';
 export default function BasicDatePicker() {
   const [bathingDay, setBathingDay] = useAtom(bathingDayAtom)
   const darkTheme = createTheme({
@@ -27,7 +28,10 @@ export default function BasicDatePicker() {
     <ThemeProvider theme={darkTheme}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DemoContainer components={['DatePicker']}>
-            <DatePicker className='text-white w-full' label="Basic date picker" onChange={(e:any) => handleChangeDate(e)}/>
+          <div className='flex flex-col w-full'>
+            <p className=''>入湯日</p>
+            <DatePicker value={bathingDay !== undefined ? dayjs(bathingDay) : undefined} className='text-white w-full' label="Basic date picker" onChange={(e:any) => handleChangeDate(e)}/>
+          </div>
         </DemoContainer>
       </LocalizationProvider>
     </ThemeProvider>

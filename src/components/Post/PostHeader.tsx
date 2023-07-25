@@ -19,17 +19,18 @@ interface PostHeaderProps{
   ryokan?: string;
   description?: string;
   post?: PostData;
+  bathingDay?: Date | undefined;
 }
 
 export const PostHeader = (props: PostHeaderProps) => {
-  const {userId, username, createdAt, userIconUrl, isDetailPage = false, postId, ryokan = '', description = ''} = props;
+  const {userId, username, createdAt, userIconUrl, isDetailPage = false, postId, ryokan = '', description = '',bathingDay = undefined} = props;
   const { handleDeletePost, handleGetContent } = usePosts();
   const [showEditDelete, setShowEditDelete] = useState<boolean>(false);
   const router = useRouter();
   const user = useAtomValue(userAtom);
 
   const handelClickEditIcon = () => {
-    handleGetContent(ryokan,description);
+    handleGetContent(ryokan,description,bathingDay);
     router.push(`/post/${postId}/Edit`);
   };
 

@@ -4,11 +4,13 @@ import { UserData } from "@/Interface/interfaces";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { useSetAtom } from "jotai";
-import { descriptionAtom, existingFilesSizeMBAtom, selectedPlaceAtom } from "@/atoms/atoms";
+import { bathingDayAtom, descriptionAtom, existingFilesSizeMBAtom, selectedPlaceAtom } from "@/atoms/atoms";
 import { selectAtom } from "jotai/utils";
 import { SetStateAction } from "jotai/vanilla";
 import { useState } from "react";
 import { MediaUrlsOfPostInterface } from "@/Interface/interfaces";
+import moment from 'moment';
+
 
 
 export const usePosts = () => {
@@ -22,7 +24,7 @@ export const usePosts = () => {
   }
   const [MediaUrls, setMediaUrls] = useState<MediaUrlsOfPostInterface[]>([]);
   const setExistingFilesSizeMB = useSetAtom(existingFilesSizeMBAtom);
-
+  const setBathingDay = useSetAtom(bathingDayAtom);
 
   const handleDeletePost = async (postId: string) => {
     await fetch(`${API_URL}/api/posts/${postId}`,{
@@ -44,10 +46,12 @@ export const usePosts = () => {
     return postDetail;
   };
 
-  const handleGetContent = (ryokanData: string = '', descriptionData: string = '') => {
+  const handleGetContent = (ryokanData: string = '', descriptionData: string = '', bathingDay: Date | undefined) => {
     // setRyokan(ryokanData);
     setSelectedPlace(ryokanData);
     setDescription(descriptionData);
+    if(bathingDay === undefined)return;
+    setBathingDay(moment(bathingDay).format('YYYY-MM-DD'));
   };
 
   const isMovie = (url:string) => {
