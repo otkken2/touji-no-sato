@@ -1,4 +1,4 @@
-import { descriptionAtom, filesAtom, infoBalloonAtom, latAtom, lngAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
+import { bathingDayAtom, descriptionAtom, filesAtom, infoBalloonAtom, latAtom, lngAtom, selectedPlaceAtom, userAtom } from "@/atoms/atoms";
 import { UploadForm } from "@/components/Upload/UploadForm";
 import { ImageAttributes } from "@/Interface/interfaces";
 import axios from "axios";
@@ -20,6 +20,7 @@ const Edit = () => {
   const lng = useAtomValue(lngAtom);
   const {uploadMediaFile} = usePosts();
   const [balloonText,setBalloonText] = useAtom(infoBalloonAtom);
+  const bathingDay = useAtomValue(bathingDayAtom);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -42,6 +43,7 @@ const Edit = () => {
       user: user?.id,
       lat: lat,
       lng: lng,
+      bathingDay: bathingDay,
     }
     formData.append('data', JSON.stringify(textData));
     await fetch(`${API_URL}/api/posts/${id}`, {
@@ -56,10 +58,14 @@ const Edit = () => {
       console.log("flattenedUploadedFiles↓");
       console.log(flattenedUploadedFiles);
       for (const eachFile of flattenedUploadedFiles) {
+        let fileSizeMB: number;
+        fileSizeMB = eachFile.size / 1024;
+
         const data = {
           postId: id,
           mediaAssetId: eachFile.id,
           url: eachFile.url,
+          fileSizeMB: fileSizeMB,
         };
   
         await axios
@@ -81,6 +87,7 @@ const Edit = () => {
       // console.log('成功！');
       setFiles([]);
       setBalloonText('投稿の更新に成功しました');
+      console.log('!!!!!!!!EditページのhundleSubmitだよ!!!!')
       router.push(`/post/${id}`);
     });
   }

@@ -92,6 +92,7 @@ export const Post = (props: PostsProps) => {
             description={post.attributes?.description}
             postId={postId}
             post={post}
+            bathingDay={post?.attributes?.bathingDay}
           />
           {/* 画像もしくは動画 */}
 

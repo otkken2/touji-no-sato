@@ -99,10 +99,14 @@ const ShowPostDetail = () => {
       console.log("flattenedUploadedFiles↓");
       console.log(flattenedUploadedFiles);
       for (const eachFile of flattenedUploadedFiles) {
+        let fileSizeMB: number;
+        fileSizeMB = eachFile.size / 1024;
+
         const data = {
           postId: postId,
           mediaAssetId: eachFile.id,
           url: eachFile.url,
+          fileSizeMB: fileSizeMB
         };
         console.log("media-urls-of-postsエンドポイントに渡すdata↓");
         console.log(data);
@@ -173,7 +177,7 @@ const ShowPostDetail = () => {
               }}
             />
           </div>
-          <div className="mx-auto w-full">
+          <div className="mx-auto w-full mb-5">
             <FileInput onFileInputChange={(e)=> setReplyFiles(e as SetStateAction<File[]>)}/>
           </div>
           <button type="submit" className="bg-primary h-10 w-full mx-auto rounded-lg mb-5">返信</button>

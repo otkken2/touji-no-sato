@@ -4,10 +4,14 @@ import { UserData } from "@/Interface/interfaces";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { useSetAtom } from "jotai";
-import { descriptionAtom, selectedPlaceAtom } from "@/atoms/atoms";
+import { bathingDayAtom, descriptionAtom, existingFilesSizeMBAtom, selectedPlaceAtom } from "@/atoms/atoms";
 import { selectAtom } from "jotai/utils";
 import { SetStateAction } from "jotai/vanilla";
 import { useState } from "react";
+import { MediaUrlsOfPostInterface } from "@/Interface/interfaces";
+import moment from 'moment';
+
+
 
 export const usePosts = () => {
   const token = Cookies.get('token');
@@ -18,7 +22,9 @@ export const usePosts = () => {
     const response = await axios.get(`${API_URL}/api/posts?populate=*&filters[user][id][$eq]=${userId}`)
     return response.data;
   }
-  const [MediaUrls, setMediaUrls] = useState<string[]>([]);
+  const [MediaUrls, setMediaUrls] = useState<MediaUrlsOfPostInterface[]>([]);
+  const setExistingFilesSizeMB = useSetAtom(existingFilesSizeMBAtom);
+  const setBathingDay = useSetAtom(bathingDayAtom);
 
   const handleDeletePost = async (postId: string) => {
     await fetch(`${API_URL}/api/posts/${postId}`,{
@@ -40,10 +46,12 @@ export const usePosts = () => {
     return postDetail;
   };
 
-  const handleGetContent = (ryokanData: string = '', descriptionData: string = '') => {
+  const handleGetContent = (ryokanData: string = '', descriptionData: string = '', bathingDay: Date | undefined) => {
     // setRyokan(ryokanData);
     setSelectedPlace(ryokanData);
     setDescription(descriptionData);
+    if(bathingDay === undefined)return;
+    setBathingDay(moment(bathingDay).format('YYYY-MM-DD'));
   };
 
   const isMovie = (url:string) => {
@@ -75,19 +83,29 @@ export const usePosts = () => {
     if(!postId)return;
     const res = await axios.get(`${API_URL}/api/media-urls-of-posts?filters[postId][$eq]=${postId}`);
     // dev環境→API_URL+url, staging&production環境->urlのみ
-    const urls = res.data.data.map((each: any) => {
-      console.log('each.attributes.url', each.attributes
-      
-      )
-      if(IS_STAGING_ENV || IS_PRODUCTION_ENV){
-        // return `${API_URL}${each.attributes.url}`
-        return each.attributes.url;
+    const mediaUrlsOfPost: MediaUrlsOfPostInterface[] = res.data.data.map((each: any) => {
+      if(IS_STAGING_ENV || IS_PRODUCTION_ENV){ //環境によってurlの形式が変わるので分岐
+        
+        const mediaUrlsOfPost: MediaUrlsOfPostInterface = {
+          url: each.attributes.url,
+          fileSizeMB: each.attributes.fileSizeMB,
+        }
+        console.log('HOGE:', mediaUrlsOfPost);
+        return mediaUrlsOfPost;
+
       }else{
-        console.log('API_URL/uploads/filesのほうだよ！！！！')
-        return `${API_URL}${each.attributes.url}`
+        
+        const mediaUrlsOfPost: MediaUrlsOfPostInterface = {
+          url: `${API_URL}${each.attributes.url}`,
+          fileSizeMB: each.attributes.fileSizeMB,
+        }
+        console.log('HOGE:', mediaUrlsOfPost);
+        return mediaUrlsOfPost;
       }
     });
-    setMediaUrls(urls);
+    setMediaUrls(mediaUrlsOfPost);
+
+    // 一つの投稿の中にあるファイルのサイズ
   };
 
   const uploadMediaFile = async (profileIcon: File) => {
