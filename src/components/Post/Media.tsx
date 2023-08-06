@@ -54,20 +54,6 @@ export const Media = (props: MediaProps)=>{
       <div className='keen-slider mb-3' ref={sliderRef}>
          {MediaUrls.map((MediaUrl: MediaUrlsOfPostInterface,ImageIndex:number)=>{
           if(!MediaUrl.url)return <></>;
-          // 詳細画面ならリンクなし
-          if(isDetailPage){
-            return (
-              isMovie(MediaUrl.url) ?
-              <div key={ImageIndex} className="w-[100vw] keen-slider__slide" >
-                <ReactPlayer width='100%' url={MediaUrl.url} controls={true}/>
-              </div>
-              :
-              <>
-                {imgContainer(MediaUrl.url)}
-              </>
-            )
-          }
-          // リンクあり
           return(
             isMovie(MediaUrl.url) ?
             <div className="w-full keen-slider__slide" >
