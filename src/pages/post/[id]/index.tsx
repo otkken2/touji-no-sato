@@ -53,8 +53,6 @@ const ShowPostDetail = () => {
     if(!router.isReady)return;
     const getReplies = async() => {
       const res = await axios.get(`${API_URL}/api/posts?populate=*&filters[parentPostId][$eq]=${id}`);
-      console.log('ReplyData[]');
-      console.log(res.data?.data);
       if(res.data === undefined)return;
       setReplies(res.data.data);
     };
@@ -68,7 +66,6 @@ const ShowPostDetail = () => {
     let flattenedUploadedFiles: ImageAttributes[] = [];
   
     if (replyFiles) {
-      console.log("画像ファイルあるよ");
       const uploadedFilesPromises = replyFiles.map((file) => uploadMediaFile(file));
       const allUploadedFiles: ImageAttributes[][] = await Promise.all(uploadedFilesPromises);
       flattenedUploadedFiles = allUploadedFiles.flat();
@@ -95,9 +92,6 @@ const ShowPostDetail = () => {
       if (!post) return;
       const postId = post.data?.id;
       if (!flattenedUploadedFiles) return;
-      console.log("flattenedUploadedFilesあるよ");
-      console.log("flattenedUploadedFiles↓");
-      console.log(flattenedUploadedFiles);
       for (const eachFile of flattenedUploadedFiles) {
         let fileSizeMB: number;
         fileSizeMB = eachFile.size / 1024;
@@ -108,8 +102,6 @@ const ShowPostDetail = () => {
           url: eachFile.url,
           fileSizeMB: fileSizeMB
         };
-        console.log("media-urls-of-postsエンドポイントに渡すdata↓");
-        console.log(data);
         await axios
           .post(
             `${API_URL}/api/media-urls-of-posts`,
@@ -123,7 +115,6 @@ const ShowPostDetail = () => {
             }
           )
           .then((res) => {
-            console.log("mediaUrlsOfPostsの投稿に成功しました")
             setHasPostedReply(true);
             setIsUploading(false);
             setPreviews([]);

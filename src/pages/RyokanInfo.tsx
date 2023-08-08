@@ -29,21 +29,6 @@ const RyokanInfo = () => {
     googleMapsApiKey: process?.env?.NEXT_PUBLIC_GOOGLE_API_KEY ?? '',
     libraries: ["places"],
   });
-  // const getRyokanData = async () => {
-  //   const URL = 'https://booking-com.p.rapidapi.com/v1/hotels/locations';
-  //   try{
-  //     const res = await axios.get(URL,options).then(res => console.log(res.data))
-  //     // return res;
-  //   }catch( error ){
-  //   }
-  // };
-
-  // useEffect(()=>{
-  //   getRyokanData();
-  //   // console.log(RyokanData);
-  // },[]);
-
-  // const coordinates = { lat: 0, lng: 0 };
 
   if(!isLoaded)return <p>loading now...</p>
 
@@ -96,13 +81,9 @@ export const PlacesAutoComplete = () => {
     suggestions: {status, data},
     clearSuggestions,
   } = usePlacesAutocomplete({defaultValue: selectedPlace || ''});
-  // } = usePlacesAutocomplete();
 
-  // console.log(data);
 
   const handleSelect = async (address: string) => {
-    console.log("address")
-    console.log(address)
     setValue(address, false);
     setSelectedPlace(address);
     clearSuggestions();
@@ -113,7 +94,6 @@ export const PlacesAutoComplete = () => {
     setLng(lng);
   };
 
-  console.log();
   return (
     // TODO: ユーザーの投稿ページにこの自動補完機能を実装する！
     <Combobox onSelect={handleSelect}>

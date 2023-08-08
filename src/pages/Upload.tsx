@@ -41,13 +41,6 @@ const Upload = () => {
     const formData = new FormData();
     formData.append('files',profileIcon, profileIcon.name);
 
-    // console.log('uploadMediaFile関数の引数ファイル確認↓');
-    // console.log(profileIcon);
-    // for (let [key, value] of formData.entries()) { 
-    //   console.log('↓formDataの確認↓');
-    //   console.log(key, value);
-    // }
-
     const response = await fetch(`${API_URL}/api/upload`, {
       method: 'POST',
       headers: {
@@ -66,18 +59,9 @@ const Upload = () => {
     }
 
     const uploadedFile = await response.json();
-    // if(uploadedFile)console.log('ファイルアップロードされたよ');
-    // console.log("uploadedFile in uploadMediaFile()");
-    // console.log(uploadedFile);
-    // setUploadedFiles(prev => [...prev,uploadedFile[0]]);
     return uploadedFile;
   };
 
-  // console.log("new Date().toISOString()↓")
-  // console.log(new Date().toISOString())
-
-  // console.log("new Date()↓");
-  // console.log(new Date());
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();

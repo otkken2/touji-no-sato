@@ -24,7 +24,6 @@ export const useFavorite = () => {
         newFavoriteCount = 0;
       }
     }
-    console.log('token!!:', token);
     // await axios.put(
     //   `${API_URL}/api/posts/${postId}`,
     //   {
@@ -36,7 +35,6 @@ export const useFavorite = () => {
     //     }
     //   },
     // ).then(result => {
-    //   console.log(result)
     //   getMyFavorites();
     // })
     //  .catch(err => console.log(err))
@@ -52,7 +50,9 @@ export const useFavorite = () => {
         Authorization: `Bearer ${token}`
       }
     }).then(async (result) => {
-      console.log(result)
+      if(result.status !== 200){
+        throw new Error('handleFavorite failed');
+      }
       getMyFavorites();
       if(type === 'increase'){
         setBalloonText('お気に入りに追加しました');
@@ -94,7 +94,6 @@ export const useFavorite = () => {
 
   const clearFavorite = async (postId: number, favoriteCount: number, token: string) => {
     const targetId: number = await axios.get(`${API_URL}/api/favorites?populate=*&filters[post][id][$eq]=${postId}`).then(res => res.data.data[0].id);
-    console.log(targetId);
 
     await axios.delete(
       `${API_URL}/api/favorites/${targetId}`,

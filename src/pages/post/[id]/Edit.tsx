@@ -31,7 +31,6 @@ const Edit = () => {
     let flattenedUploadedFiles: ImageAttributes[] = [];
 
     if (files) {
-      console.log("画像ファイルあるよ");
       const uploadedFilesPromises = files.map((file) => uploadMediaFile(file));
       const allUploadedFiles: ImageAttributes[][] = await Promise.all(uploadedFilesPromises);
       flattenedUploadedFiles = allUploadedFiles.flat();
@@ -54,9 +53,6 @@ const Edit = () => {
       }
     }).then(async res => {
       if (!flattenedUploadedFiles) return;
-      console.log("flattenedUploadedFilesあるよ");
-      console.log("flattenedUploadedFiles↓");
-      console.log(flattenedUploadedFiles);
       for (const eachFile of flattenedUploadedFiles) {
         let fileSizeMB: number;
         fileSizeMB = eachFile.size / 1024;
@@ -84,10 +80,8 @@ const Edit = () => {
           .catch((err) => console.log(err));
       }
 
-      // console.log('成功！');
       setFiles([]);
       setBalloonText('投稿の更新に成功しました');
-      console.log('!!!!!!!!EditページのhundleSubmitだよ!!!!')
       router.push(`/post/${id}`);
     });
   }
