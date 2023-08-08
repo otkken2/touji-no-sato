@@ -5,7 +5,7 @@ import { Image, ImageAttributes, Post } from "@/Interface/interfaces";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { bathingDayAtom, descriptionAtom, filesAtom, infoBalloonAtom, latAtom, lngAtom, selectedPlaceAtom, timelimitAtom, userAtom } from "@/atoms/atoms";
+import { bathingDayAtom, descriptionAtom, filesAtom, infoBalloonAtom, isErrorAtom, latAtom, lngAtom, selectedPlaceAtom, timelimitAtom, userAtom } from "@/atoms/atoms";
 import { UploadForm } from "@/components/Upload/UploadForm";
 import { useRouter } from "next/router";
 import { usePosts } from "lib/usePosts";
@@ -29,6 +29,7 @@ const Upload = () => {
   const bathingDay = useAtomValue(bathingDayAtom);
   const setBalloonText = useSetAtom(infoBalloonAtom);
   const [timelimit, setTimelimit] = useAtom(timelimitAtom)
+  const setIsError = useSetAtom(isErrorAtom);
 
   useEffect(()=>{
     setLat(0);
@@ -59,6 +60,8 @@ const Upload = () => {
     if (!response.ok) {
       const error = await response.text();
       console.error('Error uploading file:', error);
+      setIsError(true);
+      setBalloonText('ファイルのアップロードに失敗しました')
       throw new Error('Error uploading file');
     }
 
@@ -84,9 +87,6 @@ const Upload = () => {
     let flattenedUploadedFiles: ImageAttributes[] = [];
   
     if (files) {
-      // console.log("画像ファイルあるよ");
-      // console.log('filesの中身だよ↓')
-      // console.log(files);
       const uploadedFilesPromises = files.map((file) => uploadMediaFile(file));
       const allUploadedFiles: ImageAttributes[][] = await Promise.all(uploadedFilesPromises);
       flattenedUploadedFiles = allUploadedFiles.flat();
@@ -101,26 +101,27 @@ const Upload = () => {
       bathingDay: bathingDay,
     };
     formData.append("data", JSON.stringify(textData));
-    await fetch(`${API_URL}/api/posts`, {
-      method: "post",
-      body: formData,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then(async (res) => {
-      const post: Post = await res.json();
-      if (!post) return;
+  
+    try {
+      const response = await fetch(`${API_URL}/api/posts`, {
+        method: "post",
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (!response.ok) {
+        setIsError(true);
+        setBalloonText('記事の投稿に失敗しました。')
+        throw new Error('API /api/posts failed');
+      }
+  
+      const post: Post = await response.json();
       const postId = post.data?.id;
-      if (!flattenedUploadedFiles) return;
-      // console.log("flattenedUploadedFilesあるよ");
-      // console.log("flattenedUploadedFiles↓");
-      // console.log(flattenedUploadedFiles);
+      
       for (const eachFile of flattenedUploadedFiles) {
-        let fileSizeMB: number;
-        fileSizeMB = eachFile.size / 1024;
-        // if(eachFile.size){
-        //   console.log('fileSize??:', fileSizeMB);
-        // }
+        let fileSizeMB: number = eachFile.size / 1024;
         const data = {
           postId: postId,
           mediaAssetId: eachFile.id,
@@ -128,33 +129,36 @@ const Upload = () => {
           fileSizeMB: fileSizeMB
         };
   
-        await axios
-          .post(
-            `${API_URL}/api/media-urls-of-posts`,
-            {
-              data: data,
+        const axiosResponse = await axios.post(
+          `${API_URL}/api/media-urls-of-posts`,
+          { data: data },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
             },
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          )
-          .then((res) => console.log("mediaUrlsOfPostsの投稿に成功しました"))
-          .catch((err) => console.log(err));
+          }
+        );
+  
+        if (axiosResponse.status !== 200) {
+          setIsError(true);
+          setBalloonText('ファイルのアップロードに失敗しました')
+          throw new Error('API /api/media-urls-of-posts failed');
+        }
       }
-      // alert("Postの投稿に成功しました");
-      // setUploadedFiles([]);
+  
       setFiles([]);
       router.push("/");
-    }).then(()=>{
       setTimelimit(TIME_LIMIT_OF_INFO_BALLOON);
-      setBalloonText('投稿に成功しました')
-    }).catch(()=>{
-      setBalloonText('投稿に失敗しました')
-    });
+      setBalloonText('投稿に成功しました');
+  
+    } catch (error) {
+      console.error(error);
+      
+      setBalloonText('投稿に失敗しました');
+    }
   };
+  
   
   return (
     <UploadForm handleSubmit={handleSubmit} title='新規投稿'/>

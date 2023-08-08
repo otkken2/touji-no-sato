@@ -22,7 +22,8 @@ export const myFavoritesAtom = atom<FavoriteData[]>([]);
 
 export const showReplyFormAtom = atom<boolean>(false);
 
-export const bathingDayAtom = atomWithStorage<string | undefined>('bathingDay',undefined);
+// export const bathingDayAtom = atomWithStorage<string | undefined>('bathingDay',undefined);
+export const bathingDayAtom = atom<string | undefined>(undefined);
 
 export const infoBalloonAtom = atom<string>('');
 export const isErrorAtom = atom<boolean>(false);
