@@ -23,8 +23,6 @@ export const FileInput = (props:FileInputProps)=>{
             }
           })
           setPreviews(fileURLs);
-          console.log("e.target.files");
-          console.log(e.target.files);
           setFiles(Array.from(e.target.files));
         };
       };

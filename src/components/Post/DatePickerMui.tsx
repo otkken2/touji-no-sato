@@ -18,9 +18,7 @@ export default function BasicDatePicker() {
   });
   
   const handleChangeDate = (date: any) => {
-    console.log(date);
     const formattedDate = moment(date.$d).format('YYYY-MM-DD');
-    console.log(formattedDate);
     setBathingDay(formattedDate);
   };
 

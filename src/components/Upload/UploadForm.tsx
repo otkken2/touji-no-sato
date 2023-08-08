@@ -81,10 +81,7 @@ export const UploadForm = (props: UploadFormProps) => {
 
   // useEffect(()=>{
   //   const handleRouteChange= (nextUrl: string)=>{
-  //     console.log('nextUrl;',nextUrl);
-  //     console.log('router.asPath(currentUrl);', router.asPath);
   //     if(nextUrl === router.asPath)return;
-  //     console.log('!!!handleRouteChange fired!!!');
   //     setDescription('');
   //     setSelectedPlace('');
   //     setPreviews([]);
@@ -143,8 +140,6 @@ export const UploadForm = (props: UploadFormProps) => {
     }
   },[]);
 
-  // console.log(newSelectedFilesSizeMB);
-  console.log('existingPreviews:',existingPreviews);
 
   const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if(!e.target.files)return;

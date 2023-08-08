@@ -23,7 +23,6 @@ export const Media = (props: MediaProps)=>{
     {
       slideChanged(slider){
         setCurrentSlide(slider.track.details.rel);
-        console.log(slider.track.details.rel);
       },
       slides: { perView: 1 },
       created() {
@@ -44,7 +43,6 @@ export const Media = (props: MediaProps)=>{
     )
   }
 
-  // console.log(urls);
 
   // if(post?.attributes?.Image?.data === undefined)return <></>;
   // if(post?.attributes?.Image?.data?.length === 0)return <></>;

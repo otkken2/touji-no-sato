@@ -13,7 +13,6 @@ export const useAuth = () => {
 
   const fetchUser = async(userId :number) => {
     const res = await axios.get(`${API_URL}/api/users/${userId}?populate=*`)
-    console.log(res.data)
     setUser(res.data)
   }
 

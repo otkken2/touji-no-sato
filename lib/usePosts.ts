@@ -33,7 +33,6 @@ export const usePosts = () => {
         Authorization: `Bearer ${token}`
       }
     }).then(res=> {
-      console.log('記事の削除成功！')
       alert('記事の削除に成功しました。Topページへ戻ります。')
       router.push('/')
     })
@@ -70,12 +69,8 @@ export const usePosts = () => {
         body: formData,
       });
       const uploadedFile = await response.json();
-      console.log('from usePosts↓');
-      console.log(uploadedFile);
       return uploadedFile;
     });
-    console.log('array from usePosts↓')
-    console.log(uploadedFiles);
     return uploadedFiles;
   };
 
@@ -90,7 +85,6 @@ export const usePosts = () => {
           url: each.attributes.url,
           fileSizeMB: each.attributes.fileSizeMB,
         }
-        console.log('HOGE:', mediaUrlsOfPost);
         return mediaUrlsOfPost;
 
       }else{
@@ -99,7 +93,6 @@ export const usePosts = () => {
           url: `${API_URL}${each.attributes.url}`,
           fileSizeMB: each.attributes.fileSizeMB,
         }
-        console.log('HOGE:', mediaUrlsOfPost);
         return mediaUrlsOfPost;
       }
     });
@@ -119,10 +112,6 @@ export const usePosts = () => {
       body: formData,
     });
     const uploadedFile = await response.json();
-    if(uploadedFile)console.log('ファイルアップロードされたよ');
-    console.log("uploadedFile in uploadMediaFile()");
-    console.log(uploadedFile);
-    // setUploadedFiles(prev => [...prev,uploadedFile[0]]);
     return uploadedFile;
   };
 
