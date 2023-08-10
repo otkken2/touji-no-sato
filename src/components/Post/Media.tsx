@@ -38,7 +38,7 @@ export const Media = (props: MediaProps)=>{
   const imgContainer = (url: string) => {
     return (
       <div className="w-full h-fit keen-slider__slide object-contain bg-black flex" >
-        <img  src={url} alt="" className='w-full object-contain max-h-[460px] items-center' />
+        <img  src={url} alt="" className='w-full object-contain max-h-[460px] items-center' loading='lazy'/>
       </div>
     )
   }
