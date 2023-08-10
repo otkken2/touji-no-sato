@@ -27,6 +27,7 @@ export const usePosts = () => {
   const setBathingDay = useSetAtom(bathingDayAtom);
 
   const handleDeletePost = async (postId: string) => {
+    if(confirm(`この記事を削除します。よろしいですか？`))
     await fetch(`${API_URL}/api/posts/${postId}`,{
       method: 'delete',
       headers:{
