@@ -1,19 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-}
-
-// module.exports = nextConfig
-
-module.exports = {
   images: {
-    domains: ['localhost']
-  },
-  // nextConfig,
+    domains: ['localhost', 'toujinosato.s3.amazonaws.com']
+  }
 }
 
 const withTM = require("next-transpile-modules")(["@mui/x-date-pickers"]);
 
 module.exports = withTM({
+  ...nextConfig
   // 他の設定があればここに追加
 });
