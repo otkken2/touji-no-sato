@@ -1,12 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 import {useKeenSlider} from 'keen-slider/react'
 import 'keen-slider/keen-slider.min.css'
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Image as ImageInterface, PostData } from "@/Interface/interfaces";
 import ReactPlayer from 'react-player';
 import Link from 'next/link';
 import { usePosts } from 'lib/usePosts';
 import { MediaUrlsOfPostInterface } from '@/Interface/interfaces';
+import Image from 'next/image';
 
 interface MediaProps{
   post: PostData,
@@ -38,14 +39,11 @@ export const Media = (props: MediaProps)=>{
   const imgContainer = (url: string) => {
     return (
       <div className="w-full h-fit keen-slider__slide object-contain bg-black flex" >
-        <img  src={url} alt="" className='w-full object-contain max-h-[460px] items-center' loading='lazy'/>
+        <Image src={url} sizes='100%' width={600} height={460} alt="Image" className='w-full object-contain max-h-[460px]'/>
       </div>
     )
   }
 
-
-  // if(post?.attributes?.Image?.data === undefined)return <></>;
-  // if(post?.attributes?.Image?.data?.length === 0)return <></>;
   return(
     MediaUrls?.length ? 
     <>
