@@ -58,26 +58,15 @@ export const UploadForm = (props: UploadFormProps) => {
   const [existingFilesSizeMB, setExistingFilesSizeMB] = useAtom(existingFilesSizeMBAtom);
   const MAX_FILE_SIZE = 500;
 
-  //upload,editともに、編集途中のデータが、再ローディングによって消えてしまうことは避けたい
-  //かつ、たとえばある既存投稿の編集画面をのぞいていたあとに新規投稿ページをひらいた場合に、直前の編集ページにあったデータが、新規投稿ページに残ってしまうことは避けたい
+  //upload,editともに、編集途中のデータが、再ローディングによって消えてしまうことは避けたい->atomWithStorage使用
+  //かつ、たとえばある既存投稿の編集画面をのぞいていたあとに新規投稿ページをひらいた場合に、直前の編集ページにあったデータが、新規投稿ページに残ってしまうことは避けたい下記のuserEffect()。
 
-  useEffect(()=>{ //Uploadページの場合
+  useEffect(()=>{ //Uploadページの場合、すべて空の状態で表示
     if(isEditPage)return;
-    // setDescription('');
-    // setSelectedPlace('');
-    // setPreviews([]);
-  },[]);
-
-  useEffect(()=>{ //テスト
-    if(isEditPage){
-      return ()=>{
-        setDescription('');
-        setSelectedPlace('');
-        setPreviews([]);
-        setBathingDay('');
-        setExistingFilesSizeMB(0);
-      }
-    }
+    setDescription('');
+    setSelectedPlace('');
+    setPreviews([]);
+    setBathingDay(undefined)
   },[]);
 
   // useEffect(()=>{
@@ -226,7 +215,7 @@ export const UploadForm = (props: UploadFormProps) => {
             </div>
             :
             // <img className="w-full m-auto h-full object-contain" key={index} src={preview.URL} alt="プレビュー" />
-            <Image src={preview.URL} alt="プレビュー画像" width={200} height={200} sizes='100%' className="object-contain" />
+            <Image src={preview.URL} alt="プレビュー画像" width={200} height={200} sizes='100%' className="object-contain w-full h-full" />
         }
         {
           isExistingMedia && <input type="checkbox" name="" id="" className="absolute top-1 right-1 h-5 w-10 " onClick={() => handleClickPreviews(preview,index)}/> 
