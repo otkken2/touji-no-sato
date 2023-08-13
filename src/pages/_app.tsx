@@ -30,7 +30,10 @@ function App({ Component, pageProps }: AppProps) {
       <Head>
         <meta property="og:title" content="湯治の郷 | 温泉を愛する人達の為の記録共有アプリ" />
         <meta property="og:description" content={description} />
-        <meta property="og:image" content={`${process.env.NEXT_PUBLIC_SITE_DOMAIN}/ogImage.png`} />
+        {
+          process.env.NODE_ENV === 'production' && 
+          <meta property="og:image" content={`${process.env.NEXT_PUBLIC_SITE_DOMAIN}/ogImage.png`} />
+        }
         <link rel="icon" type="image/png" sizes="32x32" href="favicon.png" />
         {/* 他の共通のOGPタグもここに追加 */}
       </Head>
