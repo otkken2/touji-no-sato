@@ -5,7 +5,7 @@ import { Image, ImageAttributes, Post } from "@/Interface/interfaces";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { bathingDayAtom, descriptionAtom, filesAtom, infoBalloonAtom, isErrorAtom, latAtom, lngAtom, selectedPlaceAtom, timelimitAtom, userAtom } from "@/atoms/atoms";
+import { bathingDayAtom, descriptionAtom, filesAtom, infoBalloonAtom, isErrorAtom, latAtom, lngAtom, previewsAtom, selectedPlaceAtom, timelimitAtom, userAtom } from "@/atoms/atoms";
 import { UploadForm } from "@/components/Upload/UploadForm";
 import { useRouter } from "next/router";
 import { usePosts } from "lib/usePosts";
@@ -18,8 +18,9 @@ interface PostInterface{
 }
 const Upload = () => {
   const [files, setFiles] = useAtom(filesAtom);
-  const selectedPlace = useAtomValue(selectedPlaceAtom);
-  const description = useAtomValue(descriptionAtom);
+  const setPreviews = useSetAtom(previewsAtom);
+  const [selectedPlace, setSelectedPlace] = useAtom(selectedPlaceAtom);
+  const [description, setDescription] = useAtom(descriptionAtom);
   const [lat,setLat] = useAtom(latAtom);
   const [lng,setLng] = useAtom(lngAtom);
 
@@ -131,7 +132,10 @@ const Upload = () => {
         }
       }
   
+      setSelectedPlace('');
       setFiles([]);
+      setPreviews([]);
+      setDescription('');
       router.push("/");
       setTimelimit(TIME_LIMIT_OF_INFO_BALLOON);
       setBalloonText('投稿に成功しました');

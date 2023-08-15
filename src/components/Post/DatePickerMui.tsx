@@ -22,14 +22,15 @@ export default function BasicDatePicker() {
     setBathingDay(formattedDate);
   };
 
+  // console.log('bathingday->',bathingDay);
   return (
     <ThemeProvider theme={darkTheme}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DemoContainer components={['DatePicker']}>
           <div className='flex flex-col w-full'>
             <p className=''>入湯日</p>
-            {/* <DatePicker value={bathingDay !== undefined ? dayjs(bathingDay) : undefined} className='text-white w-full' label="Basic date picker" onChange={(e:any) => handleChangeDate(e)}/> */}
-            <DatePicker className='text-white w-full' label="Basic date picker" onChange={(e:any) => handleChangeDate(e)}/>
+            <DatePicker value={bathingDay !== undefined ? dayjs(bathingDay) : undefined} className='text-white w-full' label="Basic date picker" onChange={(e:any) => handleChangeDate(e)}/>
+            {/* <DatePicker className='text-white w-full' label="Basic date picker" onChange={(e:any) => handleChangeDate(e)}/> */}
           </div>
         </DemoContainer>
       </LocalizationProvider>

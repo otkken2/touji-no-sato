@@ -16,6 +16,7 @@ import Cookies from "js-cookie";
 import Header from "../Header/Header";
 import { DatePicker } from "@mui/x-date-pickers";
 import DatePickerMui from "../Post/DatePickerMui";
+import Image from "next/image";
 const AWS = require('aws-sdk');
 const s3 = new AWS.S3();
 
@@ -57,26 +58,15 @@ export const UploadForm = (props: UploadFormProps) => {
   const [existingFilesSizeMB, setExistingFilesSizeMB] = useAtom(existingFilesSizeMBAtom);
   const MAX_FILE_SIZE = 500;
 
-  //upload,editともに、編集途中のデータが、再ローディングによって消えてしまうことは避けたい
-  //かつ、たとえばある既存投稿の編集画面をのぞいていたあとに新規投稿ページをひらいた場合に、直前の編集ページにあったデータが、新規投稿ページに残ってしまうことは避けたい
+  //upload,editともに、編集途中のデータが、再ローディングによって消えてしまうことは避けたい->atomWithStorage使用
+  //かつ、たとえばある既存投稿の編集画面をのぞいていたあとに新規投稿ページをひらいた場合に、直前の編集ページにあったデータが、新規投稿ページに残ってしまうことは避けたい下記のuserEffect()。
 
-  useEffect(()=>{ //Uploadページの場合
+  useEffect(()=>{ //Uploadページの場合、すべて空の状態で表示
     if(isEditPage)return;
-    // setDescription('');
-    // setSelectedPlace('');
-    // setPreviews([]);
-  },[]);
-
-  useEffect(()=>{ //テスト
-    if(isEditPage){
-      return ()=>{
-        setDescription('');
-        setSelectedPlace('');
-        setPreviews([]);
-        setBathingDay('');
-        setExistingFilesSizeMB(0);
-      }
-    }
+    setDescription('');
+    setSelectedPlace('');
+    setPreviews([]);
+    setBathingDay(undefined)
   },[]);
 
   // useEffect(()=>{
@@ -224,7 +214,8 @@ export const UploadForm = (props: UploadFormProps) => {
               <ReactPlayer key={index} width='95%' height={200} url={preview.URL} controls={true}/>
             </div>
             :
-            <img className="w-full m-auto h-full object-contain" key={index} src={preview.URL} alt="プレビュー" />
+            // <img className="w-full m-auto h-full object-contain" key={index} src={preview.URL} alt="プレビュー" />
+            <Image src={preview.URL} alt="プレビュー画像" width={200} height={200} sizes='100%' className="object-contain w-full h-full" />
         }
         {
           isExistingMedia && <input type="checkbox" name="" id="" className="absolute top-1 right-1 h-5 w-10 " onClick={() => handleClickPreviews(preview,index)}/> 
@@ -336,7 +327,7 @@ export const UploadForm = (props: UploadFormProps) => {
                   onChange={onFileInputChange}
                 />
                 <img src="/pictures.svg" alt="" className="h-[25px] mr-3"/>
-                <p className="my-auto align-middlle">写真・動画を選択</p>
+                <p className="my-auto align-middlle">写真を選択</p>
               </label>
               <button className='w-[50%] mb-[100px] left-0 m-auto bg-background-secondary h-14 text-primary rounded-full' type="submit">{isEditPage ? '更新する':'投稿する'}</button>
           </div>

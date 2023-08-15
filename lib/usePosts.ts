@@ -46,12 +46,16 @@ export const usePosts = () => {
     return postDetail;
   };
 
-  const handleGetContent = (ryokanData: string = '', descriptionData: string = '', bathingDay: Date | undefined) => {
+  const handleGetContent = (ryokanData: string = '', descriptionData: string = '', bathingDay: Date | undefined = undefined) => {
     // setRyokan(ryokanData);
+    // console.log('handleGetContentの中でのbathingDay->',bathingDay);
     setSelectedPlace(ryokanData);
     setDescription(descriptionData);
-    if(bathingDay === undefined)return;
-    setBathingDay(moment(bathingDay).format('YYYY-MM-DD'));
+    if(bathingDay === null){
+      setBathingDay(undefined);
+    }else{
+      setBathingDay(moment(bathingDay).format('YYYY-MM-DD'));
+    }
   };
 
   const isMovie = (url:string) => {
