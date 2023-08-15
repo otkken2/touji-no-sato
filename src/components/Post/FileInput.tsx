@@ -48,12 +48,12 @@ export const FileInput = (props:FileInputProps)=>{
           <div className="grid grid-cols-2 w-full">
             {
               previews.map((preview,index) => (
-								<div className='relative bg-black mb-5 mr-2 h-[200px]'>
+								<div key={index} className='relative bg-black mb-5 mr-2 h-[200px]'>
 									{
 										preview.isMovie 
 										?
 											<div key={index} className='flex justify-center'>
-											<ReactPlayer key={index} width='95%' height={200} url={preview.URL} controls={true}/>
+											  <ReactPlayer width='95%' height={200} url={preview.URL} controls={true}/>
 											</div>
 										:
 											<Image src={preview.URL} alt="プレビュー画像" width={200} height={200} sizes='100%' className="object-contain m-auto w-full h-full" />
