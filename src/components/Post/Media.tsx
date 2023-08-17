@@ -70,15 +70,13 @@ export const Media = (props: MediaProps)=>{
               <div key={ImageIndex}>
                 {
                   isMovie(MediaUrl.url) ?
-                  <div className="w-full h-fit keen-slider__slide object-contain bg-black" >
+                  <div className="w-full h-fit keen-slider__slide object-contain bg-black m-auto flex items-center" >
                     <ReactPlayer width='100%' url={MediaUrl.url} controls={true}/>
                   </div>
                   :
-                  // <Link href={`/post/${post.id}`}>
                   <>
                     {imgContainer(MediaUrl.url)}
                   </>
-                  // </Link>
                 }
               </div>
             );
