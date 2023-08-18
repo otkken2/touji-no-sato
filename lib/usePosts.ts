@@ -101,6 +101,7 @@ export const usePosts = () => {
         return mediaUrlsOfPost;
       }
     });
+    console.log('fetchされたmediaUrlsOfPost->',mediaUrlsOfPost);
     setMediaUrls(mediaUrlsOfPost);
 
     // 一つの投稿の中にあるファイルのサイズ

@@ -38,6 +38,10 @@ export const Media = (props: MediaProps)=>{
   },[post, post.id]);
 
   const imgContainer = (url: string) => {
+    if(!url)return;
+    if(url.includes('null'))return;
+    if(url.includes('undefined'))return;
+    console.log('url->',url);
     return (
       <div className={`keen-slider__slide bg-black flex ${isExpanded ? 'w-[100vw] h-screen justify-center items-center' : 'w-full h-fit'}`} >
         <Image src={url} sizes='100%' width={600} height={460} alt="Image" className={`object-scale-down ${isExpanded ? 'w-full h-full' : 'w-full max-h-[460px]'}`}/>
