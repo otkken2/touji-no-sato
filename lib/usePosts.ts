@@ -48,7 +48,6 @@ export const usePosts = () => {
 
   const handleGetContent = (ryokanData: string = '', descriptionData: string = '', bathingDay: Date | undefined = undefined) => {
     // setRyokan(ryokanData);
-    // console.log('handleGetContentの中でのbathingDay->',bathingDay);
     setSelectedPlace(ryokanData);
     setDescription(descriptionData);
     if(bathingDay === null){
@@ -101,7 +100,6 @@ export const usePosts = () => {
         return mediaUrlsOfPost;
       }
     });
-    console.log('fetchされたmediaUrlsOfPost->',mediaUrlsOfPost);
     setMediaUrls(mediaUrlsOfPost);
 
     // 一つの投稿の中にあるファイルのサイズ

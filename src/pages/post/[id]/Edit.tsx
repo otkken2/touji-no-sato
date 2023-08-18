@@ -76,7 +76,6 @@ const Edit = () => {
               },
             }
           )
-          .then((res) => console.log("mediaUrlsOfPostsの投稿に成功しました"))
           .catch((err) => console.log(err));
       }
 
