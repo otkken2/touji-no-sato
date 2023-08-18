@@ -14,7 +14,7 @@ const Header = () => {
         </Link>
       </h1>
       <Link href={`/profile/${user?.id}`}>
-        <div className='text-white mr-5 font-bold '>{user?.username ?? 'ゲスト'}さん！</div>
+        <div className='text-white mr-5 font-bold '>{user?.username ?? 'ゲスト'}さん</div>
       </Link>
     </div>
   );
